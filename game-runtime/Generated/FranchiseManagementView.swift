@@ -46,8 +46,10 @@ extension FranchiseView {
             ("lineup","Pick the batting lineup",a.lineup,"Before your games; may replace your manual batting order."),
             ("rotation","Manage starting rotation",a.rotation,"Before your games; clears manual next-starter overrides."),
             ("tickets","Set ticket prices",a.tickets,"Weekly; balance matchday income and fan growth."),
-            ("facilities","Buy facility upgrades",a.facilities,"At most one per week, retaining reserve and eight weeks of staff pay.")]
-        for (i,row) in rows.enumerated(){let y:CGFloat=331+CGFloat(i)*57;panel(rect(51,y,1493,51));text(row.1,68,y+7,22,white,"AvenirNextCondensed-Heavy",420);text(row.3,489,y+12,17,muted,"AvenirNextCondensed-DemiBold",827);button(row.2 ? "AUTO":"MANUAL","automate:"+row.0,rect(1341,y+7,181,37),primary:row.2)}
+            ("facilities","Buy facility upgrades",a.facilities,"At most one per week, retaining reserve and eight weeks of staff pay."),
+            ("contracts","Negotiate offseason contracts",f.world?.autoContracts ?? false,"Offer renewals and recruit within your salary budget; no auto-release."),
+            ("events","Resolve club events",f.world?.autoEvents ?? false,"Choose the low-cost option for each event; outcomes appear in League News.")]
+        for (i,row) in rows.enumerated(){let y:CGFloat=331+CGFloat(i)*44;panel(rect(51,y,1493,40));text(row.1,68,y+7,22,white,"AvenirNextCondensed-Heavy",420);text(row.3,489,y+12,17,muted,"AvenirNextCondensed-DemiBold",827);button(row.2 ? "AUTO":"MANUAL","automate:"+row.0,rect(1341,y+3,181,34),primary:row.2)}
         button("STAFF CAP €\(a.weeklyStaffBudget)/WEEK","staffbudget",rect(51,739,490,43));button("CASH RESERVE €\(a.reserve)","autoreserve",rect(558,739,490,43));button("INJURIES & SIM STOPS","tab:12",rect(1065,739,479,43))
         button("REPLAY FRANCHISE TOUR","tour:start",rect(51,796,490,36));button("TOUR ON NEW CAREERS: \(interfacePreferences.showCareerTour ? "ON":"OFF")","tour:toggle",rect(558,796,490,36));button("TRADE GM: "+["RELAXED","BALANCED","STRICT"][f.gmStrictness],"tradestrict",rect(1065,796,479,36))
     }

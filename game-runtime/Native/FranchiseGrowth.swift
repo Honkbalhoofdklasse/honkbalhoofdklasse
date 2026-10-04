@@ -1,6 +1,6 @@
 import Foundation
 
-struct YouthOrigin:Codable {var year:Int,skills:[Double],ceilings:[Double],region:String}
+struct YouthOrigin:Codable {var year:Int,skills:[Double],ceilings:[Double],region:String,kind:String?=nil}
 struct YouthCandidate:Codable {var player:FranchisePlayer,club:Int,scouting:Int=0,fee:Int,signed:Bool=false}
 struct YouthIntake:Codable {var year:Int,candidates:[YouthCandidate]}
 struct BoardPlan:Codable {var year:Int,style:Int,fanTarget:Int,growthTarget:Double,cashTarget:Int
@@ -18,7 +18,7 @@ extension FranchisePlayer {
 extension Franchise {
     var currentBoardPlan:BoardPlan{boardPlan?.year==year ? boardPlan!:makeBoardPlan()}
     func makeBoardPlan()->BoardPlan {
-        var style=[1,5].contains(user) ? 2:([4,6].contains(user) ? 0:1)
+        var style=[1,5].contains(user) ? 2:([4,6,7].contains(user) ? 0:1)
         if let previous=history.last,previous.userWins+previous.userLosses>0 {
             let pct=Double(previous.userWins)/Double(previous.userWins+previous.userLosses)
             if previous.champion==user || pct>=0.65{style=2}else if pct<0.35{style=0}else{style=1}
@@ -54,7 +54,7 @@ extension Franchise {
         guard academyIntake?.year != year else{return}
         let first=["Milan","Dario","Jesse","Rafael","Noah","Jairo","Timo","Diego","Finn","Elian","Sem","Nico"]
         let last=["Vermeer","Martina","Smit","Maduro","Bakker","De Vries","Jansen","Rosalia","Vos","Jacobs","Meijer","De Jong"]
-        let regions=["West-Brabant","Rotterdam","Gooi","Kennemerland","Haarlemmermeer","Amsterdam","Utrecht"]
+        let regions=["West-Brabant","Rotterdam","Gooi","Kennemerland","Haarlemmermeer","Amsterdam","Utrecht",customClub?.city ?? "Regional"]
         var candidates=[YouthCandidate]()
         for c in clubs.indices {for n in 0..<3 {
             let key=(year*7+c*3+n)%144,name=first[key%12]+" "+last[key/12]
@@ -114,7 +114,7 @@ extension Franchise {
         guard players.allSatisfy(validYouth) else{return false}
         if let plan=boardPlan,(!(0...2).contains(plan.style) || plan.fanTarget<=0 || plan.growthTarget<=0 || !plan.growthTarget.isFinite || plan.cashTarget<=0){return false}
         if let intake=academyIntake {
-            guard intake.candidates.count<=21,Set(intake.candidates.map{$0.player.profile.id}).count==intake.candidates.count,intake.candidates.allSatisfy({clubs.indices.contains($0.club) && (0...2).contains($0.scouting) && (0...20000).contains($0.fee) && validYouth($0.player) && $0.player.youth != nil}) else{return false}
+            guard intake.candidates.count<=clubs.count*3,Set(intake.candidates.map{$0.player.profile.id}).count==intake.candidates.count,intake.candidates.allSatisfy({clubs.indices.contains($0.club) && (0...2).contains($0.scouting) && (0...20000).contains($0.fee) && validYouth($0.player) && $0.player.youth != nil}) else{return false}
         }
         if let offer=counterOffer {
             guard clubs.indices.contains(offer.club),offer.club != user,(1...3).contains(offer.give.count),(1...3).contains(offer.take.count),offer.expires>=offer.issued else{return false}

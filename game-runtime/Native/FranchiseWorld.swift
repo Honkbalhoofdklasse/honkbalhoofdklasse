@@ -1,0 +1,161 @@
+import Foundation
+
+struct PlayerDeal:Codable {var salary:Int,endYear:Int,role:Int,ambition:Int,trust=65,paid=0,retired=false;var promise:RolePromise?=nil}
+struct RolePromise:Codable {var role:Int,year:Int,start:Int,until:Int}
+struct MarketBid:Codable {var player:String,club:Int,salary:Int,years:Int,role:Int}
+struct WinterMarket:Codable {var year:Int,week=0,bids:[MarketBid]=[]}
+struct ClubMoment:Codable {var id:String,kind:Int,year:Int,week:Int,resolved=false,choice:Int?=nil}
+struct LeagueOffer:Codable {var club:Int,give:String,take:String,year:Int,expires:Int}
+struct ClubRecord:Codable {var club:Int,key:String,player:String,name:String,year:Int,value:Int}
+struct ClubRivalry:Codable {var club:Int,opponent:Int,wins=0,losses=0,playoffGames=0}
+struct ClubLegend:Codable {var player:String,name:String,club:Int,year:Int,reason:String}
+struct MentorPair:Codable {var veteran:String,prospect:String,until:Int}
+struct FranchiseWorld:Codable {
+    var initializedYear:Int,lastWeek = -1,styles:[Int],autoContracts=false,autoEvents=false
+    var winter:WinterMarket?=nil,moment:ClubMoment?=nil,incoming:LeagueOffer?=nil
+    var news:[String]=[],records:[ClubRecord]=[],rivalries:[ClubRivalry]=[],legends:[ClubLegend]=[],milestones:[String]=[]
+    var archivedYears:[Int]=[],mentors:[MentorPair]=[],lastCPUMove = -1
+}
+let playerRoles=["Reserve","Regular / rotation","Key player","Farm prospect"]
+let playerAmbitions=["Playing time","Win trophies","Club loyalty","Financial security"]
+let clubStyles=["Balanced","Speed & defence","Power & patience","Pitching first"]
+extension FranchisePlayer {var retired:Bool{deal?.retired ?? false}}
+extension Franchise {
+    func identity(_ id:String)->Int{id.utf8.reduce(17){($0*31+Int($1))%100003}}
+    func clubLabel(_ c:Int)->String{c==7 ? customClub?.abbr ?? "NEW":["TWI","NEP","HCAW","KIN","PIO","AMS","UVV"][max(0,min(6,c))]}
+    func annualAsk(_ p:FranchisePlayer)->Int{max(1200,Int(800+pow(max(0,Double(p.rating)-40),2)*2.2)/100*100)}
+    func salaryBudget(_ c:Int)->Int{max(125000,min(240000,110000+clubs[c].fans*15))}
+    func committedSalary(_ c:Int,excluding:String="")->Int{roster(c).filter{$0.profile.id != excluding}.reduce(0){$0+($1.deal?.salary ?? annualAsk($1))}}
+    var worldStamp:Int{(year-2026)*100+day/7}
+    func defaultRole(_ p:FranchisePlayer)->Int{p.inFarm ? 3:(clubs.indices.contains(p.club) && (clubs[p.club].lineup.contains(p.profile.id) || clubs[p.club].rotation.contains(p.profile.id)) ? 1:0)}
+    mutating func prepareWorld(){
+        guard !draft else{return}
+        if world==nil{world=FranchiseWorld(initializedYear:year,styles:clubs.indices.map{($0+year)%4});world!.styles[user]=0}
+        if world!.styles.count != clubCount{world!.styles=Array(repeating:0,count:clubCount)}
+        for i in players.indices where players[i].deal==nil {
+            let p=players[i],salary=annualAsk(p)
+            players[i].deal=PlayerDeal(salary:salary,endYear:year+identity(p.profile.id)%3,role:defaultRole(p),ambition:identity(p.profile.id+"ambition")%4,paid:salary*min(26,day/7)/26)
+        }
+    }
+    mutating func worldNews(_ text:String){guard world != nil else{return};world!.news=Array((["\(year) · "+text]+world!.news).prefix(100));log(text)}
+    func style(_ c:Int)->Int{world?.styles.indices.contains(c)==true ? world!.styles[c]:0}
+    func styleFit(_ p:FranchisePlayer,_ c:Int)->Double{
+        switch style(c){case 1:return p.isPitcher ? p.skill(6):p.skill(3)*0.35+p.skill(4)*0.4+p.skill(8)*0.25
+        case 2:return p.isPitcher ? p.skill(5):p.skill(1)*0.65+p.skill(2)*0.35
+        case 3:return p.isPitcher ? p.skill(5)*0.4+p.skill(6)*0.4+p.skill(7)*0.2:p.skill(4)
+        default:return p.value}
+    }
+    func styleTraining(_ c:Int,_ a:Int)->Double{
+        let targets=[[Int](),[3,4,8],[0,1,2],[5,6,7,10,11]][style(c)]
+        return targets.contains(a) ? 0.06:0
+    }
+    func releaseIssue(_ id:String,owner:Int,negotiating:Bool=false)->String? {
+        guard !draft,let p=player(id),p.club==owner,p.loanOwner==nil else{return "Only permanently owned players can be released."}
+        if !negotiating && world?.winter?.bids.contains(where:{$0.player==id})==true{return "Withdraw the pending contract offer first."}
+        let remaining=roster(owner).filter{$0.profile.id != id && !$0.inFarm && !$0.retired}
+        if remaining.filter({!$0.isPitcher}).count<9 || remaining.filter({$0.canPitch}).count<4{return "Keep at least nine active hitters and four pitchers. Promote a replacement first."}
+        for pos in defensePositions where pos != "DH" {
+            if p.fits(pos) && !p.inFarm && !remaining.contains(where:{$0.fits(pos)}){return "Promote or sign an eligible \(pos) before releasing your last option."}
+        }
+        if !negotiating && clubs[owner].cash<releaseFee(p){return "Insufficient cash for the release settlement."};return nil
+    }
+    func releaseFee(_ p:FranchisePlayer)->Int{guard let d=p.deal else{return 0};return max(0,d.endYear-year+1)*d.salary/5}
+    @inline(never) func incomingOwnershipValid()->Bool{
+        guard let state=world,let offer=state.incoming else{return true}
+        return player(offer.give)?.club==user && player(offer.take)?.club==offer.club
+    }
+    mutating func repairMembership(_ owners:[Int]){
+        for c in Set(owners) where clubs.indices.contains(c){
+            clubs[c].roster=roster(c).map{$0.profile.id}
+            for n in clubs[c].lineup.indices where player(clubs[c].lineup[n])?.club != c{clubs[c].lineup[n]=""}
+            for n in clubs[c].rotation.indices where player(clubs[c].rotation[n])?.club != c{clubs[c].rotation[n]=""}
+            if let id=clubs[c].nextStarter,player(id)?.club != c{clubs[c].nextStarter=nil}
+            repairUnavailable(c)
+        }
+        training=training.filter{player($0.key)?.club==user && player($0.key)?.inFarm != true}
+        if !incomingOwnershipValid(){world?.incoming=nil}
+    }
+    @discardableResult mutating func releasePlayer(_ id:String)->String {
+        prepareWorld();if let reason=releaseIssue(id,owner:user){return reason}
+        guard let i=players.firstIndex(where:{$0.profile.id==id})else{return "Player not found."}
+        let fee=releaseFee(players[i]),name=players[i].profile.name
+        clubs[user].cash-=fee;clubs[user].expenses+=fee;players[i].club = -1;players[i].farm=false;players[i].deal?.endYear=year-1;players[i].deal?.promise=nil
+        training.removeValue(forKey:id);repairMembership([user])
+        ledger.insert("Release \(name): −€\(fee)",at:0);worldNews("RELEASED: \(name) becomes a free agent. Career statistics are retained.")
+        return "RELEASED. Roster and farm space are available immediately."
+    }
+    mutating func promiseRole(_ id:String,_ role:Int)->Bool{
+        guard (0...3).contains(role),let i=players.firstIndex(where:{$0.profile.id==id && $0.club==user}),players[i].deal != nil,players[i].deal?.promise==nil,champion==nil else{return false}
+        players[i].deal!.promise=RolePromise(role:role,year:year,start:day,until:day+28)
+        worldNews("ROLE PROMISE: \(players[i].profile.name) expects \(playerRoles[role].lowercased()) opportunities over the next four weeks.");return true
+    }
+    func roleSatisfied(_ p:FranchisePlayer,_ role:Int,since:Int)->Bool? {
+        if role==3{return p.inFarm};if role==0{return true}
+        if p.inFarm{return false};if (p.injury?.untilDay ?? -1)>day{return nil}
+        let games=schedule.filter{$0.played && $0.day>=since && ($0.home==p.club || $0.away==p.club)}
+        guard games.count>=4 else{return nil}
+        let apps=games.filter{g in guard let s=g.box[p.profile.id] else{return false};return p.isPitcher ? s.outs>0:s.pa>=2}.count
+        return Double(apps)/Double(games.count)>=(p.isPitcher ? (role==2 ? 0.3:0.2):(role==2 ? 0.7:0.5))
+    }
+    mutating func settleWorldWeek(){
+        guard world != nil,world!.lastWeek != worldStamp else{return};prepareWorld();world!.lastWeek=worldStamp
+        for i in players.indices where players[i].club>=0 {
+            guard var d=players[i].deal else{continue};let p=players[i]
+            if let promise=d.promise,promise.year==year,day>=promise.until {
+                if let kept=roleSatisfied(p,promise.role,since:promise.start){d.trust=max(10,min(100,d.trust+(kept ? 8:-12)));if kept{d.role=promise.role};if p.club==user{worldNews("PROMISE \(kept ? "KEPT":"MISSED"): \(p.profile.name). Trust \(d.trust)%.")};d.promise=nil}
+                else{d.promise?.until=day+7}
+            }else if d.promise==nil,let happy=roleSatisfied(p,d.role,since:max(0,day-21)) {
+                d.trust=max(10,min(100,d.trust+(happy ? 1:-2)))
+            }
+            players[i].deal=d;players[i].morale=max(20,min(95,players[i].morale+Double(d.trust-60)*0.015))
+            if p.club==user && d.trust==35{worldNews("ROLE CONCERN: \(p.profile.name) wants a conversation about playing time.")}
+        }
+        let stamp=worldStamp
+        world!.mentors.removeAll{$0.until<stamp}
+        if world!.moment?.resolved != false && day/7>0 && day/7%5==0 {
+            let kind=(year+day/35+user)%4
+            world!.moment=ClubMoment(id:"\(year)-\(day/7)",kind:kind,year:year,week:day/7)
+            worldNews("CLUB DECISION: \(momentTitle(kind)). Review Front Office → Club decision.")
+        }
+        if world!.autoEvents,world!.moment?.resolved==false{_=resolveMoment(1)}
+        if day/7>0 && day/7%4==0 && loanWindowOpen {runLeagueMarket()}
+    }
+    func weeklyPlayerPay(_ c:Int)->Int {
+        roster(c).reduce(0){sum,p in guard let d=p.deal else{return sum};return sum+min(max(0,d.salary-d.paid),max(1,d.salary/26))}
+    }
+    mutating func markWeeklyPay(_ c:Int){for i in players.indices where players[i].club==c && players[i].deal != nil{let d=players[i].deal!;players[i].deal!.paid=min(d.salary,d.paid+max(1,d.salary/26))}}
+    func momentTitle(_ kind:Int)->String{["Community family day","Veteran mentorship","Local broadcasting feature","Training camp invitation"][max(0,min(3,kind))]}
+    func momentOptions(_ kind:Int)->[String]{switch kind{
+        case 0:return ["Fund a family day · €2,000 · supporter growth depends on fan facilities","Small community visit · €400 · +12 fans"]
+        case 1:return ["Pair a veteran and prospect · €1,200 · 4 weeks of faster youth learning; mentor trains less","Keep individual plans · no cost or training change"]
+        case 2:return ["Sell the feature · +€3,000 · featured starters lose 8 readiness","Protect preparation · +10 fans; no fee or fatigue"]
+        default:return ["Attend camp · €3,500 · +0.18 pitching or fielding per player; +8 fatigue","Stay home · +5 readiness for your squad"]}}
+    @discardableResult mutating func resolveMoment(_ choice:Int)->Bool {
+        guard (0...1).contains(choice),let m=world?.moment,!m.resolved,m.year==year else{return false}
+        let cost=choice==0 ? [2000,1200,0,3500][m.kind]:m.kind==0 ? 400:0
+        guard clubs[user].cash>=cost else{return false}
+        if m.kind==1 && choice==0 {
+            guard let old=roster(user).filter{year-($0.profile.birthYear ?? year)>=32}.max(by:{$0.rating<$1.rating}),let young=roster(user).filter{year-($0.profile.birthYear ?? year)<25 && $0.profile.id != old.profile.id}.min(by:{$0.rating<$1.rating})else{return false}
+            world!.mentors.append(MentorPair(veteran:old.profile.id,prospect:young.profile.id,until:worldStamp+4))
+        }
+        clubs[user].cash-=cost;clubs[user].expenses+=cost
+        if m.kind==0{clubs[user].fans+=choice==0 ? 35+clubs[user].level(7)*6:12}
+        if m.kind==2{if choice==0{clubs[user].cash+=3000;clubs[user].income+=3000;for i in players.indices where clubs[user].lineup.contains(players[i].profile.id){players[i].fatigue=min(100,players[i].fatigue+8)}}else{clubs[user].fans+=10}}
+        if m.kind==3{for i in players.indices where players[i].club==user{if choice==0{let a=players[i].isPitcher ? 6:4;players[i].develop(a,min(0.18,max(0,players[i].abilityCeiling(a)-players[i].skill(a))));players[i].fatigue=min(100,players[i].fatigue+8)}else{players[i].fatigue=max(0,players[i].fatigue-5)}}}
+        world!.moment?.resolved=true;world!.moment?.choice=choice;ledger.insert("Club decision: \(momentTitle(m.kind)) −€\(cost)",at:0);worldNews("DECISION: \(momentTitle(m.kind)) — \(momentOptions(m.kind)[choice]).");return true
+    }
+    func mentorFactor(_ p:FranchisePlayer)->Double {
+        guard let w=world else{return 1};if w.mentors.contains(where:{$0.veteran==p.profile.id && $0.until>=worldStamp}){return 0.75}
+        return w.mentors.contains(where:{$0.prospect==p.profile.id && $0.until>=worldStamp && player($0.veteran)?.club==p.club}) ? 1.25:1
+    }
+    func worldValid()->Bool {
+        guard let w=world else{return players.allSatisfy{$0.deal==nil}}
+        guard w.styles.count==clubCount,w.styles.allSatisfy({(0...3).contains($0)}),w.news.count<=100 else{return false}
+        if let winter=w.winter {guard winter.year==year,(0...4).contains(winter.week),champion != nil,winter.bids.count<=players.count*clubCount,winter.bids.allSatisfy({player($0.player) != nil && clubs.indices.contains($0.club) && (1200...100000).contains($0.salary) && (1...3).contains($0.years) && (0...3).contains($0.role)}) else{return false}}
+        if let e=w.moment,!(0...3).contains(e.kind){return false}
+        if let o=w.incoming, !clubs.indices.contains(o.club) || o.club==user || player(o.give)==nil || player(o.take)==nil{return false}
+        guard w.records.allSatisfy({clubs.indices.contains($0.club) && $0.value>=0}),w.rivalries.allSatisfy({clubs.indices.contains($0.club) && clubs.indices.contains($0.opponent) && $0.club != $0.opponent && $0.wins>=0 && $0.losses>=0}),w.legends.allSatisfy({clubs.indices.contains($0.club)}),w.mentors.allSatisfy({player($0.veteran) != nil && player($0.prospect) != nil}) else{return false}
+        for p in players {if let promise=p.deal?.promise, !(0...3).contains(promise.role) || promise.start<0 || promise.until<promise.start{return false}}
+        return players.allSatisfy{p in guard let d=p.deal else{return true};return (0...100000).contains(d.salary) && d.paid>=0 && d.paid<=d.salary && (0...3).contains(d.role) && (0...3).contains(d.ambition) && (0...100).contains(d.trust) && (!d.retired || p.club == -1)}
+    }
+}

@@ -23,3 +23,7 @@ assert.throws(()=>decodeSaveRequest(JSON.stringify({...body,payload:'invalid!',p
 const {gzipSync}=await import('node:zlib');
 assert.throws(()=>decodeSaveRequest(JSON.stringify({...body,payload:gzipSync(Buffer.alloc(16_000_001,32)).toString('base64'),payloadEncoding:'gzip-base64'})));
 console.log('PASS: gzip round-trip, large career, unknown/corrupt encoding, decompression limit');
+const expansionRaw=await fs.readFile('game-runtime/.test-native/world/custom.json','utf8');const expansion={...body,payload:expansionRaw};assert.equal(validateSaveEnvelope(expansion,1),true);
+for(const patch of [{user:0},{draft:true},{customClub:null},{customClub:{name:'bad'}}]){assert.equal(validateSaveEnvelope({...body,payload:JSON.stringify({...JSON.parse(expansionRaw),...patch})},1),false);}
+const originalExpansion=expansion.payload;validateSaveEnvelope(expansion,1);assert.equal(expansion.payload,originalExpansion);
+console.log('PASS: custom eighth club accepted; malformed/custom draft configurations rejected; original save text preserved');

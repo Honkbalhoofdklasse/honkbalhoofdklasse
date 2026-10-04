@@ -1,0 +1,157 @@
+import Foundation
+
+extension Franchise {
+    func retiringThisWinter(_ p:FranchisePlayer)->Bool{let age=year-(p.profile.birthYear ?? year-28);return age>=40 || (age>=36 && identity(p.profile.id+String(year))%5==0)}
+    func contractCandidates()->[FranchisePlayer]{players.filter{!$0.retired && !retiringThisWinter($0) && $0.loanOwner==nil && ($0.club == -1 || (world?.winter != nil && ($0.deal?.endYear ?? year+1)<=year))}.sorted{$0.rating==$1.rating ? $0.profile.id<$1.profile.id:$0.rating>$1.rating}}
+    func bidIssue(_ bid:MarketBid)->String? {
+        guard world?.winter != nil,clubs.indices.contains(bid.club),(1...3).contains(bid.years),(0...3).contains(bid.role),(1200...100000).contains(bid.salary),let p=player(bid.player),contractCandidates().contains(where:{$0.profile.id==p.profile.id})else{return "This player is not available for offseason negotiation."}
+        let otherBids=(world?.winter?.bids ?? []).filter{$0.club==bid.club && $0.player != bid.player}
+        let reserved=otherBids.reduce(0){$0+$1.salary},existing=committedSalary(bid.club,excluding:p.profile.id)-otherBids.reduce(0){$0+(player($1.player)?.club==bid.club ? player($1.player)?.deal?.salary ?? 0:0)}
+        if existing+reserved+bid.salary>salaryBudget(bid.club){return "The offer exceeds your annual salary budget, including pending offers."}
+        if clubs[bid.club].cash<bid.salary/10+otherBids.reduce(0,{$0+$1.salary/10}){return "Keep cash available for all pending signing fees (10% of annual salary)."}
+        if p.club != bid.club && roster(bid.club).count+otherBids.filter({player($0.player)?.club != bid.club}).count>=32{return "Free a roster slot before making this offer."}
+        if bid.role==3 && (!p.inFarm || p.club != bid.club) && roster(bid.club).filter({$0.inFarm}).count+otherBids.filter({$0.role==3}).count>=3+clubs[bid.club].level(8){return "No farm slot is available for the proposed role."}
+        return nil
+    }
+    @discardableResult mutating func submitBid(_ bid:MarketBid)->String{
+        if let reason=bidIssue(bid){return reason};world!.winter!.bids.removeAll{$0.club==bid.club && $0.player==bid.player};world!.winter!.bids.append(bid)
+        return "OFFER FILED. The player compares all offers at the next offseason week. Acceptance is not guaranteed."
+    }
+    func bidScore(_ bid:MarketBid,_ p:FranchisePlayer)->Double{
+        let d=p.deal,amb=d?.ambition ?? 0,role=Double(bid.role==3 ? 0:bid.role)
+        let sporting=table().first{$0.club==bid.club}.map{$0.pct} ?? 0.5
+        let money=Double(bid.salary)/Double(annualAsk(p))*100
+        return money+(amb==0 ? role*13:role*4)+(amb==1 ? sporting*35:0)+(amb==2 && p.club==bid.club ? 22:0)+(amb==3 ? Double(bid.years)*6:0)+Double((p.club==bid.club ? d?.trust ?? 65:65)-65)*0.3
+    }
+    mutating func beginOffseason(){
+        guard champion != nil else{return};prepareWorld();guard world!.winter==nil else{return}
+        recordClubSeason();world!.winter=WinterMarket(year:year);phase="Offseason · week 1 of 4"
+        for c in clubs.indices {
+            let balance=roster(c).reduce(0){$0+max(0,($1.deal?.salary ?? 0)-($1.deal?.paid ?? 0))}
+            clubs[c].cash-=balance;clubs[c].expenses+=balance
+            for i in players.indices where players[i].club==c{let salary=players[i].deal?.salary ?? 0;players[i].deal?.paid=salary}
+            if c==user{ledger.insert("Annual player salary settlement −€\(balance)",at:0)}
+        }
+        for p in roster(user) where retiringThisWinter(p){worldNews("RETIREMENT NOTICE: \(p.profile.name) will retire at the end of this offseason. Plan a replacement.")}
+        for c in clubs.indices{ensurePlayingRoster(c)}
+        for n in 0..<clubCount{let pos=defensePositions[(year+n)%8];let p=makeMarketPlayer(position:n%3==0 ? "P":pos,serial:n);if player(p.profile.id)==nil{players.append(p)}}
+        worldNews("OFFSEASON OPEN: four weekly negotiation rounds. Renew expiring contracts, compete for free agents and review your squad. Player decisions happen when you advance a week.")
+    }
+    func makeMarketPlayer(position:String,serial:Int)->FranchisePlayer {
+        let key="tryout-\(year)-\(serial)",seed=identity(key),first=["Bram","Dion","Lars","Enzo","Niels","Jurgen","Tariq","Floris"],last=["De Graaf","Willems","Martis","Dekker","De Groot","Kok","Pieters","Van Leeuwen"]
+        let profile=Player(id:key,teamID:"free-agent",name:first[seed%8]+" "+last[(seed/8)%8],position:position,number:nil,bats:seed%3==0 ? "L":"R",throws:"R",sourceID:nil,birthYear:year-21-seed%10,ovr:nil,stats:nil,positions:position=="P" ? ["P"]:[position,"DH"],positionCoverage:"Fictional free-agent tryout")
+        var p=FranchisePlayer(profile:profile,club:-1)
+        let skills=(0..<12).map{40+Double(identity(key+String($0))%140)/10}
+        p.youth=YouthOrigin(year:year,skills:skills,ceilings:skills.map{min(85,$0+14)},region:"Regional leagues",kind:"free-agent")
+        p.deal=PlayerDeal(salary:annualAsk(p),endYear:year-1,role:0,ambition:seed%4);return p
+    }
+    mutating func addCPUBids(){
+        guard let winter=world?.winter else{return}
+        for c in clubs.indices where c != user || world!.autoContracts {
+            let own=roster(c).filter{($0.deal?.endYear ?? year+1)<=year && !$0.retired}.sorted{$0.rating>$1.rating}
+            for p in own {
+                let age=year-(p.profile.birthYear ?? year-28)
+                if age>=39 || p.deal!.trust<35{continue}
+                let salary=annualAsk(p)*(p.deal!.ambition==3 ? 115:105)/100
+                let bid=MarketBid(player:p.profile.id,club:c,salary:salary,years:age<30 ? 2:1,role:defaultRole(p))
+                if bidIssue(bid)==nil{_=submitBid(bid)}
+            }
+            let vacancies=max(0,28-roster(c).count),market=contractCandidates().filter{$0.club != c}.sorted{styleFit($0,c)>styleFit($1,c)}
+            for p in market.prefix(vacancies>0 ? min(2,vacancies):1) {
+                if p.club>=0 && identity(p.profile.id+String(c)+String(winter.week))%3 != 0{continue}
+                let salary=annualAsk(p)*(100+(identity(p.profile.id+String(c))%4)*5)/100
+                let bid=MarketBid(player:p.profile.id,club:c,salary:salary,years:1+identity(p.profile.id+String(c))%2,role:p.rating>=75 ? 1:0)
+                if bidIssue(bid)==nil{_=submitBid(bid)}
+            }
+        }
+    }
+    mutating func resolveContractBids(){
+        guard let winter=world?.winter else{return}
+        let ids=Set(winter.bids.map{$0.player}).sorted()
+        for id in ids {
+            guard let i=players.firstIndex(where:{$0.profile.id==id}),!players[i].retired else{continue};let p=players[i]
+            let offers=winter.bids.filter{$0.player==id}.sorted{let a=bidScore($0,p),b=bidScore($1,p);return a==b ? $0.club<$1.club:a>b}
+            var signed=false
+            for bid in offers {
+                let asking=100.0+((p.deal?.trust ?? 65)<40 ? 8:0)
+                guard bidScore(bid,p)>=asking,bidIssue(bid)==nil else{continue}
+                let old=p.club,c=bid.club,fee=bid.salary/10
+                if old != c && old>=0 && releaseIssue(id,owner:old,negotiating:true) != nil{continue}
+                players[i].club=c;players[i].farm=bid.role==3;players[i].deal=PlayerDeal(salary:bid.salary,endYear:year+bid.years,role:bid.role,ambition:p.deal?.ambition ?? 0,trust:old==c ? min(100,(p.deal?.trust ?? 65)+4):65,paid:p.deal?.paid ?? 0)
+                players[i].deal!.paid=min(bid.salary,players[i].deal!.paid)
+                if bid.role==3{players[i].farmProgress=FarmProgress(focus:p.isPitcher ? 5:0)}
+                clubs[c].cash-=fee;clubs[c].expenses+=fee;repairMembership([old,c])
+                worldNews("SIGNED: \(p.profile.name) → \(clubLabel(c)), \(bid.years) year(s), €\(bid.salary)/year. \(playerRoles[bid.role]).")
+                signed=true;break
+            }
+            if !signed && offers.contains(where:{$0.club==user}){worldNews("NO AGREEMENT: \(p.profile.name) declined or the roster/budget conditions changed. Revise your offer.")}
+        }
+        world!.winter!.bids=[]
+    }
+    @discardableResult mutating func advanceOffseason()->Bool {
+        guard let winter=world?.winter,winter.year==year,winter.week<4 else{return false}
+        addCPUBids();resolveContractBids();world!.winter!.week+=1
+        if world!.winter!.week<4{phase="Offseason · week \(world!.winter!.week+1) of 4";return true}
+        // Contracts end and retirement happens only after the final decision round.
+        for i in players.indices where players[i].club>=0 {
+            let p=players[i],age=year-(p.profile.birthYear ?? year-28),retire=retiringThisWinter(p)
+            if retire {
+                honorRetirement(p);players[i].deal?.retired=true;players[i].club = -1;players[i].farm=false
+                worldNews("RETIRED: \(p.profile.name), age \(age). Their career record stays in Club Story.")
+            }else if (p.deal?.endYear ?? year+1)<=year {
+                players[i].club = -1;players[i].farm=false;players[i].deal?.promise=nil;worldNews("FREE AGENT: \(p.profile.name) leaves \(clubLabel(p.club)) after their contract expires.")
+            }
+        }
+        for c in clubs.indices{ensurePlayingRoster(c)}
+        training=training.filter{player($0.key)?.club==user};world!.winter=nil
+        _=nextSeason();prepareWorld();for i in players.indices{players[i].deal?.paid=0;players[i].deal?.promise=nil}
+        return true
+    }
+    mutating func ensurePlayingRoster(_ c:Int){
+        // First use existing farm coverage, then available free agents. Academy walk-ons
+        // are a low-rated fallback so retirement cannot leave a career unplayable.
+        for pos in ["C","1B","2B","3B","SS","LF","CF","RF","DH","P","P","P","P"] {
+            let active=roster(c).filter{!$0.inFarm && !$0.retired}
+            let need=pos=="P" ? active.filter{$0.canPitch}.count<4:pos=="DH" ? active.filter{!$0.isPitcher}.count<9:!active.contains{$0.fits(pos) && !$0.isPitcher}
+            if !need{continue}
+            if let i=players.indices.first(where:{players[$0].club==c && players[$0].inFarm && players[$0].fits(pos)}){players[i].farm=false;continue}
+            var index=players.indices.filter{players[$0].club == -1 && !players[$0].retired && players[$0].rating<=68 && players[$0].fits(pos) && (pos=="P" ? players[$0].canPitch:!players[$0].isPitcher)}.min{players[$0].rating<players[$1].rating}
+            if index==nil {var p=makeMarketPlayer(position:pos=="DH" ? "1B":pos,serial:1000+c*100+players.count);p.youth?.skills=Array(repeating:40,count:12);players.append(p);index=players.count-1}
+            if let i=index {
+                players[i].club=c;players[i].farm=false;players[i].deal=PlayerDeal(salary:1200,endYear:year+1,role:0,ambition:0)
+                worldNews("ROSTER COVER: \(clubLabel(c)) signs \(players[i].profile.name), €1,200, to fill \(pos).")
+            }
+        }
+        clubs[c].roster=roster(c).map{$0.profile.id};autoLineup(c)
+    }
+    mutating func runLeagueMarket(){
+        guard world != nil,world!.lastCPUMove != worldStamp else{return};world!.lastCPUMove=worldStamp
+        // One proactive human offer per month; never silently transfers a user player.
+        if world!.incoming==nil || world!.incoming!.expires<day {
+            for c in clubs.indices where c != user {
+                let us=roster(user).filter{!$0.inFarm && $0.available(day)}.sorted{styleFit($0,c)>styleFit($1,c)}
+                let them=roster(c).filter{!$0.inFarm && $0.available(day)}.sorted{styleFit($0,user)>styleFit($1,user)}
+                var found=false
+                for a in us.prefix(10){for b in them.prefix(12) where abs(a.rating-b.rating)<=8 {
+                    if tradeValidation(club:c,give:[a.profile.id],take:[b.profile.id])==nil && cpuAcceptsTrade(club:c,give:[a.profile.id],take:[b.profile.id]){
+                        world!.incoming=LeagueOffer(club:c,give:a.profile.id,take:b.profile.id,year:year,expires:day+14);worldNews("INCOMING TRADE: \(clubLabel(c)) offers \(b.profile.name) for \(a.profile.name). Review in Front Office.");found=true;break
+                    }
+                };if found{break}};if found{break}
+            }
+        }
+        let cpus=clubs.indices.filter{$0 != user};guard cpus.count>=2 else{return}
+        let a=cpus[(day/28)%cpus.count],b=cpus[(day/28+1)%cpus.count]
+        let left=roster(a).filter{!$0.inFarm && $0.available(day)}.sorted{styleFit($0,b)-styleFit($0,a)>styleFit($1,b)-styleFit($1,a)}
+        let right=roster(b).filter{!$0.inFarm && $0.available(day)}.sorted{styleFit($0,a)-styleFit($0,b)>styleFit($1,a)-styleFit($1,b)}
+        for p in left.prefix(8){for q in right.prefix(8) where p.isPitcher==q.isPitcher && abs(p.rating-q.rating)<=4 {
+            guard styleFit(q,a)+styleFit(p,b)>styleFit(p,a)+styleFit(q,b)+2,releaseIssue(p.profile.id,owner:a)==nil,releaseIssue(q.profile.id,owner:b)==nil else{continue}
+            guard committedSalary(a,excluding:p.profile.id)+(q.deal?.salary ?? annualAsk(q))<=salaryBudget(a),committedSalary(b,excluding:q.profile.id)+(p.deal?.salary ?? annualAsk(p))<=salaryBudget(b) else{continue}
+            let i=players.firstIndex{$0.profile.id==p.profile.id}!,j=players.firstIndex{$0.profile.id==q.profile.id}!
+            players[i].club=b;players[j].club=a;repairMembership([a,b]);worldNews("LEAGUE TRADE: \(clubLabel(a)) sends \(p.profile.name) to \(clubLabel(b)) for \(q.profile.name). Both clubs improve their chosen playing style.");return
+        }}
+    }
+    @discardableResult mutating func acceptLeagueOffer()->String{
+        guard let o=world?.incoming,o.year==year,o.expires>=day else{world?.incoming=nil;return "Offer expired."}
+        let reply=proposeTrade(club:o.club,give:[o.give],take:[o.take]);world?.incoming=nil;return reply
+    }
+}

@@ -127,7 +127,7 @@ if CommandLine.arguments.contains("--self-test-ui") {
     view.act("tab:3");view.act("rotation:2");view.act("startnext")
     let starter=view.career!.clubs[0].rotation[2]
     checkUI(view.career!.clubs[0].nextStarter==starter,"Choose starter")
-    view.act("tab:0");view.act("simweek");checkUI(view.autoSim,"Start simulation")
+    view.act("tab:0");view.act("simweek");checkUI(view.autoSim && view.tab==1 && view.selectedDay==view.career!.day,"Start simulation opens calendar on today")
     view.act("tab:7");checkUI(!view.autoSim,"Standings navigation stops simulation")
     let oldDay=view.career!.day
     for _ in 0..<30{view.tick()};checkUI(view.career!.day==oldDay,"Stopped timer cannot simulate")
@@ -189,7 +189,7 @@ if CommandLine.arguments.contains("--self-test-ui") {
     playoffs.options.injuryFrequency=0
     for _ in 0..<500{if !playoffs.seeds.isEmpty{break};_=playoffs.step()}
     view.career=playoffs;view.page="hub";view.modal="";view.tab=13
-    view.act("simplayoff");let beforeDay=view.career!.day;view.simulateOne(stopAt:view.simStopDay)
+    view.act("simplayoff");checkUI(view.tab==1 && view.autoSim,"Playoff sim also opens calendar");let beforeDay=view.career!.day;view.simulateOne(stopAt:view.simStopDay)
     checkUI(view.career!.day==beforeDay+1,"Calendar visibly advances only one day per simulation update")
     for _ in 0..<1500{view.tick();if !view.autoSim{break}}
     checkUI(view.modal=="playoffnight" && !view.autoSim,"Playoff result gets its own paused presentation")
@@ -204,7 +204,7 @@ if CommandLine.arguments.contains("--self-test-ui") {
     checkUI(!bench.isEmpty && bench.allSatisfy{!view.career!.clubs[0].lineup.contains($0.profile.id)},"Bench list excludes all starters")
     view.lineupSlot=0;view.act("lineup:"+bench[0].profile.id)
     checkUI(!view.benchPlayers().contains{$0.profile.id==bench[0].profile.id} && view.benchPlayers().contains{$0.profile.id==outgoing},"Substitution exchanges incoming and outgoing bench membership")
-    checkUI(Set(view.navigationGroups.flatMap{$0.1})==Set(0..<19),"Every management screen remains reachable")
+    checkUI(Set(view.navigationGroups.flatMap{$0.1})==Set(view.tabs.indices),"Every management screen remains reachable")
     view.act("group:3");view.act("facility:0")
     checkUI(view.modal=="facility:0","Upgrade opens effect comparison before purchase")
     view.act("upgrade:0");checkUI(view.modal.isEmpty && view.career!.clubs[0].stadium==1,"Upgrade purchase activates facility and closes comparison")

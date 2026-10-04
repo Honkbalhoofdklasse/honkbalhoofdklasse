@@ -16,10 +16,12 @@ extension FranchiseView {
         .init(tab:5,title:"INVEST IN YOUR CLUB",body:"The club complex grows with your investments. Select a facility, then preview its current and expanded building with the real effects before buying. Club Projects adds construction time and weekly upkeep. Upgrades can improve training, recovery, capacity or income. Ticket Forecast explains the trade-off between prices, attendance and matchday income. Merchandise lets you stock and price club products. Trades lets you offer one to three players for another club’s players; their GM may decline or send a seven-day counteroffer. GM strictness is in Settings."),
         .init(tab:14,title:"BUILD YOUR COACHING STAFF",body:"Hire hitting, pitching, development and fitness coaches. Better coaches cost more but provide stronger listed bonuses. Signing fees are immediate and salaries settle weekly. Keep a cash reserve for training and club operations."),
         .init(tab:16,title:"EARN BETTER SPONSORS",body:"Fill eight placements, from your cap and jerseys to the team bus. Sponsors approach gradually as your fanbase grows; only received offers appear. Review the annual fee and contract length before signing: slots remain occupied until expiry, and each brand can hold only one placement."),
-        .init(tab:17,title:"EXPLORE EVERY CLUB'S ROSTER",body:"Choose any of the seven clubs to inspect its current career squad. Filter hitters, pitchers or farm players and open a player profile. Trades, injuries and development appear here as they change. Browsing another club does not change your own squad."),
+        .init(tab:17,title:"EXPLORE EVERY CLUB'S ROSTER",body:"Choose any club in your league to inspect its current career squad. Filter hitters, pitchers or farm players and open a player profile. Trades, injuries and development appear here as they change. Browsing another club does not change your own squad."),
         .init(tab:8,title:"FOLLOW THE LEAGUE",body:"League → Standings shows the race for the top four. Stats switches between hitting, pitching and fielding, your club and the full league. Player cards link to annual Career Stats and career totals; completed seasons are archived from this update onward. Sort the columns to find leaders. Awards shows the current top three and keeps completed season awards."),
         .init(tab:13,title:"MAKE THE HOLLAND SERIES",body:"The top four qualify: first plays fourth, second plays third. Semifinals are best of five; the Holland Series is best of seven. Choose one game, a complete series or all remaining playoffs. Days advance visibly and you can always stop to adjust your team."),
-        .init(tab:15,title:"MANAGE AS MUCH AS YOU LIKE",body:"Delegate training plans, staff, lineups, rotation, tickets or facilities independently, or keep manual control. Saved training sessions run automatically by default. You can replay this tour here and change whether it appears for new careers. You're ready to build your club.")
+        .init(tab:19,title:"RUN YOUR FRONT OFFICE",body:"Review player contracts, roles and trust. Open a player to make a playing-time promise or review a permanent release, including its settlement fee. Releasing a farm player frees a development place immediately. Club decisions and incoming CPU trades appear here. After the Holland Series, negotiate in four offseason rounds before starting the next year. Contracts and player ambitions are simulated career rules, not real-world contract data."),
+        .init(tab:20,title:"WRITE YOUR CLUB'S STORY",body:"Your games build rivalry records; completed seasons set club records. Career milestones appear in League News, while retired players retain their statistics. Strong recorded careers earn Hall of Fame recognition. Only seasons played in this career count."),
+        .init(tab:15,title:"MANAGE AS MUCH AS YOU LIKE",body:"Delegate training plans, staff, lineups, rotation, tickets, facilities, offseason contracts or club decisions independently, or keep manual control. Saved training sessions run automatically by default. You can replay this tour here and change whether it appears for new careers. You're ready to build your club.")
     ]}
     func setShowCareerTour(_ enabled:Bool)->Bool {
         var updated=interfacePreferences;updated.showCareerTour=enabled
@@ -64,7 +66,7 @@ extension FranchiseView {
             };return true
         }
         if tourStep != nil{return true}
-        if action.hasPrefix("rosterclub:"),let c=Int(action.dropFirst(11)),db.teams.indices.contains(c){leagueRosterClub=c;leagueRosterPage=0;focus=0;return true}
+        if action.hasPrefix("rosterclub:"),let c=Int(action.dropFirst(11)),leagueTeams.indices.contains(c){leagueRosterClub=c;leagueRosterPage=0;focus=0;return true}
         if action.hasPrefix("rosterfilter:"),let filter=Int(action.dropFirst(13)),(0...3).contains(filter){leagueRosterFilter=filter;leagueRosterPage=0;focus=0;return true}
         if action=="leagueroster:prev"{leagueRosterPage=max(0,leagueRosterPage-1);return true}
         if action=="leagueroster:next"{leagueRosterPage=min(max(0,(leagueRosterPlayers().count-1)/10),leagueRosterPage+1);return true}
@@ -83,11 +85,11 @@ extension FranchiseView {
     }
     func managerLeagueRosters(){
         guard let f=career else{return}
-        let selected=db.teams[leagueRosterClub],players=leagueRosterPlayers(),roster=f.roster(leagueRosterClub)
+        let selected=leagueTeams[leagueRosterClub],players=leagueRosterPlayers(),roster=f.roster(leagueRosterClub)
         image(selected.logo,rect(53,237,67,44));text(selected.name.uppercased(),137,234,36,white,"Impact",1060)
         text("\(roster.count) PLAYERS · CURRENT CAREER ROSTER",1117,248,16,selected.highlight,"AvenirNext-DemiBold",426)
-        for (i,t) in db.teams.enumerated(){let x:CGFloat=51+CGFloat(i)*214,r=rect(x,289,201,54)
-            fill(r,i==leagueRosterClub ? t.highlight.withAlphaComponent(0.22):ink);fill(rect(x,341,201,2),i==leagueRosterClub ? t.highlight:muted.withAlphaComponent(0.2));image(t.logo,rect(x+12,297,48,36));text(t.abbr,x+77,306,21,white,"AvenirNextCondensed-Heavy",110);hit("rosterclub:\(i)",t.name,r)
+        for (i,t) in leagueTeams.enumerated(){let width:CGFloat=1494/CGFloat(leagueTeams.count),x:CGFloat=51+CGFloat(i)*width,r=rect(x,289,width-13,54)
+            fill(r,i==leagueRosterClub ? t.highlight.withAlphaComponent(0.22):ink);fill(rect(x,341,width-13,2),i==leagueRosterClub ? t.highlight:muted.withAlphaComponent(0.2));image(t.logo,rect(x+12,297,48,36));text(t.abbr,x+77,306,21,white,"AvenirNextCondensed-Heavy",110);hit("rosterclub:\(i)",t.name,r)
         }
         for (i,label) in ["ALL PLAYERS","HITTERS","PITCHERS","FARM"].enumerated(){button(label,"rosterfilter:\(i)",rect(51+CGFloat(i)*224,359,211,40),primary:leagueRosterFilter==i)}
         button("SORT: "+["OVR ↓","AGE ↑","NAME A–Z"][leagueRosterSort],"leagueroster:sort",rect(1134,359,410,40))

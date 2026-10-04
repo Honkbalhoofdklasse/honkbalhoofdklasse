@@ -10,7 +10,7 @@ extension Franchise {
         for g in schedule where g.played {
             guard let s=g.box[p.profile.id] else{continue}
             if g.stage=="Regular"{regular.add(s)}else{post.add(s)}
-            if let team=g.playerTeams[p.profile.id],(0..<7).contains(team){teams.insert(team)}
+            if let team=g.playerTeams[p.profile.id],clubs.indices.contains(team){teams.insert(team)}
         }
         var combined=regular;combined.add(post)
         let complete=combined.pa==p.totals.pa && combined.outs==p.totals.outs && combined.games==p.totals.games
@@ -32,7 +32,7 @@ extension Franchise {
         players.allSatisfy { p in
             let rows=p.seasonArchive ?? []
             return Set(rows.map{$0.year}).count==rows.count && rows.allSatisfy { row in
-                row.year>=2026 && row.year<=year && row.clubs.allSatisfy{(0..<7).contains($0)} &&
+                row.year>=2026 && row.year<=year && row.clubs.allSatisfy{clubs.indices.contains($0)} &&
                 [row.all,row.regular,row.postseason].allSatisfy { s in
                     [s.pa,s.ab,s.h,s.hr,s.bb,s.k,s.r,s.rbi,s.sb,s.outs,s.er,s.allowed,s.pbb,s.pk,s.games].allSatisfy{$0>=0}
                 }

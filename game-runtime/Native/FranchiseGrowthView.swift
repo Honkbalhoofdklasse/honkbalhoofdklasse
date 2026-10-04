@@ -4,7 +4,7 @@ extension FranchiseView {
         if modal=="tradecounter",let offer=f.counterOffer {
             let names:( [String] )->String={ids in ids.compactMap{f.player($0)?.profile.name}.joined(separator:", ")}
             let expired=offer.year != f.year || offer.expires<f.day
-            contractDocument(title:"TRANSFER COUNTEROFFER",reference:"TRADE / \(offer.year) / \(offer.issued)",counterparty:db.teams[offer.club].name,
+            contractDocument(title:"TRANSFER COUNTEROFFER",reference:"TRADE / \(offer.year) / \(offer.issued)",counterparty:leagueTeams[offer.club].name,
                 rows:[("YOUR CLUB SENDS",names(offer.give)),("YOUR CLUB RECEIVES",names(offer.take)),("VALID THROUGH",f.dateLabel(offer.expires)),("TRANSFER TYPE","Permanent exchange · no cash fee")],
                 terms:"Their GM proposes this revised package. Review every name before signing. Healthy roster depth, the 1 July deadline and current GM settings are checked again on acceptance. Players move immediately; unaffected lineup positions stay in place.",signed:false)
             button("DECLINE","counterdecline",rect(305,752,250,49));button(expired ? "OFFER EXPIRED":"SIGN & ACCEPT TRADE","counteraccept",rect(972,752,511,49),primary:true,enabled:!expired)

@@ -1,0 +1,41 @@
+import Foundation
+extension Franchise {
+    mutating func rememberWorldGame(_ g:FranchiseGame){
+        guard world != nil,let winner=g.winner else{return}
+        for c in [g.away,g.home]{let other=c==g.away ? g.home:g.away
+            if let i=world!.rivalries.firstIndex(where:{$0.club==c && $0.opponent==other}){if winner==c{world!.rivalries[i].wins+=1}else{world!.rivalries[i].losses+=1};if g.stage != "Regular"{world!.rivalries[i].playoffGames+=1}}
+            else{world!.rivalries.append(ClubRivalry(club:c,opponent:other,wins:winner==c ? 1:0,losses:winner==c ? 0:1,playoffGames:g.stage=="Regular" ? 0:1))}
+        }
+        for id in g.box.keys.sorted(){guard let p=player(id),p.club==user else{continue};var totals=p.totals
+            for row in (p.seasonArchive ?? []).filter({$0.year<year}){totals.add(row.all)}
+            for (label,value,step) in [("hits",totals.h,100),("home runs",totals.hr,25),("stolen bases",totals.sb,25),("strikeouts",totals.pk,100)] where value>=step {
+                let mark=value/step*step,key="\(id)-\(label)-\(mark)"
+                if !world!.milestones.contains(key){world!.milestones.append(key);worldNews("CAREER MILESTONE: \(p.profile.name) reaches \(mark) simulated \(label).")}
+            }
+        }
+    }
+    mutating func recordClubSeason(){
+        guard world != nil,!world!.archivedYears.contains(year),champion != nil else{return};world!.archivedYears.append(year)
+        for c in clubs.indices {
+            var boxes=[String:SeasonStat]()
+            for g in schedule where g.played && g.stage=="Regular"{for (id,s) in g.box where g.playerTeams[id]==c{var sum=boxes[id] ?? SeasonStat();sum.add(s);boxes[id]=sum}}
+            for (key,stat) in [("HITS",0),("HOME RUNS",1),("STEALS",2),("STRIKEOUTS",3)] {
+                var candidates:[(id:String,value:Int)]=[]
+                for (id,box) in boxes{let value=[box.h,box.hr,box.sb,box.pk][stat];candidates.append((id:id,value:value))}
+                candidates.sort{$0.value==$1.value ? $0.id<$1.id:$0.value>$1.value}
+                guard let best=candidates.first,best.value>0,let p=player(best.id) else{continue}
+                let old=world!.records.firstIndex{$0.club==c && $0.key==key}
+                if let old,world!.records[old].value>=best.value{continue}
+                let record=ClubRecord(club:c,key:key,player:best.id,name:p.profile.name,year:year,value:best.value)
+                if let old{world!.records[old]=record}else{world!.records.append(record)}
+                if c==user{worldNews("CLUB RECORD: \(p.profile.name), \(best.value) \(key.lowercased()) in \(year).")}
+            }
+        }
+    }
+    mutating func honorRetirement(_ p:FranchisePlayer){
+        guard world != nil,!world!.legends.contains(where:{$0.player==p.profile.id}) else{return}
+        var total=p.totals;for row in (p.seasonArchive ?? []).filter({$0.year<year}){total.add(row.all)}
+        guard total.h>=200 || total.hr>=25 || total.pk>=200 else{return}
+        world!.legends.append(ClubLegend(player:p.profile.id,name:p.profile.name,club:p.club,year:year,reason:"\(total.h) H · \(total.hr) HR · \(total.pk) K in the recorded simulated career"))
+    }
+}

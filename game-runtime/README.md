@@ -1,4 +1,4 @@
-# Hoofdklasse Franchise — 0.6.3
+# Hoofdklasse Franchise — 0.7.0
 
 The original Swift simulation and management screen bodies run in WebAssembly.
 `Native/` holds the maintained Swift source (the original 0.6.1 reference is archived). `scripts/generate-franchise.py` replaces only
@@ -143,3 +143,52 @@ Release validation: 5,476 simulation assertions, 168 UI assertions, 53 focused
 growth/archive/upgrade checks, isolated Chrome/Firefox/WebKit workflows, and a
 successful Next.js production build. Browser flows cover purchase and save/reload,
 career-stat filters, scouting/signing, counteroffers and Settings-only GM control.
+
+
+## 0.7.0 — expansion and a living franchise
+
+- Create an eighth club with a name, city, 2–4 letter abbreviation, 12 colours,
+  three generated emblem shapes and two trim colours. Starts with 25 active
+  fictional players, three farm prospects, €180,000 and 700 supporters.
+  Names and skills are seeded; the starting squad is deliberately weak.
+  Expansion has 42 regular games per club; the original seven-club schedule
+  remains unchanged. The top four still use best-of-five semifinals and a
+  best-of-seven Holland Series. The bottom four play placement series.
+- Simulation opens the calendar, advances day by day and shows a progress strip,
+  processed games, today's fixtures and a fixed Stop button. Management
+  navigation pauses simulation. Single playoff games retain the result screen.
+- Team → Front Office: contracts, roles, trust, free agents, incoming CPU trades,
+  club decisions and playing identity. Release agreements display settlement
+  (20% of remaining annual salaries), vacancies and consequences. Release
+  retains player history and guards minimum position/pitching coverage.
+- Offseason has four negotiation rounds. Clubs reserve salary budget and signing
+  fees for offers; player preferences determine acceptance, including competition
+  from CPU clubs. Retirement, expiring contracts and roster repair settle at the
+  end. Minimum low-rated coverage prevents an unplayable career.
+- Role promises evaluate actual appearances, protect injured players and affect
+  trust/morale. Styles modestly affect selected training, CPU recruitment/lineups
+  and speed-oriented steal attempts. CPU clubs can propose and execute trades.
+- Four recurring event types affect money, fans, fatigue or development. Events
+  arrive about every five weeks and wait for a decision. Mentor development
+  lasts four weeks. Contract/event automation is opt-in in Settings.
+- League → Club Story: simulated club records, rivalry results, milestone news,
+  retired player records and Hall of Fame thresholds. No historical statistics
+  are invented; records accumulate from the loaded career's available data.
+
+Player contracts, ambitions, synthetic prospects and custom-club squads are
+fictional game systems, not claims about real employment terms. Existing saves
+receive optional world state on load without resetting the career or deducting
+retroactive weekly wages. Annual salary balances settle once at offseason opening.
+Custom clubs require a new career; existing careers keep their original league.
+
+Apply `202610020001_franchise_expansion.sql` before deploying this release.
+It extends the existing save function to accept the explicit eight-club format;
+authentication, RLS, raw-text storage and revision checks remain in place.
+`test-franchise-expansion.sql` verifies these using rolled-back test accounts.
+
+Additional checks:
+`python3 scripts/test-franchise-world.py`,
+`node scripts/test-franchise-world-wasm.mjs`,
+`node scripts/test-franchise-world-browser.mjs`, and
+`node scripts/test-franchise-api.mjs`.
+Browser test profiles are new and isolated; account endpoints are mocked.

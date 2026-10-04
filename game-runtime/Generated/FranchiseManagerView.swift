@@ -4,18 +4,18 @@ import Foundation
 extension FranchiseView {
     func managerOverview(){guard let f=career else{return}
         let r=f.table().first{$0.club==f.user}!,c=f.clubs[f.user]
-        if let g=f.nextUserGame {
+        if let g=f.nextUserGame,f.champion==nil {
             panel(rect(50,233,975,341));text("NEXT MATCHUP  /  "+g.stage.uppercased(),74,250,23,accent,"AvenirNextCondensed-Heavy",645);fill(rect(749,246,252,34),accent.withAlphaComponent(0.16));text(g.day<=f.day ? "TODAY · GAME DAY":"GAME DAY IN \(g.day-f.day) DAYS",762,253,18,accent,"AvenirNextCondensed-Heavy",233)
-            text(f.dateLabel(g.day,format:"EEEE d MMMM").uppercased()+"  ·  "+db.teams[g.home].city.uppercased(),75,291,19,muted,"AvenirNext-DemiBold",910)
-            for (i,id) in [g.away,g.home].enumerated(){let x:CGFloat=76+CGFloat(i)*487;let t=db.teams[id],row=f.table().first{$0.club==id}!,p=f.player(f.starter(id))
+            text(f.dateLabel(g.day,format:"EEEE d MMMM").uppercased()+"  ·  "+leagueTeams[g.home].city.uppercased(),75,291,19,muted,"AvenirNext-DemiBold",910)
+            for (i,id) in [g.away,g.home].enumerated(){let x:CGFloat=76+CGFloat(i)*487;let t=leagueTeams[id],row=f.table().first{$0.club==id}!,p=f.player(f.starter(id))
                 image(t.logo,rect(x,341,110,80));text(t.abbr,x+129,338,45,white,"Impact",244);text("\(row.w)–\(row.l)  ·  \(i==0 ? "AWAY":"HOME")",x+132,394,18,accent,"AvenirNext-DemiBold",285)
                 text("PROJECTED STARTER",x,449,15,muted,"AvenirNext-DemiBold",433);text(p?.profile.name ?? "Unavailable",x,476,27,white,"AvenirNextCondensed-Heavy",431)
                 text("\(p?.rating ?? 0) OVR*  ·  \(Int(p?.readiness ?? 0))% READY  ·  ERA \(p?.totals.era ?? "—")",x,521,16,muted,"AvenirNext-DemiBold",432)
             }
             text("VS",491,365,30,muted,"Impact",66)
         }else{panel(rect(50,233,975,341));text(f.champion==nil ? "YOUR FIXTURES ARE COMPLETE":"THE SEASON IS IN THE BOOKS",76,268,44,white,"Impact",922)
-            if let winner=f.champion{image(db.teams[winner].logo,rect(78,349,142,111));text(db.teams[winner].name.uppercased(),250,364,40,accent,"Impact",730);text("HOLLAND SERIES CHAMPION",252,425,20,muted,"AvenirNext-DemiBold",709)}
-            button(f.champion==nil ? "CONTINUE SEASON →":"BEGIN NEXT SEASON →",f.champion==nil ? "simclub":"nextseason",rect(77,491,908,54),primary:true)
+            if let winner=f.champion{image(leagueTeams[winner].logo,rect(78,349,142,111));text(leagueTeams[winner].name.uppercased(),250,364,40,accent,"Impact",730);text("HOLLAND SERIES CHAMPION",252,425,20,muted,"AvenirNext-DemiBold",709)}
+            button(f.champion==nil ? "CONTINUE SEASON →":"OPEN OFFSEASON →",f.champion==nil ? "simclub":"nextseason",rect(77,491,908,54),primary:true)
         }
         panel(rect(1050,233,495,341));text("YOUR CLUB AT A GLANCE",1073,254,27,white,"Impact",445)
         text("\(r.w)–\(r.l)",1075,300,60,accent,"Impact",207);text("#\((f.table().firstIndex{$0.club==f.user} ?? 0)+1)",1373,300,59,white,"Impact",128)
@@ -98,7 +98,7 @@ extension FranchiseView {
         rosterPage=min(rosterPage,max(0,(ps.count-1)/10))
         text("PLAYER / CLUB",67,399,16,muted,"AvenirNext-DemiBold",415)
         for (n,col) in cols.enumerated(){let x:CGFloat=488+CGFloat(n)*cw;text(col+(statsSort==col ? (statsAscending ? " ↑":" ↓"):""),x,399,17,statsSort==col ? accent:muted,"AvenirNextCondensed-Heavy",cw);hit("sortstat:\(col)","Sort by "+col,rect(x,391,cw,35))}
-        for (i,p) in ps.dropFirst(rosterPage*10).prefix(10).enumerated(){let y:CGFloat=438+CGFloat(i)*32,r=rect(51,y,1494,30);fill(r,ink.withAlphaComponent(i%2==0 ? 0.85:0.55));text(p.profile.name,67,y+2,21,white,"AvenirNextCondensed-DemiBold",330);text(p.club>=0 ? db.teams[p.club].abbr:"FA",401,y+5,15,accent,"Menlo",80);for (n,col) in cols.enumerated(){text(statValue(p.totals,col),488+CGFloat(n)*cw,y+4,18,white,"Menlo",cw-4)};hit("profile:\(p.profile.id)",p.profile.name,r)}
+        for (i,p) in ps.dropFirst(rosterPage*10).prefix(10).enumerated(){let y:CGFloat=438+CGFloat(i)*32,r=rect(51,y,1494,30);fill(r,ink.withAlphaComponent(i%2==0 ? 0.85:0.55));text(p.profile.name,67,y+2,21,white,"AvenirNextCondensed-DemiBold",330);text(p.club>=0 ? leagueTeams[p.club].abbr:"FA",401,y+5,15,accent,"Menlo",80);for (n,col) in cols.enumerated(){text(statValue(p.totals,col),488+CGFloat(n)*cw,y+4,18,white,"Menlo",cw-4)};hit("profile:\(p.profile.id)",p.profile.name,r)}
         if ps.isEmpty{paragraph("No qualifying results yet. Simulate games or choose All Samples. Player profiles are also available from Training and Farm.",69,463,1330,130,27,white)}
         pages(y:790,x:51,width:1494)
     }
@@ -108,7 +108,7 @@ extension FranchiseView {
         text("PLAYER PHOTO",128,218,16,muted,"AvenirNext-DemiBold",128)
         text("—",168,135,46,muted,"AvenirNext-Light",90)
         text(p.profile.name.uppercased(),293,108,43,white,"Impact",933)
-        let clubName=p.club>=0 && db.teams.indices.contains(p.club) ? db.teams[p.club].name:"UNDRAFTED"
+        let clubName=p.club>=0 && leagueTeams.indices.contains(p.club) ? leagueTeams[p.club].name:"UNDRAFTED"
         text(clubName.uppercased(),298,163,20,accent,"AvenirNext-DemiBold",883)
         let birth=p.profile.birthYear.map(String.init) ?? "—",age=p.profile.birthYear.map{String(f.year-$0)} ?? "—"
         text("#\(p.profile.number ?? "—")   POS \(p.positionLabel)   YOB \(birth)   AGE \(age)",297,204,20,white,"AvenirNext-DemiBold",940)
@@ -141,8 +141,8 @@ extension FranchiseView {
             let summary=appearances.isEmpty ? "No appearances yet in this simulated season.":pitching ? "\(appearances.count) APP · \(recent.ip) IP · \(recent.era) ERA · \(recent.whip) WHIP · \(recent.pk) K / \(recent.pbb) BB":"\(appearances.count) APP · \(recent.pa) PA · \(recent.avg) AVG · \(recent.ops) OPS · \(recent.hr) HR"
             text(summary,320,663,22,white,"AvenirNextCondensed-Heavy",1120)
         }else{text("\(p.totals.h) H     \(p.totals.hr) HR     \(p.totals.sb) SB     \(p.totals.ip) IP     \(p.totals.pk) K",320,663,23,white,"AvenirNextCondensed-Heavy",1120)}
-        text(profilePerformance ? "CURRENT SIMULATED SEASON · RECENT FORM USES ACTUAL GAME BOXES · SMALL SAMPLES CAN MISLEAD":(p.youth != nil ? "FICTIONAL ACADEMY PLAYER · ATTRIBUTES COME FROM YOUR CAREER, NOT REAL 2026 STATISTICS":"* OVR: 2026 EVIDENCE + CAREER DEVELOPMENT · EST: MISSING EVIDENCE · AGE: SEASON YEAR MINUS YOB"),118,718,15,muted,"AvenirNext-DemiBold",1336)
-        if modal.hasPrefix("profile:"){button("CAREER STATS","careerstats:\(p.profile.id)",rect(610,752,423,49));button("DEVELOPMENT HISTORY","progress:\(p.profile.id)",rect(1060,752,423,49))}
+        text(profilePerformance ? "CURRENT SIMULATED SEASON · RECENT FORM USES ACTUAL GAME BOXES · SMALL SAMPLES CAN MISLEAD":(p.youth != nil ? "FICTIONAL CAREER PLAYER · ATTRIBUTES COME FROM YOUR CAREER, NOT REAL 2026 STATISTICS":"* OVR: 2026 EVIDENCE + CAREER DEVELOPMENT · EST: MISSING EVIDENCE · AGE: SEASON YEAR MINUS YOB"),118,718,15,muted,"AvenirNext-DemiBold",1336)
+        if modal.hasPrefix("profile:"){if p.club==f.user{button("CONTRACT / ROLE","worldplayer:\(p.profile.id)",rect(305,752,284,49))};button("CAREER STATS","careerstats:\(p.profile.id)",rect(610,752,423,49));button("DEVELOPMENT HISTORY","progress:\(p.profile.id)",rect(1060,752,423,49))}
     }
     func managerAwards(){guard let f=career else{return};text(f.champion==nil ? "THE AWARD RACE.":"THE SEASON’S BEST.",51,233,42,white,"Impact",1450)
         text("TOP THREE · YOUR SIMULATED SEASON · UPDATED AFTER EVERY GAME",54,289,18,accent,"AvenirNext-DemiBold",1420)
@@ -250,7 +250,21 @@ extension FranchiseView {
             else{notify("No remaining games.");return}
         }
         else{simStopDay=kind=="week" ? (f.day/7+1)*7:(kind=="month" ? f.monthTarget:selectedDay)}
-        autoSim=true;simAccumulator=0
+        simStartDay=f.day;simStartGames=f.schedule.filter{$0.played}.count
+        simLabel=["week":"ONE WEEK","month":"ONE MONTH","club":"NEXT MATCH","series":"THIS SERIES","playoff":"PLAYOFF GAME","playoffseries":"PLAYOFF SERIES","postseason":"ALL PLAYOFFS","date":"SELECTED DATE"][kind] ?? "SIMULATION"
+        selectedDay=f.day;syncMonth();tab=1;focus=0;autoSim=true;simAccumulator=0
+    }
+    func drawSimulationStatus(){guard let f=career else{return}
+        let games=max(0,f.schedule.filter{$0.played}.count-simStartGames),elapsed=max(0,f.day-simStartDay)
+        let lastDay=simStopDay>=500 ? max(f.day+1,f.schedule.filter{!$0.cancelled}.map{$0.day}.max() ?? f.day+1):simStopDay
+        let progress=max(0,min(1,Double(f.day-simStartDay)/Double(max(1,lastDay-simStartDay))))
+        fill(rect(51,735,1494,46),ink);fill(rect(51,735,5,46),accent)
+        text("SIMULATING · "+simLabel,70,744,23,accent,"AvenirNextCondensed-Heavy",546)
+        text("\(elapsed) DAYS · \(games) GAMES",634,747,19,white,"AvenirNext-DemiBold",365)
+        let today=f.schedule.filter{$0.day==f.day && !$0.cancelled},done=today.filter{$0.played}.count
+        let detail=today.isEmpty ? "RECOVERY / DEVELOPMENT DAY":"TODAY · \(done) / \(today.count) GAMES COMPLETE"
+        text(detail,1053,747,18,muted,"AvenirNext-DemiBold",470)
+        fill(rect(51,779,1494,3),white.withAlphaComponent(0.15));fill(rect(51,779,1494*CGFloat(progress),3),accent)
     }
 }
 
@@ -269,20 +283,20 @@ extension FranchiseView {
         for (i,s) in [1000,1001,3000].enumerated(){let x:CGFloat=51+CGFloat(i)*507,games=f.schedule.filter{$0.series==s},teams=games.first.map{[$0.home,$0.away]} ?? [],need=i==2 ? 4:3
             panel(rect(x,335,485,267));fill(rect(x,335,485,4),i==2 ? accent:muted);text(i==2 ? "HOLLAND SERIES":"SEMIFINAL \(i+1) · \(i==0 ? "1 v 4":"2 v 3")",x+20,354,29,white,"Impact",445)
             for side in 0..<2{let y:CGFloat=413+CGFloat(side)*76
-                if side<teams.count{let club=teams[side],wins=games.filter{$0.winner==club}.count;image(db.teams[club].logo,rect(x+18,y,72,46));text(db.teams[club].name,x+106,y+3,24,white,"AvenirNextCondensed-Heavy",301);text("\(wins)",x+421,y,34,accent,"Impact",55)
+                if side<teams.count{let club=teams[side],wins=games.filter{$0.winner==club}.count;image(leagueTeams[club].logo,rect(x+18,y,72,46));text(leagueTeams[club].name,x+106,y+3,24,white,"AvenirNextCondensed-Heavy",301);text("\(wins)",x+421,y,34,accent,"Impact",55)
                     for n in 0..<need{fill(rect(x+109+CGFloat(n)*32,y+39,23,6),n<wins ? accent:muted.withAlphaComponent(0.2))}
                 }else{text(i==2 ? "SEMIFINAL WINNER \(side+1)":"SEED \(i==0 ? (side==0 ? 1:4):(side==0 ? 2:3))",x+23,y+9,24,muted,"AvenirNextCondensed-Heavy",433)}
             }
-            text(f.seriesWinner(s,need).map{"ADVANCES: "+db.teams[$0].abbr} ?? "FIRST TO \(need) WINS",x+23,565,18,accent,"AvenirNext-DemiBold",435)
+            text(f.seriesWinner(s,need).map{"ADVANCES: "+leagueTeams[$0].abbr} ?? "FIRST TO \(need) WINS",x+23,565,18,accent,"AvenirNext-DemiBold",435)
         }
         let last=f.schedule.last{$0.played && ["Semifinal","Holland Series"].contains($0.stage)}
-        if let g=last{panel(rect(51,622,975,128));text("LAST PLAYOFF RESULT",73,636,21,muted,"AvenirNext-DemiBold",697);text("\(db.teams[g.away].abbr) \(g.awayRuns!) – \(g.homeRuns!) \(db.teams[g.home].abbr)",75,674,36,white,"Impact",731);button("GAME REPORT","box:\(g.id)",rect(797,671,205,48))}
+        if let g=last{panel(rect(51,622,975,128));text("LAST PLAYOFF RESULT",73,636,21,muted,"AvenirNext-DemiBold",697);text("\(leagueTeams[g.away].abbr) \(g.awayRuns!) – \(g.homeRuns!) \(leagueTeams[g.home].abbr)",75,674,36,white,"Impact",731);button("GAME REPORT","box:\(g.id)",rect(797,671,205,48))}
         else{paragraph("The bracket locks after the regular season. Follow both semifinals, adjust between games, and build toward four wins in the final.",75,646,920,97,24,white)}
         panel(rect(1051,622,494,128))
         if let g=f.schedule.first(where:{!$0.played && !$0.cancelled && ["Semifinal","Holland Series"].contains($0.stage)}){
             let gameNumber=f.schedule.filter{$0.series==g.series && $0.played}.count+1
-            text("NEXT: GAME \(gameNumber) · \(f.dateLabel(g.day))",1074,638,21,accent,"AvenirNextCondensed-Heavy",449);text("\(db.teams[g.away].abbr) AT \(db.teams[g.home].abbr)",1075,684,30,white,"Impact",448)
-        }else{text(f.champion==nil ? "THE CHASE IS ON":"CHAMPIONS CROWNED",1075,645,31,accent,"Impact",444);if let c=f.champion{text(db.teams[c].name,1077,697,24,white,"AvenirNextCondensed-Heavy",442)}}
+            text("NEXT: GAME \(gameNumber) · \(f.dateLabel(g.day))",1074,638,21,accent,"AvenirNextCondensed-Heavy",449);text("\(leagueTeams[g.away].abbr) AT \(leagueTeams[g.home].abbr)",1075,684,30,white,"Impact",448)
+        }else{text(f.champion==nil ? "THE CHASE IS ON":"CHAMPIONS CROWNED",1075,645,31,accent,"Impact",444);if let c=f.champion{text(leagueTeams[c].name,1077,697,24,white,"AvenirNextCondensed-Heavy",442)}}
         dayTimeline(f,51,754,1494)
         button(autoSim ? "■ STOP SIMULATION":f.seeds.isEmpty ? "SIM TO PLAYOFFS →":"SIM NEXT PLAYOFF GAME →",autoSim ? "stop":"simplayoff",rect(51,783,485,48),primary:true,enabled:f.champion==nil)
         button("SIM SERIES","simplayoffseries",rect(561,783,285,48),enabled:!autoSim && !f.seeds.isEmpty && f.champion==nil);button("SIM ALL PLAYOFFS","simpostseason",rect(871,783,336,48),enabled:!autoSim && !f.seeds.isEmpty && f.champion==nil);button("SEASON HONOURS","tab:10",rect(1232,783,313,48))
@@ -292,8 +306,8 @@ extension FranchiseView {
         let gameNumber=games.filter{$0.played && ($0.day<g.day || ($0.day==g.day && $0.id<=g.id))}.count
         text("\(g.stage.uppercased()) · GAME \(gameNumber)",113,105,44,accent,"Impact",1310)
         text("FINAL · \(f.dateLabel(g.day).uppercased())",116,171,21,muted,"AvenirNext-DemiBold",1334)
-        for (n,id) in [g.away,g.home].enumerated(){let x:CGFloat=118+CGFloat(n)*704;image(db.teams[id].logo,rect(x,240,136,97));text(db.teams[id].name.uppercased(),x,361,31,white,"Impact",641);text(String(n==0 ? g.awayRuns!:g.homeRuns!),x+194,227,101,white,"Impact",284);let wins=games.filter{$0.winner==id}.count;text("\(wins) SERIES WIN\(wins==1 ? "":"S") / \(need) NEEDED",x,416,22,accent,"AvenirNext-DemiBold",640)}
-        if let winner=f.seriesWinner(g.series,need){text(f.champion==winner ? "\(db.teams[winner].name.uppercased()) ARE CHAMPIONS":"\(db.teams[winner].name.uppercased()) ADVANCE",117,479,38,accent,"Impact",1320)}
+        for (n,id) in [g.away,g.home].enumerated(){let x:CGFloat=118+CGFloat(n)*704;image(leagueTeams[id].logo,rect(x,240,136,97));text(leagueTeams[id].name.uppercased(),x,361,31,white,"Impact",641);text(String(n==0 ? g.awayRuns!:g.homeRuns!),x+194,227,101,white,"Impact",284);let wins=games.filter{$0.winner==id}.count;text("\(wins) SERIES WIN\(wins==1 ? "":"S") / \(need) NEEDED",x,416,22,accent,"AvenirNext-DemiBold",640)}
+        if let winner=f.seriesWinner(g.series,need){text(f.champion==winner ? "\(leagueTeams[winner].name.uppercased()) ARE CHAMPIONS":"\(leagueTeams[winner].name.uppercased()) ADVANCE",117,479,38,accent,"Impact",1320)}
         else{text("THE SERIES CONTINUES. YOUR NEXT DECISION MATTERS.",117,479,32,white,"Impact",1320)}
         let performers=g.box.keys.compactMap{f.player($0)}.sorted{a,b in let x=g.box[a.profile.id]!,y=g.box[b.profile.id]!;return x.h+2*x.hr+x.rbi+x.pk > y.h+2*y.hr+y.rbi+y.pk}.prefix(3)
         for (i,p) in performers.enumerated(){let st=g.box[p.profile.id]!,y:CGFloat=549+CGFloat(i)*43;text(p.profile.name,120,y,25,white,"AvenirNextCondensed-Heavy",612);text(st.outs>0 ? "\(st.ip) IP · \(st.er) ER · \(st.pk) K":"\(st.h)-FOR-\(st.ab) · \(st.hr) HR · \(st.rbi) RBI",765,y+3,21,muted,"AvenirNext-DemiBold",665)}

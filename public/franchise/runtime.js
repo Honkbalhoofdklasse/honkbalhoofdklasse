@@ -19,7 +19,7 @@ async function persist(files){
   }
 }
 async function send(req){if(!ready||disposed||blocked&&!['pause','draw','export','validate'].includes(req.op))return;if(busy){if(req.op!=='tick'&&!(req.op==='pointer'&&!req.click))inputQueue.push(req);return;}
-  busy=true;try{const result=await call(req);await persist(result.files);if(result.commands){frame=result;renderer.paint(result);}if(Object.keys(result.files||{}).length)status(user?'Lokaal opgeslagen · cloud wordt bijgewerkt':'Lokaal opgeslagen · log in voor cloudopslag');}
+  busy=true;try{const result=await call(req);await persist(result.files);if(result.commands){frame=result;renderer.paint(result);showClubText(result);}if(Object.keys(result.files||{}).length)status(user?'Lokaal opgeslagen · cloud wordt bijgewerkt':'Lokaal opgeslagen · log in voor cloudopslag');}
   catch(e){fail('Opslaan of laden mislukt: '+e.message);}finally{busy=false;const next=inputQueue.shift();if(next)queueMicrotask(()=>send(next));}
 }
 async function session(){const r=await fetch('/api/franchise/session',{cache:'no-store'});if(!r.ok)throw Error('Accountstatus niet beschikbaar');return r.json();}
@@ -56,13 +56,13 @@ async function boot(){
   await renderer.fonts();frame=await call({op:'init',data,files:await storage.files()});renderer.resize();renderer.paint(frame);ready=true;
   $('identity').textContent=user?'Ingelogd als '+user.email:'Gast · saves staan alleen in deze browser. Exporteer ze voordat je browsergegevens wist.';
   if(!blocked)status(user?(cloudAvailable?'Account gekoppeld · cloudopslag actief':'Cloud niet beschikbaar · lokaal spelen mogelijk'):'Gast · lokale opslag');
-  setInterval(()=>{if(!document.hidden&&!$('account-dialog').open&&!blocked)send({op:'tick'});},100);
+  setInterval(()=>{if(!document.hidden&&!$('account-dialog').open&&!$('club-text-dialog').open&&!blocked)send({op:'tick'});},100);
   setInterval(sync,1500);
 }
 $('controls').addEventListener('pointermove',e=>{if(busy)return;const r=$('stage').getBoundingClientRect();send({op:'pointer',x:(e.clientX-r.left)*1600/r.width,y:(e.clientY-r.top)*900/r.height});});
 $('controls').addEventListener('pointerdown',e=>{if(e.target===$('controls')){const r=$('stage').getBoundingClientRect();send({op:'pointer',x:(e.clientX-r.left)*1600/r.width,y:(e.clientY-r.top)*900/r.height,click:true});}});
 $('controls').addEventListener('pointerleave',()=>send({op:'pointer',x:-1,y:-1}));
-document.addEventListener('keydown',e=>{if($('account-dialog').open)return;const codes={Escape:53,Enter:36,' ':49,ArrowLeft:123,ArrowRight:124,ArrowDown:125,ArrowUp:126};if(e.key==='Tab')return;if(e.key==='F11'){e.preventDefault();$('fullscreen').click();return;}if(codes[e.key]){e.preventDefault();send({op:'key',code:codes[e.key],characters:e.key,shift:e.shiftKey});}});
+document.addEventListener('keydown',e=>{if($('account-dialog').open||$('club-text-dialog').open)return;const codes={Escape:53,Enter:36,' ':49,ArrowLeft:123,ArrowRight:124,ArrowDown:125,ArrowUp:126};if(e.key==='Tab')return;if(e.key==='F11'){e.preventDefault();$('fullscreen').click();return;}if(codes[e.key]){e.preventDefault();send({op:'key',code:codes[e.key],characters:e.key,shift:e.shiftKey});}});
 window.addEventListener('resize',()=>renderer.resize());
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&ready)call({op:'pause'}).catch(()=>{});});
 window.addEventListener('online',sync);
@@ -84,4 +84,8 @@ $('save-file').onchange=async e=>{const file=e.target.files[0];if(!file)return;t
   if(conflictSlot)throw Error('Los eerst het opslagconflict op voordat je importeert.');blocked=false;await send({op:'import',slot,payload:raw});$('account-message').textContent='Save geïmporteerd. Dezelfde carrière kan worden voortgezet.';
 }catch(err){$('account-message').textContent=err.message;}finally{e.target.value='';}};
 $('resolve').onclick=async()=>{try{const slot=conflictSlot;if(!slot)return;const local=await storage.get('slot:'+slot);if(local?.payload)download(local.payload,`hoofdklasse-conflict-${slot}.json`);const r=await fetch('/api/franchise/saves',{cache:'no-store'});if(!r.ok)throw Error('Cloud niet bereikbaar');const response=await r.json();if(response.userId!==user.id)throw Error('Het account is gewijzigd. Herlaad de game om dat account te openen.');const remote=response.saves.find(x=>x.slot===slot);if(!remote)throw Error('Geen cloudversie gevonden. Je lokale kopie is behouden.');await storage.put('slot:'+slot,{payload:remote.payload,revision:remote.revision,dirty:false,backup:local?.payload});location.reload();}catch(e){$('account-message').textContent=e.message;}};
+function showClubText(result){const dlg=$('club-text-dialog');if(result.clubText){if(!dlg.open){$('club-text-title').textContent='EDIT '+result.clubText.field.toUpperCase();$('club-text-input').value=result.clubText.value;$('club-text-input').maxLength=result.clubText.limit;dlg.showModal();$('club-text-input').focus();$('club-text-input').select();}}else if(dlg.open)dlg.close();}
+$('club-text-form').onsubmit=e=>{e.preventDefault();send({op:'clubtext',value:$('club-text-input').value});};
+$('club-text-cancel').onclick=()=>send({op:'action',action:'clubtextcancel'});
+$('club-text-dialog').addEventListener('cancel',e=>{e.preventDefault();send({op:'action',action:'clubtextcancel'});});
 boot().catch(e=>fail(e.message));

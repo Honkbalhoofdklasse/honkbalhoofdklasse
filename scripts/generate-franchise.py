@@ -44,6 +44,7 @@ for f in src.glob('*.swift'):
         Canvas.commands.append(["text",s,x,y,size,(color ?? muted).css,"Regular",w,h,4])
     }
     func image(_ path:String,_ r:NSRect,alpha:CGFloat=1,cover:Bool=false){
+        if path.hasPrefix("custom|"){customBadge(path,r);return}
         Canvas.commands.append(["image",path,r.minX,r.minY,r.width,r.height,alpha,cover,cover && path=="Assets/Photos/neptunus-10.jpg" ? 0.20:0.50])
     }
 '''+s[b:]
@@ -59,6 +60,7 @@ for f in src.glob('*.swift'):
         else {hover=areas.firstIndex{$0.rect.contains(p)} ?? -1;if hover>=0{focus=hover}}
     }
     func key(_ code:Int,_ characters:String,shift:Bool=false){
+        if customTextKey(code,characters){return}
         if code==53 && tourStep != nil{act("tour:skip");return}
         if code==53 && positionMenu{positionMenu=false;return}
         if characters==" " && autoSim{act("stop");return}

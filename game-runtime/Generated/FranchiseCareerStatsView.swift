@@ -23,7 +23,7 @@ extension FranchiseView {
         for (n,row) in rows.dropFirst(careerStatsPage*8).prefix(8).enumerated(){let y:CGFloat=322+CGFloat(n)*39
             fill(rect(116,y,1363,37),ink.withAlphaComponent(n%2==0 ? 0.8:0.45))
             text("\(row.year)"+(row.year==f.year ? " *":""),128,y+5,20,white,"Menlo-Bold",115)
-            text(row.clubs.map{db.teams[$0].abbr}.joined(separator:" / "),247,y+9,14,accent,"AvenirNextCondensed-DemiBold",196)
+            text(row.clubs.map{leagueTeams[$0].abbr}.joined(separator:" / "),247,y+9,14,accent,"AvenirNextCondensed-DemiBold",196)
             let available=careerStatsScope==0 || row.completeSplits
             for (j,col) in columns.enumerated(){text(available ? statValue(row.stats(careerStatsScope),col):"—",456+CGFloat(j)*126,y+7,18,white,"Menlo",118)}
         }

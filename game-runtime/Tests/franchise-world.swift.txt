@@ -1,0 +1,89 @@
+import Foundation
+import Darwin
+setbuf(stdout,nil)
+let root=URL(fileURLWithPath:CommandLine.arguments[1]),output=URL(fileURLWithPath:CommandLine.arguments[2])
+for name in ["teams","players","staff"]{Database.input["Data/\(name).json"]=try String(contentsOf:root.appendingPathComponent("Data/\(name).json"),encoding:.utf8)}
+let db=Database(root:root)
+var checks=0
+func check(_ yes:Bool,_ message:String){checks+=1;if !yes{fatalError(message)}}
+func ready(_ f:inout Franchise){f.prepareWorld();f.options.automaticTraining=true;f.options.injuryFrequency=0;f.options.pauseLowFunds=false;f.automation.lineup=true;f.automation.rotation=true}
+func season(_ f:inout Franchise){var steps=0;while f.champion==nil && steps<600{let result=f.step();steps+=1;if steps%30==0{print("SIM",f.year,steps,f.day,result)}};check(f.champion != nil,"season reaches final without deadlock");check(f.validate(),"completed season valid")}
+var standard=Franchise.make(db:db,user:0,slot:1,fantasy:false,seed:8123);ready(&standard)
+var f=Franchise.makeCustom(db:db,design:CustomClub(),slot:1,seed:98765)!;ready(&f)
+check(f.validate() && f.clubs.count==8 && f.user==7,"eight-club initial career valid")
+check(f.roster(7).count==28 && f.roster(7).filter{$0.inFarm}.count==3,"25 active plus three farm")
+check(f.roster(7).allSatisfy{$0.profile.stats==nil && $0.youth?.kind=="expansion"},"fictional players explicitly identified")
+check(Set(f.roster(7).map{$0.profile.name}).count==28,"random starting names are unique")
+let strengths=f.clubs.indices.map{c in f.roster(c).filter{!$0.inFarm}.map{Double($0.rating)}.reduce(0,+)/Double(f.roster(c).filter{!$0.inFarm}.count)}
+check(strengths.filter{$0<strengths[7]}.count<=1,"expansion starts among the two weakest squads")
+print("INITIAL SQUAD MEAN OVR",strengths)
+check(f.academyIntake?.candidates.count==24,"eighth club has academy intake")
+for c in f.clubs.indices{check(f.schedule.filter{$0.home==c}.count==21 && f.schedule.filter{$0.away==c}.count==21,"42 games balanced home/away");for d in f.clubs.indices where d != c{check(f.schedule.filter{$0.home==c && $0.away==d}.count==3,"every matchup three home games")}}
+let restored=try JSONDecoder().decode(Franchise.self,from:JSONEncoder().encode(f));check(restored.validate() && restored.rng==f.rng && restored.customClub?.name=="New Holland","custom save exact round trip")
+var bad=f;bad.customClub!.abbr="X|";check(!bad.validate(),"malformed badge metadata rejected")
+bad=f;bad.world!.styles=[7];check(!bad.validate(),"invalid styles rejected")
+bad=f;bad.world!.incoming=LeagueOffer(club:99,give:f.players[0].profile.id,take:f.players[1].profile.id,year:2026,expires:12);check(!bad.validate(),"out of bounds offer rejected")
+var released=f;let prospect=released.roster(7).first{$0.inFarm}!,pi=released.players.firstIndex{$0.profile.id==prospect.profile.id}!
+released.players[pi].totals.h=4;let cash=released.clubs[7].cash,fee=released.releaseFee(prospect),count=released.roster(7).count
+check(released.releasePlayer(prospect.profile.id).hasPrefix("RELEASED"),"farm player can be released")
+check(released.clubs[7].cash==cash-fee && released.roster(7).count==count-1 && released.roster(7).filter{$0.inFarm}.count==2,"one fee and immediate roster/farm vacancy")
+check(released.player(prospect.profile.id)?.totals.h==4 && released.player(prospect.profile.id)?.club == -1,"release preserves career record")
+check(!released.releasePlayer(prospect.profile.id).hasPrefix("RELEASED") && released.clubs[7].cash==cash-fee,"cannot release twice")
+let youth=released.academyIntake!.candidates.first{$0.club==7}!.player.profile.id
+check(released.signYouth(youth,for:7) && released.validate(),"released farm place accepts new prospect")
+let shortstop=f.roster(7).first{$0.profile.position=="SS"}!
+var guardCase=f
+for i in guardCase.players.indices where guardCase.players[i].club==7 && guardCase.players[i].fits("SS") && guardCase.players[i].profile.id != shortstop.profile.id{guardCase.players[i].farm=true}
+check(guardCase.releaseIssue(shortstop.profile.id,owner:7)?.contains("SS")==true,"last eligible shortstop cannot be dropped")
+var style=f;let trained=style.roster(7).first{!$0.isPitcher && !$0.inFarm}!
+check(style.styleTraining(7,3)==0,"balanced gives no focus bonus");style.world!.styles[7]=1
+check(style.styleTraining(7,3)==0.06 && style.styleTraining(7,1)==0,"style targets specific abilities")
+var events=f;events.world!.moment=ClubMoment(id:"test",kind:0,year:2026,week:5);let fans=events.clubs[7].fans,money=events.clubs[7].cash
+check(events.resolveMoment(0) && !events.resolveMoment(0) && events.clubs[7].cash==money-2000 && events.clubs[7].fans==fans+35,"event applies consequences once")
+events.world!.moment=ClubMoment(id:"camp",kind:3,year:2026,week:10);let before=events.player(trained.profile.id)!.skill(4)
+check(events.resolveMoment(0) && events.player(trained.profile.id)!.skill(4)>before,"camp changes actual fielding skill")
+var roles=f;let batter=roles.roster(7).first{!$0.isPitcher && !$0.inFarm}!,bi=roles.players.firstIndex{$0.profile.id==batter.profile.id}!
+roles.players[bi].deal!.role=0;check(roles.promiseRole(batter.profile.id,2) && !roles.promiseRole(batter.profile.id,2),"single outstanding promise")
+var stat=SeasonStat();stat.pa=4;stat.ab=4;stat.games=1
+roles.schedule=(0..<4).map{FranchiseGame(id:$0,day:$0+1,away:7,home:0,stage:"Regular",series:0,awayRuns:1,homeRuns:2,box:[batter.profile.id:stat],playerTeams:[batter.profile.id:7])}
+roles.day=28;let trust=roles.players[bi].deal!.trust;roles.settleWorldWeek()
+check(roles.players[bi].deal!.trust==trust+8 && roles.players[bi].deal!.role==2 && roles.players[bi].deal!.promise==nil,"playing-time promise uses actual appearances")
+roles.settleWorldWeek();check(roles.players[bi].deal!.trust==trust+8,"weekly review idempotent")
+var market=f;market.champion=1;market.beginOffseason();let settledCash=market.clubs[7].cash;market.beginOffseason();check(market.clubs[7].cash==settledCash,"annual salary settled only once")
+let free=market.contractCandidates().first{$0.club == -1}!
+let bid=MarketBid(player:free.profile.id,club:7,salary:market.annualAsk(free)*2,years:2,role:1)
+check(market.submitBid(bid).hasPrefix("OFFER FILED"),"valid free agent offer can be filed")
+check(market.player(free.profile.id)?.club == -1,"filing is not instant acceptance")
+let cpuBid=MarketBid(player:free.profile.id,club:0,salary:market.annualAsk(free)*3,years:2,role:2)
+check(market.submitBid(cpuBid).hasPrefix("OFFER FILED"),"CPU competes using same budget checks")
+market.resolveContractBids();check(market.player(free.profile.id)?.club==0 && market.validate(),"better competing offer wins and memberships remain valid")
+var broke=market;broke.clubs[7].cash=0
+let another=broke.contractCandidates().first{$0.club == -1}!
+check(broke.bidIssue(MarketBid(player:another.profile.id,club:7,salary:2000,years:1,role:0)) != nil,"cannot sign without fee cash")
+try JSONEncoder().encode(market).write(to:output.appendingPathComponent("offseason.json"))
+var transactions=standard;let initialOwners=Dictionary(uniqueKeysWithValues:transactions.players.map{($0.profile.id,$0.club)})
+for day in [28,56,84]{transactions.day=day;transactions.runLeagueMarket()}
+check(transactions.validate(),"CPU transfers keep career valid")
+check(transactions.players.filter{initialOwners[$0.profile.id]==transactions.user}.allSatisfy{$0.club==transactions.user},"CPU never silently transfers human players")
+check(transactions.world!.incoming != nil,"CPU initiates a human proposal")
+check(transactions.players.contains{initialOwners[$0.profile.id] != $0.club},"CPU clubs make proactive transactions")
+// UI actions, including release confirmation and every screen with eight clubs.
+let view=FranchiseView(frame:.zero,db:db,saveDirectory:URL(fileURLWithPath:"/"));view.career=f;view.page="hub"
+for tab in view.tabs.indices{view.tab=tab;Canvas.commands=[];view.draw(.zero);check(!Canvas.commands.isEmpty,"eight-club screen renders")}
+view.act("worldplayer:"+prospect.profile.id);view.draw(.zero);check(view.areas.contains{$0.action=="releasecheck:"+prospect.profile.id},"profile links to release")
+view.act("releasecheck:"+prospect.profile.id);view.draw(.zero);check(view.areas.contains{$0.action=="releasedo:"+prospect.profile.id},"release has review screen")
+view.act("releasedo:"+prospect.profile.id);check(view.career!.player(prospect.profile.id)?.club == -1 && view.career!.validate(),"release button executes correct player")
+view.career=standard;view.modal="";view.tradeClub=7;view.tab=6;view.draw(.zero);check(view.tradeClub<7,"switching to legacy club clears eighth trade target")
+try JSONEncoder().encode(f).write(to:output.appendingPathComponent("custom.json"))
+season(&f);let schedule2026=f.schedule.filter{$0.stage=="Regular"}.map{"\($0.day)-\($0.home)-\($0.away)"};let title=f.champion!
+f.beginOffseason();let records=f.world!.records.count;f.recordClubSeason();check(records==f.world!.records.count && records>0,"club records are idempotent")
+check(f.world!.rivalries.contains{$0.club==7 && $0.wins+$0.losses>=6},"matchups become recorded rivalry history")
+f.world!.autoContracts=true
+for round in 0..<4{check(f.advanceOffseason(),"offseason weekly advance");check(f.validate(),"save valid after offseason round \(round)");if round<3{check(f.year==2026,"cannot skip offseason rounds")}}
+check(f.year==2027 && f.world!.winter==nil && f.champion==nil && f.history.last?.champion==title,"new season after four rounds")
+check(f.players.contains{$0.retired} && f.players.filter{$0.retired}.allSatisfy{$0.club == -1},"retirements leave rosters but retain players")
+check(f.players.contains{$0.seasonArchive?.first?.year==2026},"career statistics preserved through offseason")
+check(f.schedule.filter{$0.stage=="Regular"}.map{"\($0.day)-\($0.home)-\($0.away)"} != schedule2026,"next year's calendar varies")
+for c in f.clubs.indices{check(f.roster(c).filter{!$0.inFarm && !$0.isPitcher}.count>=9 && f.roster(c).filter{!$0.inFarm && $0.canPitch}.count>=4,"all clubs have playable post-retirement coverage")}
+season(&f);check(f.world!.news.count<=100,"multi-season news bounded")
+print("PASS: \(checks) expansion / release / contracts / roles / CPU market / events / two-season checks")

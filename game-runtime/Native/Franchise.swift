@@ -19,6 +19,7 @@ struct FranchisePlayer:Codable {
     var developmentHistory:[DevelopmentSnapshot]?=nil
     var youth:YouthOrigin?=nil
     var seasonArchive:[PlayerSeasonRecord]?=nil
+    var deal:PlayerDeal?=nil
     var isPitcher:Bool{profile.position=="P"}
     // These are sandbox simulation inputs, never certified real-world OVR ratings.
     // Unknown evidence uses a shared neutral model prior, not an invented player statistic.
@@ -83,6 +84,8 @@ struct FranchiseGame:Codable {
 struct TableRow {var club:Int,w=0,l=0,rf=0,ra=0;var pct:Double{w+l>0 ? Double(w)/Double(w+l):0}}
 struct FranchiseHistory:Codable {var year:Int,champion:Int,userWins:Int,userLosses:Int}
 struct Franchise:Codable {
+    var customClub:CustomClub?=nil
+    var world:FranchiseWorld?=nil
     var version=1,year=2026,user:Int,slot:Int,day=0,lastTrainingWeek = -1
     var rng:UInt64,players:[FranchisePlayer],clubs:[FranchiseClub]
     var schedule:[FranchiseGame]=[],training:[String:TrainingOrder]=[:]
@@ -131,7 +134,7 @@ struct Franchise:Codable {
         var pairRounds=[[(Int,Int)]]()
         for r in 0..<7 {
             var pairs=[(Int,Int)]()
-            for i in 0..<4 {let a=ring[i],b=ring[7-i];if a<7 && b<7 {pairs.append(r%2==0 ? (a,b):(b,a))}}
+            for i in 0..<4 {let a=ring[i],b=ring[7-i];if a<clubCount && b<clubCount {pairs.append(r%2==0 ? (a,b):(b,a))}}
             pairRounds.append(pairs);let last=ring.removeLast();ring.insert(last,at:1)
         }
         let firstLeg=year>2026 ? shuffled(Array(0..<7)){random()}:Array(0..<7)
@@ -171,7 +174,7 @@ struct Franchise:Codable {
                 func score(_ id:String)->Double {let p=player(id)!
                     if slot==0{return p.skill(0)*0.60+p.skill(2)*0.35+p.skill(3)*0.05-p.fatigue*0.18}
                     if [2,3,4].contains(slot){return p.skill(1)*0.50+p.skill(0)*0.35+p.skill(2)*0.15-p.fatigue*0.15}
-                    return p.skill(0)*0.40+p.skill(1)*0.35+p.skill(2)*0.25-p.fatigue*0.17
+                    return p.skill(0)*0.40+p.skill(1)*0.35+p.skill(2)*0.25-p.fatigue*0.17+(world==nil ? 0:styleFit(p,team)*0.06)
                 }
                 let best=remaining.indices.max{score(remaining[$0].0)<score(remaining[$1].0)}!
                 ordered.append(remaining.remove(at:best))
@@ -214,7 +217,7 @@ struct Franchise:Codable {
     mutating func selectDraft(_ id:String)->Bool {
         guard draftAllowed(id),let i=players.firstIndex(where:{$0.profile.id==id && $0.club == -1}) else{return false}
         let club=draftTeam;players[i].club=club;clubs[club].roster.append(id);draftPick+=1
-        if draftPick>=175 {draft=false;phase="Regular season";for c in 0..<7 {autoLineup(c)};makeSchedule();refreshSponsorMarket();prepareFranchiseYear();log("Draft complete. All seven clubs have 25 players. Your first training week is ready.")}
+        if draftPick>=175 {draft=false;phase="Regular season";for c in 0..<7 {autoLineup(c)};makeSchedule();refreshSponsorMarket();prepareFranchiseYear();prepareWorld();log("Draft complete. All seven clubs have 25 players. Your first training week is ready.")}
         return true
     }
     mutating func cpuDraft() {
@@ -233,7 +236,7 @@ struct Franchise:Codable {
         if let p=available.max(by:{desirability($0)<desirability($1)}) {_=selectDraft(p.profile.id)}
     }
     func table()->[TableRow] {
-        var rows=(0..<7).map{TableRow(club:$0)}
+        var rows=clubs.indices.map{TableRow(club:$0)}
         for g in schedule where g.stage=="Regular" && g.played {
             let a=g.awayRuns!,h=g.homeRuns!
             rows[g.away].rf+=a;rows[g.away].ra+=h;rows[g.home].rf+=h;rows[g.home].ra+=a
@@ -253,14 +256,19 @@ struct Franchise:Codable {
         for (s,pair) in [(seeds[0],seeds[3]),(seeds[1],seeds[2])].enumerated() {
             for n in 0..<5 {appendGame(day:days[n],away:n%2==0 ? pair.1:pair.0,home:n%2==0 ? pair.0:pair.1,stage:"Semifinal",series:1000+s)}
         }
+        if clubCount==8 {
+            let rounds=[[(seeds[4],seeds[7]),(seeds[5],seeds[6])],[(seeds[4],seeds[6]),(seeds[7],seeds[5])],[(seeds[4],seeds[5]),(seeds[6],seeds[7])]]
+            for (r,pairs) in rounds.enumerated(){for (n,p) in pairs.enumerated(){for game in 0..<3{appendGame(day:Self.offset(8,20)+r*7+[0,2,2][game],away:game==1 ? p.0:p.1,home:game==1 ? p.1:p.0,stage:"Placement round",series:2000+r*2+n)}}}
+        }else{
         let bottom=[(seeds[4],seeds[5]),(seeds[6],seeds[4]),(seeds[5],seeds[6])]
         let bdays=[Self.offset(8,20),Self.offset(8,22),Self.offset(8,22),Self.offset(8,27),Self.offset(8,29),Self.offset(8,29),Self.offset(9,3),Self.offset(9,5),Self.offset(9,5)]
         for (s,p) in bottom.enumerated(){for n in 0..<3 {appendGame(day:bdays[s*3+n],away:n%2==0 ? p.1:p.0,home:n%2==0 ? p.0:p.1,stage:"Bottom three",series:2000+s)}}
-        schedule.sort{($0.day,$0.id)<($1.day,$1.id)};log("The regular season is complete. The top four enter best-of-five semifinals. The remaining clubs play the Bottom Three series.")
+        }
+        schedule.sort{($0.day,$0.id)<($1.day,$1.id)};log("The regular season is complete. Top four: best-of-five semifinals. Remaining clubs: \(clubCount==8 ? "placement round":"Bottom Three series").")
     }
     mutating func appendGame(day:Int,away:Int,home:Int,stage:String,series:Int) {schedule.append(FranchiseGame(id:(schedule.map{$0.id}.max() ?? -1)+1,day:day,away:away,home:home,stage:stage,series:series))}
     func seriesWinner(_ series:Int,_ wins:Int)->Int? {
-        for c in 0..<7 {if schedule.filter({$0.series==series && $0.winner==c}).count>=wins{return c}};return nil
+        for c in clubs.indices {if schedule.filter({$0.series==series && $0.winner==c}).count>=wins{return c}};return nil
     }
     mutating func updateBracket() {
         for s in [1000,1001,3000] {
@@ -293,8 +301,9 @@ struct Franchise:Codable {
     }
     @discardableResult mutating func completeTraining()->Bool {
         guard trainingDue else{return false};recordDevelopment();trainingReport=[];runWeeklyAutomation();settleStaffPayroll();settleClubCommerce();refreshSponsorMarket()
-        for club in 0..<7 {
-            let sponsor=2600+clubs[club].fans/2,payroll=2000+roster(club).count*75
+        for club in clubs.indices {
+            let sponsor=2600+clubs[club].fans/2,payroll=2000+(world==nil ? roster(club).count*75:weeklyPlayerPay(club))
+            if world != nil{markWeeklyPay(club)}
             clubs[club].cash+=sponsor-payroll;clubs[club].income+=sponsor;clubs[club].expenses+=payroll
             if club==user {ledger.insert("\(dateLabel(day)): community support +€\(sponsor) / payroll −€\(payroll)",at:0)}
             let orders: [String:TrainingOrder]
@@ -313,7 +322,7 @@ struct Franchise:Codable {
             }
             if clubs[club].cash < -25000 {clubs[club].cash+=40000;clubs[club].fans=Int(Double(clubs[club].fans)*0.90);if club==user {log("The board provided €40,000 emergency funding. Fan confidence fell 10%. Improve your weekly finances.")}}
         }
-        recruitCPUYouth();developFarm();settleObjectives()
+        recruitCPUYouth();developFarm();settleWorldWeek();settleObjectives()
         recordDevelopment()
         lastTrainingWeek=day/7
         if trainingReport.isEmpty {trainingReport=["Recovery week: no individual training assigned. Your squad stays fresh."]}
@@ -574,28 +583,29 @@ struct Franchise:Codable {
         schedule[gi].awayRuns=score[0];schedule[gi].homeRuns=score[1];schedule[gi].lines=lines;schedule[gi].box=box;schedule[gi].starters=starterIDs;schedule[gi].attendance=attendance;schedule[gi].gate=gate
         report.insert("Starters: \(player(starterIDs[0])?.profile.name ?? "") / \(player(starterIDs[1])?.profile.name ?? "")",at:0)
         report.append("\(attendance) fans · €\(gate) matchday income. Fatigue and morale updated.");schedule[gi].report=report
-        checkInjuries(Set(box.keys))
+        rememberWorldGame(schedule[gi]);checkInjuries(Set(box.keys))
         if teams.contains(user){log("\(dateLabel(g.day)): \(winning==user ? "WIN":"LOSS") \(score[teams.firstIndex(of:user)!])–\(score[1-teams.firstIndex(of:user)!]). Open Calendar for the box score.");if g.home==user{ledger.insert("\(dateLabel(g.day)): matchday +€\(gate) / operation −€\(matchCost)",at:0)}}
     }
     @discardableResult mutating func nextSeason()->Bool {
         guard let champion else{return false};let record=table().first{$0.club==user}!
-        recordDevelopment();reviewBoardSeason();archivePlayerSeasons()
+        recordDevelopment();reviewBoardSeason();recordClubSeason();archivePlayerSeasons()
         history.append(.init(year:year,champion:champion,userWins:record.w,userLosses:record.l))
         for i in players.indices {
             if let owner=players[i].loanOwner {players[i].club=owner;players[i].loanOwner=nil;players[i].farm=false}
             players[i].totals=SeasonStat();players[i].fatigue=0;players[i].injury=nil;players[i].morale=65
-            players[i].applyAgeProgression(nextYear:year+1)
+            if !players[i].retired{players[i].applyAgeProgression(nextYear:year+1)}
         }
-        for c in 0..<7{clubs[c].roster=roster(c).map{$0.profile.id};clubs[c].cash+=25000;clubs[c].income=0;clubs[c].expenses=0;clubs[c].nextStarter=nil;autoLineup(c)}
+        for c in clubs.indices{clubs[c].roster=roster(c).map{$0.profile.id};clubs[c].cash+=25000;clubs[c].income=0;clubs[c].expenses=0;clubs[c].nextStarter=nil;autoLineup(c)}
         seasonGrowthBaseline=roster(user).reduce(0){$0+$1.growth.reduce(0,+)};seasonFanBaseline=clubs[user].fans;claimedObjectives=[];pauseReason=nil
         year+=1;day=0;lastTrainingWeek = -1;seeds=[];self.champion=nil;phase="Regular season";training=training.filter{player($0.key)?.club==user};makeSchedule()
+        if world != nil{world!.moment=nil;world!.incoming=nil;world!.mentors=[]}
         trainingReport=[];ledger=[];counterOffer=nil;renewSponsorYear();refreshSponsorMarket();prepareFranchiseYear();recordDevelopment();log("Welcome to \(year). Club upgrades and player development carry over. Loans have ended; lineups have been refreshed.");return true
     }
     func validate()->Bool {
-        guard growthStateValid() && careerArchiveValid() else{return false}
-        guard version==1,(0..<7).contains(user),(1...3).contains(slot),clubs.count==7,players.count>=175,Set(players.map{$0.profile.id}).count==players.count else{return false}
-        guard players.allSatisfy({(-1..<7).contains($0.club) && (8...12).contains($0.growth.count) && $0.fatigue.isFinite && $0.growth.allSatisfy{$0.isFinite}}),Set(schedule.map{$0.id}).count==schedule.count else{return false}
-        guard schedule.allSatisfy({(0..<7).contains($0.away) && (0..<7).contains($0.home) && $0.away != $0.home && (($0.awayRuns==nil)==($0.homeRuns==nil))}) else{return false}
+        guard growthStateValid() && careerArchiveValid() && worldValid() else{return false}
+        guard version==1,clubs.indices.contains(user),(1...3).contains(slot),(clubs.count==7 && customClub==nil || clubs.count==8 && customClub?.valid==true && user==7 && !draft),players.count>=175,Set(players.map{$0.profile.id}).count==players.count else{return false}
+        guard players.allSatisfy({(-1..<clubCount).contains($0.club) && (8...12).contains($0.growth.count) && $0.fatigue.isFinite && $0.growth.allSatisfy{$0.isFinite}}),Set(schedule.map{$0.id}).count==schedule.count else{return false}
+        guard schedule.allSatisfy({clubs.indices.contains($0.away) && clubs.indices.contains($0.home) && $0.away != $0.home && (($0.awayRuns==nil)==($0.homeRuns==nil))}) else{return false}
         guard (0...12).contains(clubs[user].stadium),(0...10).contains(clubs[user].locker),(0...10).contains(clubs[user].academy),day>=0,training.count<=6 else{return false}
         guard clubs.enumerated().allSatisfy({i,c in Set(c.roster)==Set(players.filter{$0.club==i}.map{$0.profile.id}) && c.roster.count==Set(c.roster).count && (0...12).contains(c.stadium) && (0...10).contains(c.locker) && (0...10).contains(c.academy) && (3..<9).allSatisfy{(0...facilities[$0].maxLevel).contains(c.level($0))} && (8...22).contains(c.ticket) && (0...2).contains(c.approach) && (0...1).contains(c.bullpen)}) else{return false}
         guard training.allSatisfy({id,o in player(id)?.club==user && (0..<abilityNames.count).contains(o.ability) && (0..<3).contains(o.intensity)}) else{return false}

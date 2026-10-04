@@ -14,8 +14,8 @@ await context.route('**/api/franchise/**',async route=>{const req=route.request(
  cloud=body.payloadEncoding==='gzip-base64'?gunzipSync(Buffer.from(body.payload,'base64')).toString('utf8'):body.payload;revision++;writes++;return route.fulfill({json:{revision}});
 });
 const page=await context.newPage();await page.goto('http://127.0.0.1:3100/franchise/game.html');
-await page.locator('[data-action="careers"]').click({timeout:60000});await page.locator('[data-action="new:1"]').click();await page.locator('[data-action="create"]').click();await page.locator('[data-action="tour:skip"]').click();
-await expect(page.locator('#sync')).toHaveText('Opgeslagen in je account',{timeout:15000});if(writes<1||!cloud.includes('"rng":'))throw Error('No lossless cloud save');const first=cloud;
+await page.locator('[data-action="careers"]').click({timeout:60000});await page.locator('[data-action="new:1"]').click();if(process.env.FRANCHISE_CUSTOM==='1'){await page.locator('[data-action="newcustomclub"]').click();await page.locator('[data-action="clubcreate"]').click();}else await page.locator('[data-action="create"]').click();await page.locator('[data-action="tour:skip"]').click();
+await expect(page.locator('#sync')).toHaveText('Opgeslagen in je account',{timeout:15000});if(writes<1||!cloud.includes('"rng":'))throw Error('No lossless cloud save');const first=cloud;if(process.env.FRANCHISE_CUSTOM==='1'&&JSON.parse(cloud).clubs.length!==8)throw Error('Expansion cloud payload must have eight clubs');
 await page.reload();await page.locator('[data-action="careers"]').click({timeout:60000});await page.locator('[data-action="load:1"]').click();
 conflict=true;await page.locator('[data-action="group:1"]').click();await page.locator('[data-action="tab:2"]').click();await page.locator('[data-action="orderdown"]').click();
 await expect(page.locator('#sync')).toContainText('Andere versie gevonden',{timeout:15000});if(cloud!==first)throw Error('Conflict overwrote remote data');

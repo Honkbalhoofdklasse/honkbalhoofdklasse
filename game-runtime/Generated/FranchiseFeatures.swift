@@ -49,7 +49,7 @@ extension FranchiseClub {
 extension FranchisePlayer {
     var positionLabel:String {if let p=profile.positions{return p.isEmpty ? profile.position+"?":p.prefix(3).joined(separator:"/")};return profile.position}
     var inFarm:Bool{farm == true}
-    func available(_ day:Int)->Bool{!inFarm && (injury?.untilDay ?? -1)<=day}
+    func available(_ day:Int)->Bool{!retired && !inFarm && (injury?.untilDay ?? -1)<=day}
     var canPitch:Bool{isPitcher || (profile.positions ?? []).contains("P")}
     var canHit:Bool{!isPitcher || (profile.stats?.pa ?? 0)>0 || (profile.positions ?? []).contains(where:{$0 != "P"})}
     var hittingAbilities:[Int]{[0,1,2,9,3,8,4]}
@@ -60,9 +60,9 @@ extension FranchisePlayer {
     mutating func develop(_ ability:Int,_ amount:Double){if growth.count<abilityNames.count{growth += Array(repeating:0,count:abilityNames.count-growth.count)};growth[ability]+=amount}
     var rating:Int {Int(overallValue.rounded())}
     var evidenceCount:Int{abilities.filter{evidence($0) != nil}.count}
-    var ratingLabel:String{youth != nil ? "YTH":(evidenceCount==0 ? "EST": "OVR*")}
+    var ratingLabel:String{youth != nil ? (youth?.kind != nil ? "SIM":"YTH"):(evidenceCount==0 ? "EST": "OVR*")}
     func evidenceText(_ a:Int)->String {
-        if youth != nil{return "Fictional academy player · career skill development"}
+        if youth != nil{return "Fictional career player · simulated skill development"}
         guard let s=profile.stats else{return "No matching 2026 data · estimated baseline"}
         switch a {
         case 0:return "2026 H/AB: \(s.hits.map(String.init) ?? "?")/\(s.ab.map(String.init) ?? "?")"
@@ -139,7 +139,7 @@ extension Franchise {
             guard clubs[club].cash>=cost else{continue}
             let focus=players[i].farmProgress?.focus ?? (players[i].isPitcher ? 5:0)
             let age=year-(players[i].profile.birthYear ?? year-28)
-            let gain=0.14*(age<25 ? 1.25:0.8)*(1+Double(clubs[club].level(8))*0.1+(club==user ? coachBonus(2):0))*players[i].learningFactor(focus)
+            let gain=0.14*(age<25 ? 1.25:0.8)*(1+Double(clubs[club].level(8))*0.1+(club==user ? coachBonus(2):0))*players[i].learningFactor(focus)*mentorFactor(players[i])
             let actual=min(0.35,gain,max(0,players[i].abilityCeiling(focus)-players[i].skill(focus)))
             players[i].develop(focus,actual)
             var progress=players[i].farmProgress ?? FarmProgress(focus:focus);progress.weeks+=1;progress.games+=3;progress.gain+=actual;players[i].farmProgress=progress
@@ -191,7 +191,7 @@ extension Franchise {
     mutating func refreshProfiles(_ db:Database){
         let profiles=Dictionary(uniqueKeysWithValues:db.players.map{($0.id,$0)})
         for i in players.indices{if let profile=profiles[players[i].profile.id]{players[i].profile=profile}}
-        migrateSponsors();prepareFranchiseYear();recordDevelopment()
+        migrateSponsors();prepareFranchiseYear();prepareWorld();recordDevelopment()
     }
 }
 

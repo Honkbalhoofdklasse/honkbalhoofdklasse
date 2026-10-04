@@ -36,6 +36,7 @@ func dispatch(_ req:[String:Any])throws->[String:Any]{
     guard let v=gameView else{throw BridgeError.notInitialized}
     switch op {
     case "pointer":v.pointer(req["x"] as? Double ?? -1,req["y"] as? Double ?? -1,click:req["click"] as? Bool ?? false)
+    case "clubtext":v.setClubText(req["value"] as? String ?? "")
     case "key":v.key(req["code"] as? Int ?? 0,req["characters"] as? String ?? "",shift:req["shift"] as? Bool ?? false)
     case "focus":v.focus=max(0,min(v.areas.count-1,req["index"] as? Int ?? 0));v.hover = -1
     case "action":
@@ -63,7 +64,7 @@ func dispatch(_ req:[String:Any])throws->[String:Any]{
     if op=="tick" && !v.needsDisplay{return ["idle":true]}
     v.draw(.zero);v.needsDisplay=false
     let changes=BrowserStorage.changed;BrowserStorage.changed=[:]
-    return ["commands":Canvas.commands,"areas":v.areas.map{["rect":[$0.rect.minX,$0.rect.minY,$0.rect.width,$0.rect.height],"action":$0.action,"label":$0.label] as [String:Any]},"files":changes,"page":v.page,"tab":v.tab,"modal":v.modal,"autoSim":v.autoSim,"focus":v.focus,"toast":v.clock<v.toastUntil ? v.toast:"","day":v.career?.day ?? 0,"slot":v.career?.slot ?? 0]
+    return ["clubText":v.clubTextField.map{["field":$0,"value":v.clubTextValue,"limit":v.clubTextLimit] as [String:Any]} as Any? ?? NSNull(),"commands":Canvas.commands,"areas":v.areas.map{["rect":[$0.rect.minX,$0.rect.minY,$0.rect.width,$0.rect.height],"action":$0.action,"label":$0.label] as [String:Any]},"files":changes,"page":v.page,"tab":v.tab,"modal":v.modal,"autoSim":v.autoSim,"focus":v.focus,"toast":v.clock<v.toastUntil ? v.toast:"","day":v.career?.day ?? 0,"slot":v.career?.slot ?? 0]
 }
 #if PORT_TEST
 func referenceFixtures(_ db:Database)throws->[String:String]{

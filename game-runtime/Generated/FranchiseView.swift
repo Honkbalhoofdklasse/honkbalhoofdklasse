@@ -11,6 +11,9 @@ final class FranchiseView {
     var rosterPage=0,poolPage=0,poolFilter=0,selectedPlayer="",lineupSlot=0,rotationSlot=0
     var trainingAbility=0,trainingIntensity=1,calendarMonth=4,calendarYear=2026,selectedDay=0,boxGame:Int?=nil,boxTeam=0
     var autoSim=false,simStopDay=0,simAccumulator=0.0,toast="",toastUntil=0.0,modal="",statsPitching=false,statsTeamOnly=true,statsFielding=false
+    var simStartDay=0,simStartGames=0,simLabel="SIMULATION"
+    var officeMode=0,officePage=0,storyMode=0,storyPage=0,offerSalary=3000,offerYears=1,offerRole=0
+    var clubDesign=CustomClub(),clubTextDraft=""
     var careerStatsDetail=false
     var clubVisual=true,clubFacility=0,careerStatsRole=0,careerStatsScope=0,careerStatsPage=0
     var trainingRole = -1,profilePitching=false,profilePerformance=false
@@ -24,10 +27,11 @@ final class FranchiseView {
     var leagueRosterClub=0,leagueRosterFilter=0,leagueRosterPage=0,leagueRosterSort=0
     let ink=NSColor(hex:"07131C"),white=NSColor(hex:"F8F5EB"),muted=NSColor(hex:"9FADB7"),blue=NSColor(hex:"00ACDC"),green=NSColor(hex:"9EDB9D")
     var club:Int{career?.user ?? selectedClub}
-    var team:Team{db.teams[club]}
-    var accent:NSColor{team.highlight}
-    var tabs:[String]{["OVERVIEW","CALENDAR","LINEUP","PITCHING","TRAINING","CLUB","TRADES","STANDINGS","STATS","INBOX","AWARDS","FARM","HEALTH","PLAYOFFS","STAFF","SETTINGS","SPONSORS","ROSTERS","MERCHANDISE"]}
-    let navigationGroups:[(String,[Int])]=[("CAREER",[0,1,9,15]),("TEAM",[2,3,12]),("DEVELOPMENT",[4,11]),("CLUB",[5,6,14,16,18]),("LEAGUE",[7,8,10,13,17])]
+    var leagueTeams:[Team]{career?.teamCatalog(db) ?? db.teams}
+    var team:Team{leagueTeams.indices.contains(club) ? leagueTeams[club]:db.teams[0]}
+    var accent:NSColor{page=="customclub" ? NSColor(hex:clubDesign.color):team.highlight}
+    var tabs:[String]{["OVERVIEW","CALENDAR","LINEUP","PITCHING","TRAINING","CLUB","TRADES","STANDINGS","STATS","INBOX","AWARDS","FARM","HEALTH","PLAYOFFS","STAFF","SETTINGS","SPONSORS","ROSTERS","MERCHANDISE","FRONT OFFICE","CLUB STORY"]}
+    let navigationGroups:[(String,[Int])]=[("CAREER",[0,1,9,15]),("TEAM",[2,3,12,19]),("DEVELOPMENT",[4,11]),("CLUB",[5,6,14,16,18]),("LEAGUE",[7,8,10,13,17,20])]
     var navigationGroup:Int{navigationGroups.firstIndex{$0.1.contains(tab)} ?? 0}
     var notificationRect:NSRect{rect(0,844,1600,56)}
     init(frame:NSRect,db:Database,saveDirectory:URL) {
@@ -52,11 +56,12 @@ final class FranchiseView {
         Canvas.commands.append(["text",s,x,y,size,(color ?? muted).css,"Regular",w,h,4])
     }
     func image(_ path:String,_ r:NSRect,alpha:CGFloat=1,cover:Bool=false){
+        if path.hasPrefix("custom|"){customBadge(path,r);return}
         Canvas.commands.append(["image",path,r.minX,r.minY,r.width,r.height,alpha,cover,cover && path=="Assets/Photos/neptunus-10.jpg" ? 0.20:0.50])
     }
     func backdrop(_ team:Int?=nil){
         let front=page != "hub" && page != "draft"
-        let t=db.teams[team ?? (front ? (photoOffset+Int(clock/9))%db.teams.count:club)]
+        let t=leagueTeams[team ?? (front ? (photoOffset+Int(clock/9))%leagueTeams.count:club)]
         let n=(photoOffset+Int(clock/9))%max(1,t.photos.count)
         image(t.photos[n],rect(0,0,1600,900),cover:true);fill(rect(0,0,1600,900),ink.withAlphaComponent(page=="hub" ? 0.88:0.55));NSGradient(starting:ink.withAlphaComponent(0.75),ending:.clear)?.draw(in:rect(0,0,1600,900),angle:0)
     }
@@ -71,7 +76,7 @@ final class FranchiseView {
     }
     func hit(_ action:String,_ label:String,_ r:NSRect){areas.append(.init(rect:r,action:action,label:label))}
     func footer(_ s:String="ARROWS / TAB  Navigate    ENTER  Select    ESC  Clubhouse    SPACE  Stop simulation"){
-        fill(rect(0,844,1600,56),ink);line(48,844,1504);text(s,48,862,16,muted,"AvenirNext-DemiBold",1290);text("FRANCHISE  0.6.3",1370,862,15,accent,"AvenirNextCondensed-Heavy",190)
+        fill(rect(0,844,1600,56),ink);line(48,844,1504);text(s,48,862,16,muted,"AvenirNext-DemiBold",1290);text("FRANCHISE  0.7.0",1370,862,15,accent,"AvenirNextCondensed-Heavy",190)
     }
     func heading(_ label:String){image("Assets/Logos/league.png",rect(43,14,132,93));text(label,205,27,19,muted,"AvenirNext-DemiBold",930);fill(rect(0,0,1600,5),accent)}
     func number(_ n:Int)->String{let f=NumberFormatter();f.numberStyle = .decimal;f.locale=Locale(identifier:"en_GB");return f.string(from:NSNumber(value:n)) ?? String(n)}
@@ -80,7 +85,7 @@ final class FranchiseView {
     func draw(_ dirtyRect:NSRect){
         Canvas.commands=[];areas=[]
         fill(rect(0,0,1600,900),ink);backdrop()
-        switch page{case "title":drawTitle();case "careers":drawCareers();case "setup":drawSetup();case "draft":drawDraft();default:drawHub()}
+        switch page{case "title":drawTitle();case "careers":drawCareers();case "setup":drawSetup();case "customclub":drawCustomClub();case "draft":drawDraft();default:drawHub()}
         if positionMenu && page=="hub" && tab==2 && modal.isEmpty{positionDropdown()}
         if !modal.isEmpty {drawModal()}
         if tourStep != nil{drawCareerTour()}
@@ -90,9 +95,9 @@ final class FranchiseView {
     }
     func drawTitle(){
         image("Assets/Logos/league.png",rect(65,72,370,259));text("BUILD A CLUB.",69,365,103,white,"Impact",1080);text("BUILD A DYNASTY.",69,474,103,accent,"Impact",1220)
-        paragraph("Your roster. Your decisions. Your Holland Series.\nA complete simulation career across all seven clubs.",77,613,810,94,26,white)
+        paragraph("Your roster. Your decisions. Your Holland Series.\nManage a Hoofdklasse club or create your own eighth club.",77,613,810,94,26,white)
         button("ENTER FRANCHISE  →","careers",rect(77,739,418,67),primary:true)
-        for (i,t) in db.teams.enumerated(){image(t.logo,rect(967+CGFloat(i)*77,761,56,49))}
+        for (i,t) in leagueTeams.enumerated(){image(t.logo,rect(967+CGFloat(i)*77,761,56,49))}
         footer("NATIVE BASEBALL MANAGEMENT  /  NO ON-FIELD PLAY REQUIRED")
     }
     func drawCareers(){heading("FRANCHISE / YOUR CAREERS");text("THE NEXT CHAPTER.",50,139,81,white,"Impact")
@@ -100,19 +105,20 @@ final class FranchiseView {
         for slot in 1...3 {
             let y=CGFloat(315+(slot-1)*158);panel(rect(52,y,1496,137))
             text(String(format:"%02d",slot),78,y+24,60,accent,"Impact",115)
-            if let f=try? store.load(slot){let t=db.teams[f.user];image(t.logo,rect(193,y+20,105,87));text(t.name.uppercased(),327,y+19,33,white,"AvenirNextCondensed-Heavy",740)
+            if let f=try? store.load(slot){let t=f.teamCatalog(db)[f.user];image(t.logo,rect(193,y+20,105,87));text(t.name.uppercased(),327,y+19,33,white,"AvenirNextCondensed-Heavy",740)
                 let r=f.table().first{$0.club==f.user};text("\(f.year)  ·  \(f.phase)  ·  \(r?.w ?? 0)–\(r?.l ?? 0)  ·  \(f.dateLabel(f.day))",330,y+73,21,muted,"AvenirNextCondensed-DemiBold",800)
                 button("CONTINUE →","load:\(slot)",rect(1165,y+26,210,52),primary:true);button("NEW","replace:\(slot)",rect(1400,y+26,112,52))
             }else{text("EMPTY CAREER SLOT",203,y+31,37,white,"Impact",760);button("NEW FRANCHISE →","new:\(slot)",rect(1165,y+28,346,56),primary:true)}
         };footer()
     }
     func drawSetup(){heading("FRANCHISE / NEW CAREER");text("CHOOSE YOUR CLUB.",48,119,76,white,"Impact")
-        let order=["neptunus","pirates","twins","kinheim","hcaw","pioniers","uvv"].compactMap{id in db.teams.firstIndex{$0.id==id}}
-        for (rank,i) in order.enumerated(){let t=db.teams[i],x:CGFloat=50+CGFloat(rank)*216,r=rect(x,232,204,222);image(t.photos[(photoOffset+rank+Int(clock/9))%t.photos.count],r,cover:true);fill(r,t.accent.withAlphaComponent(0.28));fill(r,ink.withAlphaComponent(0.32));image(t.logo,rect(x+34,269,138,100));text(t.abbr,x+19,380,42,white,"Impact",163);text("#\(rank+1) · 2026",x+14,242,17,white,"AvenirNext-DemiBold",179)
+        let order=["neptunus","pirates","twins","kinheim","hcaw","pioniers","uvv"].compactMap{id in leagueTeams.firstIndex{$0.id==id}}
+        for (rank,i) in order.enumerated(){let t=leagueTeams[i],x:CGFloat=50+CGFloat(rank)*216,r=rect(x,232,204,222);image(t.photos[(photoOffset+rank+Int(clock/9))%t.photos.count],r,cover:true);fill(r,t.accent.withAlphaComponent(0.28));fill(r,ink.withAlphaComponent(0.32));image(t.logo,rect(x+34,269,138,100));text(t.abbr,x+19,380,42,white,"Impact",163);text("#\(rank+1) · 2026",x+14,242,17,white,"AvenirNext-DemiBold",179)
             if selectedClub==i{let p=NSBezierPath(rect:r);p.lineWidth=4;white.setStroke();p.stroke();fill(rect(x,447,204,7),t.accent)};hit("team:\(i)",t.name,r)}
-        text(db.teams[selectedClub].name.uppercased(),54,486,39,white,"Impact",1150)
+        text(leagueTeams[selectedClub].name.uppercased(),54,486,39,white,"Impact",1150)
         button("REAL CLUB ROSTERS","real",rect(54,557,440,65),primary:!fantasy)
         button("FANTASY SNAKE DRAFT","fantasy",rect(520,557,440,65),primary:fantasy)
+        button("CREATE YOUR OWN CLUB →","newcustomclub",rect(986,557,557,65))
         paragraph(fantasy ? "Draft 25 players from the entire league. You pick first; the order reverses every round. CPU clubs build their own squads.":"Take over the club's supplied 2026 roster. Set your batting order and rotation, develop players and build a contender.",55,650,975,115,24,white)
         button("START YOUR CAREER →","create",rect(1094,668,449,78),primary:true)
         text("CLUB ORDER: 2026 REGULAR-SEASON STANDINGS · honkbalhoofdklasse.com/stand",56,802,17,muted,"AvenirNext-DemiBold",1400);footer()
@@ -120,7 +126,7 @@ final class FranchiseView {
     func filteredPool(_ draft:Bool)->[FranchisePlayer]{guard let f=career else{return []};let ps=draft ? f.players.filter{$0.club == -1}:f.loanCandidates()
         return ps.filter{p in poolFilter==0 || (poolFilter==1 && !p.isPitcher) || (poolFilter==2 && p.canPitch) || (poolFilter==3 && p.fits("C"))}.sorted{$0.value>$1.value}}
     func drawDraft(){guard let f=career else{return};heading("FANTASY DRAFT / ROUND \(f.draftPick/7+1) OF 25");text("YOU ARE ON THE CLOCK.",50,126,65,white,"Impact")
-        text("\(db.teams[f.user].name.uppercased())   ·   PICK \(f.draftPick+1) / 175   ·   \(f.roster(f.user).count) PLAYERS DRAFTED",54,212,21,accent,"AvenirNext-DemiBold",1450)
+        text("\(leagueTeams[f.user].name.uppercased())   ·   PICK \(f.draftPick+1) / 175   ·   \(f.roster(f.user).count) PLAYERS DRAFTED",54,212,21,accent,"AvenirNext-DemiBold",1450)
         drawPool(draft:true,y:278)
         panel(rect(1100,278,446,487));text("YOUR DRAFT BOARD",1120,296,27,white,"Impact",403)
         let rs=f.roster(f.user);text("\(rs.filter{$0.isPitcher}.count) P  /  \(rs.filter{!$0.isPitcher}.count) HITTERS",1120,345,22,accent,"AvenirNext-DemiBold",400)
@@ -142,7 +148,7 @@ final class FranchiseView {
         text("€"+number(c.cash),1143,50,34,white,"Impact",380);text("\(number(c.fans)) FANS  /  \(number(c.capacity)) CAPACITY",1146,99,17,muted,"AvenirNext-DemiBold",410)
         for (i,group) in navigationGroups.enumerated(){let r=rect(48+CGFloat(i)*301,149,290,33);fill(r,navigationGroup==i ? accent:ink.withAlphaComponent(0.75));text(group.0,r.minX+12,154,18,navigationGroup==i ? ink:white,"AvenirNextCondensed-Heavy",270);hit("group:\(i)",group.0,r)}
         for (n,i) in navigationGroups[navigationGroup].1.enumerated(){let r=rect(48+CGFloat(n)*210,187,198,30);if tab==i{fill(rect(r.minX,214,r.width,3),accent)};text(tabs[i],r.minX+12,190,16,tab==i ? accent:muted,"AvenirNext-DemiBold",180);hit("tab:\(i)",tabs[i],r)}
-        switch tab{case 0:drawOverview();case 1:drawCalendar();case 2:drawLineup();case 3:drawPitching();case 4:drawTraining();case 5:drawClub();case 6:drawTrades();case 7:drawStandings();case 8:drawStats();case 9:drawInbox();case 10:managerAwards();case 11:managerFarm();case 12:managerHealth();case 13:managerPlayoffs();case 14:managerStaff();case 15:managerSettings();case 16:managerSponsors();case 17:managerLeagueRosters();default:managerMerchandise()}
+        switch tab{case 0:drawOverview();case 1:drawCalendar();case 2:drawLineup();case 3:drawPitching();case 4:drawTraining();case 5:drawClub();case 6:drawTrades();case 7:drawStandings();case 8:drawStats();case 9:drawInbox();case 10:managerAwards();case 11:managerFarm();case 12:managerHealth();case 13:managerPlayoffs();case 14:managerStaff();case 15:managerSettings();case 16:managerSponsors();case 17:managerLeagueRosters();case 19:drawFrontOffice();case 20:drawClubStory();default:managerMerchandise()}
         if autoSim{footer("SIMULATION RUNNING  ·  SPACE OR STOP TO PAUSE  ·  OPEN ANY TAB TO MANAGE YOUR CLUB")}else{footer()}
     }
     func drawOverview(){managerOverview()}
@@ -165,16 +171,17 @@ final class FranchiseView {
             let date=cal.date(byAdding:.day,value:n-1,to:start)!,offset=cal.dateComponents([.day],from:Franchise.baseDate(f.year),to:date).day!
             let games=f.schedule.filter{$0.day==offset && ($0.away==f.user || $0.home==f.user) && !$0.cancelled}
             let r=rect(x,y,137,62);fill(r,offset==selectedDay ? accent.withAlphaComponent(0.25):ink.withAlphaComponent(0.88));text(String(n),x+9,y+4,20,offset==f.day ? accent:white,"Menlo-Bold",40)
+            if offset==f.day{let outline=NSBezierPath(rect:r.insetBy(dx:1,dy:1));outline.lineWidth=2;accent.setStroke();outline.stroke();if autoSim{fill(rect(x+126,y+5,5,5),accent.withAlphaComponent(Int(clock*3)%2==0 ? 1:0.35))}}
             if offset>=0 && offset<f.day{fill(rect(x+7,y+30,36,1),muted);text("✓",x+112,y+5,15,green,"AvenirNextCondensed-Heavy",22)}
             if offset>=0 && offset%7==0 && offset<=167 {text("TRAIN",x+58,y+6,14,accent,"AvenirNextCondensed-Heavy",74)}
-            if let g=games.first {let opponent=g.home==f.user ? g.away:g.home;let label=g.played ? "\(g.winner==f.user ? "W":"L") \(g.away==f.user ? g.awayRuns!:g.homeRuns!)–\(g.away==f.user ? g.homeRuns!:g.awayRuns!)":"\(g.home==f.user ? "v":"@") \(db.teams[opponent].abbr)";text(label+(games.count>1 ? " · DH":""),x+9,y+34,16,g.played ? (g.winner==f.user ? green:NSColor(hex:"F4AD93")):white,"AvenirNextCondensed-Heavy",126)}
+            if let g=games.first {let opponent=g.home==f.user ? g.away:g.home;let label=g.played ? "\(g.winner==f.user ? "W":"L") \(g.away==f.user ? g.awayRuns!:g.homeRuns!)–\(g.away==f.user ? g.homeRuns!:g.awayRuns!)":"\(g.home==f.user ? "v":"@") \(leagueTeams[opponent].abbr)";text(label+(games.count>1 ? " · DH":""),x+9,y+34,16,g.played ? (g.winner==f.user ? green:NSColor(hex:"F4AD93")):white,"AvenirNextCondensed-Heavy",126)}
             hit("day:\(offset)","Select \(n) \(formatter.string(from:start))",r)
         }
         panel(rect(1110,237,435,477));text(f.dateLabel(selectedDay,format:"EEE d MMM").uppercased(),1133,256,33,white,"Impact",385)
         let games=f.schedule.filter{$0.day==selectedDay && !$0.cancelled}
         if games.isEmpty{paragraph(selectedDay>=0 && selectedDay%7==0 ? "Weekly development. Your saved plan runs automatically when Auto Training is enabled. Review results in Training.":"Rest day. Players recover automatically as the calendar advances. Make lineup and club decisions before the next fixture.",1133,324,385,205,22,white)}
-        for (i,g) in games.prefix(6).enumerated(){let y:CGFloat=319+CGFloat(i)*57;text("\(db.teams[g.away].abbr)  \(g.played ? "\(g.awayRuns!)–\(g.homeRuns!)":"AT")  \(db.teams[g.home].abbr)",1133,y,23,white,"AvenirNextCondensed-Heavy",380);text(g.stage,1134,y+29,15,muted,"AvenirNext-DemiBold",260);if g.played{button("BOX","box:\(g.id)",rect(1437,y+2,83,37))}}
-        button("SIM TO SELECTED DATE","simdate",rect(1110,735,435,46),enabled:selectedDay>f.day && f.champion==nil);simControls(y:789)
+        for (i,g) in games.prefix(6).enumerated(){let y:CGFloat=319+CGFloat(i)*57;text("\(leagueTeams[g.away].abbr)  \(g.played ? "\(g.awayRuns!)–\(g.homeRuns!)":"AT")  \(leagueTeams[g.home].abbr)",1133,y,23,white,"AvenirNextCondensed-Heavy",380);text(g.stage,1134,y+29,15,muted,"AvenirNext-DemiBold",260);if g.played{button("BOX","box:\(g.id)",rect(1437,y+2,83,37))}}
+        if autoSim{drawSimulationStatus()}else{button("SIM TO SELECTED DATE","simdate",rect(1110,735,435,46),enabled:selectedDay>f.day && f.champion==nil)};simControls(y:789)
     }
     func squadPage(_ pitchers:Bool?=nil)->[FranchisePlayer]{guard let f=career else{return []};let rs=f.roster(f.user).filter{pitchers==nil || (pitchers! ? $0.canPitch:$0.canHit)}.sorted{$0.value>$1.value};rosterPage=min(rosterPage,max(0,(rs.count-1)/10));return Array(rs.dropFirst(rosterPage*10).prefix(10))}
     func rosterTable(_ ps:[FranchisePlayer],x:CGFloat,y:CGFloat,width:CGFloat,action:String="select"){
@@ -219,7 +226,7 @@ final class FranchiseView {
     func drawStandings(){guard let f=career else{return};text("THE RACE TO SEPTEMBER.",51,235,42,white,"Impact",1470);text("REGULAR SEASON  ·  TOP FOUR QUALIFY  ·  WIN% → TIED-TEAM RECORD → RUN DIFFERENTIAL",54,295,18,muted,"AvenirNext-DemiBold",1475)
         let ys:CGFloat=363;text("CLUB",104,ys,16,muted);for (x,title) in [(CGFloat(622),"W"),(726,"L"),(823,"PCT"),(983,"RF"),(1090,"RA"),(1203,"DIFF"),(1391,"GB")]{text(title,x,ys,16,muted)}
         let rows=f.table(),top=rows[0]
-        for (i,r) in rows.enumerated(){let y:CGFloat=406+CGFloat(i)*49,rr=rect(51,y,1493,46);fill(rr,r.club==f.user ? accent.withAlphaComponent(0.22):ink.withAlphaComponent(i%2==0 ? 0.9:0.65));if i<4{fill(rect(51,y,4,46),green)};text("\(i+1)",68,y+7,24,accent,"Impact",55);image(db.teams[r.club].logo,rect(113,y+5,51,35));text(db.teams[r.club].name,183,y+7,26,white,"AvenirNextCondensed-Heavy",410)
+        for (i,r) in rows.enumerated(){let y:CGFloat=406+CGFloat(i)*(career?.clubCount==8 ? 44:49),rr=rect(51,y,1493,42);fill(rr,r.club==f.user ? accent.withAlphaComponent(0.22):ink.withAlphaComponent(i%2==0 ? 0.9:0.65));if i<4{fill(rect(51,y,4,46),green)};text("\(i+1)",68,y+7,24,accent,"Impact",55);image(leagueTeams[r.club].logo,rect(113,y+5,51,35));text(leagueTeams[r.club].name,183,y+7,26,white,"AvenirNextCondensed-Heavy",410)
             let gb=Double((top.w-r.w)+(r.l-top.l))/2
             for (x,value) in [(CGFloat(622),String(r.w)),(726,String(r.l)),(823,String(format:"%.3f",r.pct)),(983,String(r.rf)),(1090,String(r.ra)),(1203,String(format:"%+d",r.rf-r.ra)),(1391,i==0 ? "—":String(format:"%.1f",gb))]{text(value,x,y+8,23,white,"Menlo",130)}}
         button("VIEW PLAYOFF BRACKET","bracket",rect(51,790,400,45),primary:true)
@@ -233,6 +240,8 @@ final class FranchiseView {
     func drawModal(){
         fill(rect(0,0,1600,900),ink.withAlphaComponent(0.91));areas=[]
         panel(rect(79,76,1442,748));fill(rect(79,76,1442,5),accent)
+        if worldModal(){return}
+        if customClubModal(){return}
         if careerStatsModal(){return}
         if growthModal(){return}
         if commerceModal(){return}
@@ -244,10 +253,10 @@ final class FranchiseView {
             text("THE ROAD TO THE HOLLAND SERIES",111,106,46,white,"Impact",1340)
             for (i,s) in [1000,1001,3000].enumerated(){let x:CGFloat=111+CGFloat(i)*463;panel(rect(x,223,433,313));text(i==2 ? "HOLLAND SERIES":"SEMIFINAL \(i+1)",x+20,243,31,white,"Impact",387);text(i==2 ? "BEST OF SEVEN":"BEST OF FIVE",x+22,290,18,accent,"AvenirNext-DemiBold",388)
                 let games=f.schedule.filter{$0.series==s};let teams=games.first.map{[$0.home,$0.away]} ?? []
-                for j in 0..<2 {let y:CGFloat=350+CGFloat(j)*75;if j<teams.count {let club=teams[j];image(db.teams[club].logo,rect(x+19,y,76,52));text(db.teams[club].name,x+113,y+7,24,white,"AvenirNextCondensed-Heavy",249);text(String(games.filter{$0.winner==club}.count),x+372,y+5,34,accent,"Impact",50)}else{text(i==2 ? "SEMIFINAL WINNER \(j+1)":"SEED \(i==0 ? (j==0 ? 1:4):(j==0 ? 2:3))",x+23,y+13,25,muted,"AvenirNextCondensed-Heavy",387)}}
-                if let winner=f.seriesWinner(s,i==2 ? 4:3){text("WINNER: "+db.teams[winner].abbr,x+24,493,20,green,"AvenirNext-DemiBold",383)}
+                for j in 0..<2 {let y:CGFloat=350+CGFloat(j)*75;if j<teams.count {let club=teams[j];image(leagueTeams[club].logo,rect(x+19,y,76,52));text(leagueTeams[club].name,x+113,y+7,24,white,"AvenirNextCondensed-Heavy",249);text(String(games.filter{$0.winner==club}.count),x+372,y+5,34,accent,"Impact",50)}else{text(i==2 ? "SEMIFINAL WINNER \(j+1)":"SEED \(i==0 ? (j==0 ? 1:4):(j==0 ? 2:3))",x+23,y+13,25,muted,"AvenirNextCondensed-Heavy",387)}}
+                if let winner=f.seriesWinner(s,i==2 ? 4:3){text("WINNER: "+leagueTeams[winner].abbr,x+24,493,20,green,"AvenirNext-DemiBold",383)}
             }
-            if let winner=f.champion{text(db.teams[winner].name.uppercased(),114,591,58,accent,"Impact",1330);text("HOLLAND SERIES CHAMPIONS · \(f.year)",118,677,25,white,"AvenirNext-DemiBold",1330)}else{paragraph("Top-four seeds are locked after the regular season. The higher seed has home advantage. Unneeded games are cancelled as soon as a series is won.",117,592,1246,133,26,white)}
+            if let winner=f.champion{text(leagueTeams[winner].name.uppercased(),114,591,58,accent,"Impact",1330);text("HOLLAND SERIES CHAMPIONS · \(f.year)",118,677,25,white,"AvenirNext-DemiBold",1330)}else{paragraph("Top-four seeds are locked after the regular season. The higher seed has home advantage. Unneeded games are cancelled as soon as a series is won.",117,592,1246,133,26,white)}
         } else if modal=="training",let f=career {
             text("THIS WEEK’S TRAINING",112,108,49,white,"Impact",1300);text("\(f.dateLabel(f.day)) · TOTAL €\(number(f.trainingCost())) · CASH €\(number(f.clubs[f.user].cash))",115,185,23,accent,"AvenirNext-DemiBold",1330)
             for (i,id) in f.training.keys.sorted().enumerated(){if let p=f.player(id),let order=f.training[id]{let y:CGFloat=258+CGFloat(i)*58;text(p.profile.name,116,y,26,white,"AvenirNextCondensed-Heavy",550);text(abilityNames[order.ability].uppercased(),688,y+2,22,accent,"AvenirNext-DemiBold",350);text(["LIGHT","BALANCED","INTENSE"][order.intensity],1136,y+2,22,muted,"AvenirNext-DemiBold",330)}}
@@ -266,7 +275,7 @@ final class FranchiseView {
             switch modal {
             case "trainreport":title="DEVELOPMENT REPORT";body=career?.trainingReport.joined(separator:"\n\n") ?? "No session yet."
             case "ledger":title="THE CLUB ACCOUNTS";body=career?.ledger.prefix(13).joined(separator:"\n\n") ?? "No transactions yet."
-            case "history":title="YOUR FRANCHISE HISTORY";body=(career?.history.map{"\($0.year) · Champion: \(db.teams[$0.champion].name) · Your record \($0.userWins)–\($0.userLosses)"}.joined(separator:"\n\n")).flatMap{$0.isEmpty ? nil:$0} ?? "Finish your first Holland Series to begin your club's story."
+            case "history":title="YOUR FRANCHISE HISTORY";body=(career?.history.map{"\($0.year) · Champion: \(leagueTeams[$0.champion].name) · Your record \($0.userWins)–\($0.userLosses)"}.joined(separator:"\n\n")).flatMap{$0.isEmpty ? nil:$0} ?? "Finish your first Holland Series to begin your club's story."
             default:title="YOUR DECISIONS SHAPE THE SEASON";body="LINEUP: batting order changes who receives plate appearances. Late-game pinch hitters can enter; substitutions never re-enter. Defensive position mistakes reduce fielding. Tired hitters make less contact.\n\nPITCHING: your chosen starter and bullpen policy affect strikeouts, walks and contact. Doubleheaders make rotation depth and recovery valuable.\n\nTRAINING: set an ongoing plan for six players. Automatic sessions repeat weekly; pitchers and hitters have separate abilities. Gains persist. Intensive sessions add more fatigue; young players develop faster. Academy upgrades increase gains.\n\nTHE CLUB: home attendance earns ticket and concession income. Wins attract fans; expensive tickets reduce demand. Locker rooms accelerate recovery. Trades permanently exchange players; GM strictness and roster needs determine acceptance.\n\nSIM SKILLS: sandbox estimates use available aggregate stats with a shared neutral prior where evidence is missing. Development is fictional career progress. These are not certified 2026 player ratings.\n\nCALENDAR: official 2026 KNBSB playing dates, generated balanced matchups. Later years use projected playing dates. Standings, box scores and finances are your simulated world."
             }
             text(title,113,109,45,white,"Impact",1327);paragraph(body.isEmpty ? "No entries yet.":body,117,212,1281,516,modal=="help" ? 21:23,white)
@@ -281,8 +290,8 @@ final class FranchiseView {
         text("R",688,147,12,muted,"Menlo",60)
         let inningWidth:CGFloat=min(48,650/CGFloat(innings))
         for inning in 0..<innings{text(String(inning+1),807+CGFloat(inning)*inningWidth,148,12,muted,"Menlo",inningWidth)}
-        for side in 0..<2 {let y:CGFloat=164+CGFloat(side)*58;image(db.teams[teams[side]].logo,rect(112,y,74,48));text(db.teams[teams[side]].name.uppercased(),206,y+7,29,white,"AvenirNextCondensed-Heavy",475);text(String(side==0 ? g.awayRuns!:g.homeRuns!),688,y+1,42,accent,"Impact",99);for inning in 0..<innings{let score=g.lines.indices.contains(side) && g.lines[side].indices.contains(inning) ? String(g.lines[side][inning]):"–";text(score,807+CGFloat(inning)*inningWidth,y+13,20,white,"Menlo",inningWidth)}}
-        button("\(db.teams[g.away].abbr) BOX","boxaway",rect(113,308,208,42),primary:boxTeam==0);button("\(db.teams[g.home].abbr) BOX","boxhome",rect(340,308,208,42),primary:boxTeam==1)
+        for side in 0..<2 {let y:CGFloat=164+CGFloat(side)*58;image(leagueTeams[teams[side]].logo,rect(112,y,74,48));text(leagueTeams[teams[side]].name.uppercased(),206,y+7,29,white,"AvenirNextCondensed-Heavy",475);text(String(side==0 ? g.awayRuns!:g.homeRuns!),688,y+1,42,accent,"Impact",99);for inning in 0..<innings{let score=g.lines.indices.contains(side) && g.lines[side].indices.contains(inning) ? String(g.lines[side][inning]):"–";text(score,807+CGFloat(inning)*inningWidth,y+13,20,white,"Menlo",inningWidth)}}
+        button("\(leagueTeams[g.away].abbr) BOX","boxaway",rect(113,308,208,42),primary:boxTeam==0);button("\(leagueTeams[g.home].abbr) BOX","boxhome",rect(340,308,208,42),primary:boxTeam==1)
         text("BATTING",115,379,22,muted,"AvenirNext-DemiBold",500);text("AB    H   HR   RBI",655,381,18,muted,"Menlo",353)
         let ps=g.box.keys.compactMap{f.player($0)}.filter{g.playerTeams[$0.profile.id]==teams[boxTeam]}.sorted{a,b in
             let order=g.battingOrders.indices.contains(boxTeam) ? g.battingOrders[boxTeam]:[]
@@ -315,21 +324,23 @@ final class FranchiseView {
         if let g=f.schedule.first(where:{$0.played && !played.contains($0.id) && ["Semifinal","Holland Series"].contains($0.stage)}),!simBulkPlayoffs{stop();boxGame=g.id;tab=13;modal="playoffnight"}
         else if let series=simSeriesTarget,f.seriesWinner(series,series==3000 ? 4:3) != nil {stop();tab=13;notify("Series complete. Review the bracket before continuing.")}
         else if let reason=f.pauseReason{stop();tab=reason.hasPrefix("Injury") || reason.contains("unavailable") ? 12:0;notify(reason)}
+        else if f.champion != nil{stop();tab=13;modal="bracket"}
         else if oldPhase != f.phase && !f.seeds.isEmpty {
-            tab=13
+            tab=autoSim ? 1:13
             if autoSim && simTargetGame != nil && !simBulkPlayoffs{startSimulation("playoff")}
             notify(simBulkPlayoffs ? "Playoff bracket updated. Simulation continues day by day.":"Playoff bracket ready. Choose a game, series or the remaining postseason.")
         }
-        else if f.champion != nil{stop();modal="bracket"}
         else if f.trainingDue && !f.options.automaticTraining{stop();tab=4;notify("Complete manual training or turn on Auto Training.")}
         else if f.schedule.filter({$0.played}).count==played.count{stop();notify(message)}
         needsDisplay=true
     }
     func act(_ action:String){
         needsDisplay=true;hover = -1
+        if customClubAction(action){return}
         if guideAction(action){return}
         if !["simweek","simdate","step","simclub","simseries","simplayoff","simmonth","simplayoffseries","simpostseason"].contains(action){stop()}
         if action != "fieldpos"{positionMenu=false}
+        if worldAction(action){return}
         if youthAction(action){return}
         if tradeAction(action){return}
         if commerceAction(action){return}
@@ -362,7 +373,7 @@ final class FranchiseView {
         case "careers":career=nil;page="careers";focus=0
         case "real":fantasy=false
         case "fantasy":fantasy=true
-        case "create":career=Franchise.make(db:db,user:selectedClub,slot:newSlot,fantasy:fantasy,seed:UInt64(Date().timeIntervalSince1970));page=fantasy ? "draft":"hub";tab=0;rosterPage=0;poolPage=0;selectedDay=0;syncMonth();save();focus=0;beginCareerTour(automatic:true)
+        case "create":career=Franchise.make(db:db,user:selectedClub,slot:newSlot,fantasy:fantasy,seed:UInt64(Date().timeIntervalSince1970));career?.prepareWorld();page=fantasy ? "draft":"hub";tab=0;rosterPage=0;poolPage=0;selectedDay=0;syncMonth();save();focus=0;beginCareerTour(automatic:true)
         case "draftbest":career?.draftBest();career?.cpuDraft();save();if career?.draft==false{page="hub";tab=0;beginCareerTour(automatic:true)}
         case "autodraft":while career?.draft==true{career?.draftBest()};save();page="hub";tab=0;beginCareerTour(automatic:true)
         case "poolprev":poolPage=max(0,poolPage-1)
@@ -382,7 +393,7 @@ final class FranchiseView {
         case "trainconfirm":modal="training";focus=0
         case "applytraining":if career?.completeTraining()==true{save();modal="trainreport";notify("Training complete. The calendar remains paused until you simulate.")}
         case "ticketdown","ticketup":if var f=career{f.clubs[f.user].ticket=max(8,min(22,f.clubs[f.user].ticket+(action=="ticketup" ? 1:-1)));career=f;save()}
-        case "nextseason":if career?.nextSeason()==true{save();selectedDay=0;syncMonth();tab=0;modal=""}
+        case "nextseason":career?.beginOffseason();save();tab=19;modal=""
         case "step":stop();career?.pauseReason=nil;simulateOne()
         case "simweek":startSimulation("week")
         case "simmonth":startSimulation("month")
@@ -405,6 +416,7 @@ final class FranchiseView {
         else {hover=areas.firstIndex{$0.rect.contains(p)} ?? -1;if hover>=0{focus=hover}}
     }
     func key(_ code:Int,_ characters:String,shift:Bool=false){
+        if customTextKey(code,characters){return}
         if code==53 && tourStep != nil{act("tour:skip");return}
         if code==53 && positionMenu{positionMenu=false;return}
         if characters==" " && autoSim{act("stop");return}

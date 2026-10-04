@@ -11,7 +11,7 @@ extension Franchise {
         let youth=age<25 ? 1.12:(age>33 ? 0.88:1.0)
         let peers=roster(club).filter{$0.canPitch==p.canPitch && !$0.inFarm}.sorted{$0.rating>$1.rating}
         let upgrade=p.rating>(peers.prefix(p.isPitcher ? 4:9).last?.rating ?? 70) ? 1.12:0.85
-        return pow(max(10,Double(p.rating)-35),2)*youth*upgrade
+        return pow(max(10,Double(p.rating)-35),2)*youth*upgrade*(world==nil ? 1:1+(styleFit(p,club)-50)*0.003)
     }
     func tradeValidation(club:Int,give:[String],take:[String])->String? {
         guard loanWindowOpen else{return "Trade window closed. Trading reopens next season; deadline is 1 July."}
@@ -22,6 +22,7 @@ extension Franchise {
         for (owner,outgoing,incoming) in [(user,give,take),(club,take,give)] {
             let after=roster(owner).filter{!outgoing.contains($0.profile.id)}+incoming.compactMap{player($0)}
             guard after.count<=32,after.filter({!$0.isPitcher && $0.available(day)}).count>=9,after.filter({$0.isPitcher && $0.available(day)}).count>=4 else{return "Both clubs need nine healthy active hitters, four healthy pitchers and no more than 32 players."}
+            if world != nil && after.reduce(0,{$0+($1.deal?.salary ?? annualAsk($1))})>salaryBudget(owner){return "This trade exceeds a club’s annual salary budget."}
             for position in defensePositions where position != "DH" {
                 let before=roster(owner).filter{$0.fits(position) && !$0.inFarm}.count
                 if before>0 && !after.contains(where:{$0.fits(position) && !$0.inFarm}){return "This deal would remove a club's last eligible \(position). Include a replacement."}
@@ -93,6 +94,6 @@ extension Franchise {
         let rate=(sb+cs+1.5)/(pa+45)
         let learned=max(-0.03,min(0.12,p.development(8)*0.007+p.development(3)*0.003))
         let situation=abs(scoreMargin)>=6 ? 0.45:1.0
-        return min(0.78,max(0.015,(0.025+rate*6+learned)*situation))
+        return min(0.78,max(0.015,(0.025+rate*6+learned)*situation*(style(p.club)==1 ? 1.25:1)))
     }
 }
