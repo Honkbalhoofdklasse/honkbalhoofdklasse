@@ -2,7 +2,7 @@
 
 Next.js 16 App Router, React 19, Tailwind 4, Supabase, Vercel. Live site: https://honkbalhoofdklasse.com. Do not break it.
 
-Full rules: AGENTS.md. Open work: to-be-improved/improvements-001/checklist.md.
+Full rules: AGENTS.md. Folder map: docs/structure.md. Open work: docs/improvements/checklist-001.md.
 
 ## Before you touch code
 1. Read AGENTS.md.

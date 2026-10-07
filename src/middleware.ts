@@ -6,10 +6,7 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Public admin routes — always allow
-  if (
-    pathname.startsWith('/admin/login') ||
-    pathname.startsWith('/admin/auth')
-  ) {
+  if (pathname.startsWith('/admin/login') || pathname.startsWith('/admin/auth')) {
     return NextResponse.next()
   }
 
@@ -31,10 +28,12 @@ export async function middleware(request: NextRequest) {
             })
           },
         },
-      }
+      },
     )
 
-    const { data: { user } } = await supabase.auth.getUser()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
 
     if (!user) {
       const loginUrl = new URL('/admin/login', request.url)
@@ -43,11 +42,15 @@ export async function middleware(request: NextRequest) {
     }
 
     // Public franchise accounts must not gain access to admin-only pages or APIs.
-    const {data: admin, error: roleError} = await supabase.from('admin_users').select('email').eq('email', user.email ?? '').maybeSingle()
+    const { data: admin, error: roleError } = await supabase
+      .from('admin_users')
+      .select('email')
+      .eq('email', user.email ?? '')
+      .maybeSingle()
     if (roleError || !admin) {
       return pathname.startsWith('/admin/api/')
-        ? NextResponse.json({error:'Forbidden'}, {status:403})
-        : new NextResponse('Geen toegang tot beheer.', {status:403})
+        ? NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+        : new NextResponse('Geen toegang tot beheer.', { status: 403 })
     }
     return response
   }

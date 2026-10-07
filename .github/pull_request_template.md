@@ -2,7 +2,7 @@
 `type(scope): what changed` (feat, fix, perf, a11y, refactor, chore)
 
 ## Why
-One or two sentences. Link the checklist item: `to-be-improved/improvements-001/checklist.md#...`
+One or two sentences. Link the checklist item: `docs/improvements/checklist-001.md#...`
 
 ## What changed
 - 

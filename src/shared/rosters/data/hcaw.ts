@@ -1,0 +1,37 @@
+import type { TeamRoster } from './types'
+
+export const hcaw: TeamRoster = {
+  players: [
+    { uniform: '15', name: 'Jesse Aussems', pos: 'IF', bt: 'L/R', yob: 1992 },
+    { uniform: '6', name: 'Daan Baltus', pos: 'IF', bt: 'L/R', yob: 2006 },
+    { uniform: '21', name: 'Maxwell Cornelissen', pos: 'P', bt: 'L/L', yob: 2005 },
+    { uniform: '14', name: 'Gio De Graauw', pos: 'P', bt: 'R/R', yob: 2002 },
+    { uniform: '72', name: 'Nathan Diaby', pos: 'P', bt: 'R/R', yob: 1999 },
+    { uniform: '8', name: 'Arij Fransen', pos: 'P', bt: 'R/R', yob: 2001 },
+    { uniform: '35', name: 'Koen Ghijsen', pos: 'P', bt: 'R/R', yob: 2008 },
+    { uniform: '31', name: 'Terrance Heemskerk', pos: 'IF', bt: 'L/R', yob: 2005 },
+    { uniform: '27', name: 'Jim Hoyer', pos: 'IF', bt: 'R/R', yob: 2007 },
+    { uniform: '2', name: 'Sheadion Louisa', pos: 'IF', bt: 'R/R', yob: 2006 },
+    { uniform: '30', name: 'Joel Martis', pos: 'P', bt: 'R/R', yob: 1998 },
+    { uniform: '8', name: 'Tyrell Mercado Reyes', pos: 'P', bt: 'R/R', yob: 2007 },
+    { uniform: '36', name: 'Sem Nijman', pos: 'P', bt: 'L/L', yob: 2004 },
+    { uniform: '26', name: 'Jeldwin Orman', pos: 'OF', bt: 'R/R', yob: 1991 },
+    { uniform: '8', name: 'Sebastian Perez', pos: 'C', bt: 'S/R', yob: 2006 },
+    { uniform: '19', name: 'Quishawn Pieternella', pos: 'IF', bt: 'R/R', yob: 2002 },
+    { uniform: '4', name: 'Mees Robberse', pos: 'C', bt: 'R/R', yob: 2004 },
+    { uniform: '11', name: 'Toss Spekking', pos: 'IF', bt: 'R/R', yob: 2008 },
+    { uniform: '16', name: 'Kaj Timmermans', pos: 'P', bt: 'R/R', yob: 1995 },
+    { uniform: '23', name: 'Jayden Van Atten', pos: 'IF', bt: 'R/R', yob: 2006 },
+    { uniform: '44', name: 'Jesse Van Es', pos: 'P', bt: 'R/R', yob: 2002 },
+    { uniform: '34', name: 'Sjors Art Van Gool', pos: 'P', bt: 'R/R', yob: 2010 },
+    { uniform: '74', name: 'Kimi Verkruijssen', pos: 'P', bt: 'R/R', yob: 2007 },
+    { uniform: '22', name: 'Koen Werkman', pos: 'OF', bt: 'R/R', yob: 1992 },
+    { uniform: '13', name: 'Miquel Willem', pos: 'OF', bt: 'L/L', yob: 2005 },
+  ],
+  coaches: [
+    { uniform: '38', name: 'René Baltus', role: 'Manager/Head coach' },
+    { uniform: '24', name: 'Roy Berrevoets', role: 'Coach' },
+    { uniform: '17', name: 'Ronald Jaarsma', role: 'Coach' },
+    { uniform: '33', name: 'Rene Rijst', role: 'Pitching Coach' },
+  ],
+}

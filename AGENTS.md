@@ -29,7 +29,7 @@ Crons (`vercel.json`) only run in production. Never add a cron without `CRON_SEC
 3. Files under 250 lines, functions under 40 lines, one component per file.
 4. No comments, no commented-out code, no TODO. Name it instead.
 5. Types: one `Game`, one `Team`, one `Player` in `src/shared/types/`. Do not redefine.
-6. Reuse before writing: `TeamLogo`, `formatGameDate`, `KNBSB_NUMERIC_ID_MAP` in `src/lib/teams.ts`, `Modal`.
+6. Reuse before writing: `src/shared/teams/teams.ts` (ids, names, logos), `src/shared/ui/` (NavBar, modals, NotifyButton), `src/shared/supabase/` (clients). Pages live in `src/features/<feature>/screens/`, handlers in `src/features/<feature>/api/`.
 7. Data fetching: server pages use `fetch` with `next: { revalidate }` or `export const revalidate`. Never `force-dynamic` without a stated reason in the PR. Never fetch your own `/api` from a server component.
 8. Client fetching: one hook per feature in `hooks/`, cleanup on unmount, pause on `document.hidden`.
 9. Heavy or click-only components (modals, charts, search) load through `next/dynamic`.
