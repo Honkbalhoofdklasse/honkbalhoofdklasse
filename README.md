@@ -91,19 +91,3 @@ Preview env vars in Vercel must use the dev Supabase project.
 | `/api/notify-games` | 07:00 on Thu, Fri, Sat (`0 7 * * 4,5,6`) |
 
 Every cron route must check `CRON_SECRET`.
-
-## Contributing
-
-1. Branch from `main`: `git switch -c feat/<name>` or `fix/<name>`.
-2. Make the smallest change that works.
-3. Run `npm run check`.
-4. Open a PR with a title, a description and a screenshot for UI changes.
-5. CI must pass. The Vercel preview must load.
-6. Merge through the PR only. Never push to `main`.
-
-Read the rules in [AGENTS.md](AGENTS.md). Pick work from [the checklist](to-be-improved/improvements-001/checklist.md).
-
-## Franchise game
-
-A Swift simulation compiled to WebAssembly, served at `/franchise`.
-Build, test and persistence details are in [game-runtime/README.md](game-runtime/README.md).
