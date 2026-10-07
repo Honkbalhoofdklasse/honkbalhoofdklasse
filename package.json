@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "biome lint .",
     "franchise:generate": "python3 scripts/generate-franchise.py",
     "franchise:build": "bash scripts/build-franchise.sh",
     "franchise:test:native": "python3 scripts/test-franchise-native.py && python3 scripts/test-franchise-ui.py",
@@ -14,7 +14,12 @@
     "franchise:photos": "node scripts/optimize-franchise-photos.mjs",
     "franchise:test:images": "node scripts/test-franchise-images.mjs",
     "franchise:test:update": "python3 scripts/test-franchise-update.py",
-    "franchise:test:growth": "python3 scripts/test-franchise-growth.py"
+    "franchise:test:growth": "python3 scripts/test-franchise-growth.py",
+    "format": "biome check --write .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest --passWithNoTests",
+    "check": "biome lint . && tsc --noEmit && vitest --run --passWithNoTests && next build",
+    "lighthouse": "lhci autorun"
   },
   "dependencies": {
     "@bjorn3/browser_wasi_shim": "^0.4.2",
@@ -23,7 +28,6 @@
     "@supabase/supabase-js": "^2.49.4",
     "@types/sharp": "^0.31.1",
     "@vercel/analytics": "^2.0.1",
-    "maplibre-gl": "^5.24.0",
     "next": "^16.2.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -40,6 +44,9 @@
     "@types/web-push": "^3.6.4",
     "postcss": "^8",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "@biomejs/biome": "^2.5.15",
+    "@lhci/cli": "^0.14.0",
+    "vitest": "^3.2.0"
   }
 }

@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.DEV_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.DEV_SUPABASE_ANON_KEY }}
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npx biome lint .
+      - run: npx tsc --noEmit
+      - run: npx vitest --run --passWithNoTests
+      - run: npm run build
+
+  lighthouse:
+    needs: check
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Wait for Vercel preview
+        id: preview
+        uses: patrickedqvist/wait-for-vercel-preview@v1.3.2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          max_timeout: 600
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Lighthouse CI
+        run: |
+          npm i -g @lhci/cli@0.14
+          lhci autorun --collect.url="${{ steps.preview.outputs.url }}" \
+            --collect.url="${{ steps.preview.outputs.url }}/stand" \
+            --collect.url="${{ steps.preview.outputs.url }}/uitslagen" \
+            --collect.url="${{ steps.preview.outputs.url }}/livescores" \
+            --collect.url="${{ steps.preview.outputs.url }}/leaders"
