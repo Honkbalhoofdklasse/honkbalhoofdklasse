@@ -9,7 +9,7 @@ One or two sentences. Link the checklist item: `to-be-improved/improvements-001/
 
 ## Checks
 - [ ] `npm run check` green
-- [ ] Lighthouse on preview: perf __ / a11y __ / bp __ / seo __ (baseline: 85 / 84 / 100 / 100)
+- [ ] Lighthouse (`npm run lighthouse`, optional): perf __ / a11y __ / bp __ / seo __ (baseline: 85 / 84 / 100 / 100)
 - [ ] Opened the preview URL and clicked through the changed screen
 
 ## Screenshot
