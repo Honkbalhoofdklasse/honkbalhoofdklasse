@@ -56,7 +56,6 @@ Crons (`vercel.json`) only run in production. Never add a cron without `CRON_SEC
 1. Unit: `npm test` (vitest).
 2. Lighthouse: `npm run lighthouse` (uses `lighthouserc.json`, needs a running server or `LH_URL`).
 3. Visual or flow check: Chrome DevTools MCP or claude-in-chrome against the preview URL. Report what you clicked and what you saw. Do not claim a UI works without opening it.
-4. jev-qa: write `tests/qa/<feature>.qa` from the acceptance criteria and run `jev-qa run`.
 
 ## 7. What not to do
 - Do not edit `public/franchise/**` generated assets by hand. Use `npm run franchise:*`.

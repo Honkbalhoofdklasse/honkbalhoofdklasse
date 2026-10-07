@@ -1,93 +1,81 @@
 # Honkbalhoofdklasse
 
-Live scores, standings, stats and a franchise game for the Dutch Honkbal Hoofdklasse. Live at [honkbalhoofdklasse.com](https://honkbalhoofdklasse.com).
+Official website of the Honkbal Hoofdklasse, the top baseball league of the Netherlands.
+Live scores, standings, statistics, news and the franchise game.
 
 [![CI](https://github.com/Honkbalhoofdklasse/honkbalhoofdklasse/actions/workflows/ci.yml/badge.svg)](https://github.com/Honkbalhoofdklasse/honkbalhoofdklasse/actions/workflows/ci.yml)
-![Next.js 16](https://img.shields.io/badge/Next.js-16-black)
-![React 19](https://img.shields.io/badge/React-19-149eca)
-![Tailwind 4](https://img.shields.io/badge/Tailwind-4-38bdf8)
 
-## Quick start
+**Production:** [honkbalhoofdklasse.com](https://honkbalhoofdklasse.com)
 
-1. Clone the repo.
-   ```bash
-   git clone https://github.com/Honkbalhoofdklasse/honkbalhoofdklasse.git
-   cd honkbalhoofdklasse
-   ```
-2. Install dependencies.
+## Stack
+
+| Layer | Technology |
+|---|---|
+| Framework | Next.js 16, React 19, TypeScript |
+| Styling | Tailwind CSS 4 |
+| Data | Supabase (Postgres, Auth, Storage) |
+| Hosting | Vercel (production from `main`, cron jobs in `vercel.json`) |
+| Email and push | Resend, Web Push |
+| Franchise game | Swift compiled to WebAssembly (`game-runtime/`) |
+
+## Getting started
+
+1. Install dependencies.
    ```bash
    npm install
    ```
-3. Create your env file. Fill in the values for the **dev** Supabase project.
+2. Create the env file and fill in the development values.
    ```bash
    cp .env.example .env.local
    ```
-4. Start the dev server.
+3. Start the development server.
    ```bash
    npm run dev
    ```
-5. Open <http://localhost:3000>.
-
-Never use the prod Supabase project locally.
+4. Open <http://localhost:3000>.
 
 ## Scripts
 
-| Script | What it does |
+| Command | Purpose |
 |---|---|
-| `npm run dev` | Dev server |
+| `npm run dev` | Development server |
 | `npm run build` | Production build |
-| `npm run start` | Serve the production build |
-| `npm run check` | Biome, typecheck, tests, build. Run before every PR |
-| `npm run lint` | Biome lint and format check |
+| `npm run check` | Lint, typecheck, tests and build. Run before every commit |
+| `npm run lint` | Biome lint |
 | `npm run format` | Biome auto-fix |
-| `npm run typecheck` | `tsc --noEmit` |
-| `npm test` | Vitest (watch mode) |
-| `npm run lighthouse` | Lighthouse CI against `http://localhost:3000` or `LH_URL` |
-| `npm run franchise:generate` | Generate Swift sources for the game |
-| `npm run franchise:build` | Build the game WebAssembly binary |
-| `npm run franchise:photos` | Optimize franchise photos |
-| `npm run franchise:test:native` | Native and UI tests |
-| `npm run franchise:test:browser` | Browser and cloud tests |
-| `npm run franchise:test:images` | Image tests |
-| `npm run franchise:test:update` | Update tests |
-| `npm run franchise:test:growth` | Growth tests |
+| `npm run typecheck` | TypeScript check |
+| `npm test` | Vitest |
+| `npm run lighthouse` | Lighthouse against a running server |
+| `npm run franchise:*` | Build and test the franchise game, see `game-runtime/README.md` |
 
 ## Project structure
 
 ```
-src/
-  app/            Next.js routes and API routes
-  components/     Shared React components
-  lib/            Shared helpers, Supabase clients, data
-  features/       Planned home for new code: src/features/<feature>/
-public/franchise/ Built game: WebAssembly, assets, game.html
-game-runtime/     Swift source of the franchise game
-supabase/
-  migrations/     SQL migrations and RLS policies
-scripts/          Franchise build and test scripts
-to-be-improved/   Audit checklist and open work
+src/app/              Routes, layouts and API routes
+src/components/       Shared React components
+src/lib/              Helpers, Supabase clients, static data
+public/franchise/     Built franchise game (WebAssembly and assets)
+game-runtime/         Swift source of the franchise game
+supabase/migrations/  SQL migrations and row level security policies
+scripts/              Franchise build and test scripts
+to-be-improved/       Improvement checklists
 ```
 
 ## Environments
 
-| Env | Branch | Vercel | Supabase | URL |
-|---|---|---|---|---|
-| dev | local | `vercel dev` or `next dev` | dev project (see `.env.example`) | localhost:3000 |
-| preview | any PR branch | automatic preview deploy | dev project | `*.vercel.app` |
-| prod | `main` | production | prod project | honkbalhoofdklasse.com |
+| Environment | Source | Supabase project |
+|---|---|---|
+| Development | local | development |
+| Preview | pull request branch | development |
+| Production | `main` | production |
 
-Preview env vars in Vercel must use the dev Supabase project.
+Development and preview never use the production database.
 
-## Deployment
+## Continuous integration
 
-1. Vercel deploys `main` to production.
-2. Every PR gets a preview deploy.
-3. Crons are in `vercel.json` and run only in production.
+Every push to `main` runs lint, typecheck, tests and a production build in GitHub Actions.
 
-| Path | Schedule |
-|---|---|
-| `/api/sync` | every 2 minutes (`*/2 * * * *`) |
-| `/api/push/live-monitor` | every minute (`*/1 * * * *`) |
-| `/api/notify-games` | 07:00 on Thu, Fri, Sat (`0 7 * * 4,5,6`) |
+## Working on the codebase
 
-Every cron route must check `CRON_SECRET`.
+Rules for contributors and AI agents are in [AGENTS.md](AGENTS.md).
+Open work is tracked in [to-be-improved](to-be-improved/).
