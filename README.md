@@ -51,14 +51,14 @@ Live scores, standings, statistics, news and the franchise game.
 ## Project structure
 
 ```
-src/app/              Routes, layouts and API routes
-src/components/       Shared React components
-src/lib/              Helpers, Supabase clients, static data
+src/app/              Thin route files only: page.tsx renders a feature screen, route.ts re-exports a feature handler
+src/features/<name>/  One folder per feature: api/ (handlers, data access), domain/ (pure logic, types), components/, screens/, hooks/
+src/shared/           Used by two or more features: ui/, supabase/, teams/, rosters/, knbsb/, email/, i18n/, media/, data/
 public/franchise/     Built franchise game (WebAssembly and assets)
 game-runtime/         Swift source of the franchise game
 supabase/migrations/  SQL migrations and row level security policies
 scripts/              Franchise build and test scripts
-to-be-improved/       Improvement checklists
+docs/                 Docs and improvement checklists
 ```
 
 ## Environments
@@ -78,4 +78,4 @@ Every push to `main` runs lint, typecheck, tests and a production build in GitHu
 ## Working on the codebase
 
 Rules for contributors and AI agents are in [AGENTS.md](AGENTS.md).
-Open work is tracked in [to-be-improved](to-be-improved/).
+Folder map: [docs/structure.md](docs/structure.md). Open work is tracked in [docs/improvements](docs/improvements/).

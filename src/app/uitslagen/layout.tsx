@@ -8,7 +8,9 @@ export const metadata: Metadata = {
     title: '',
     description: '',
     url: 'https://honkbalhoofdklasse.com/uitslagen',
-    images: ['https://res.cloudinary.com/dn8c5398m/image/upload/q_auto/f_auto/v1781607525/hk_logo_iets_groter_tumykq.png'],
+    images: [
+      'https://res.cloudinary.com/dn8c5398m/image/upload/q_auto/f_auto/v1781607525/hk_logo_iets_groter_tumykq.png',
+    ],
   },
 }
 

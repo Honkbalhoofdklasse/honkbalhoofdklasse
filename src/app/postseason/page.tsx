@@ -1,10 +1,11 @@
 import type { Metadata } from 'next'
-import { getHollandSeries } from '@/lib/holland-series'
-import PostseasonBracket from './PostseasonBracket'
+import { getHollandSeries } from '@/features/postseason/api/holland-series'
+import PostseasonBracket from '@/features/postseason/screens/PostseasonBracket'
 
 export const metadata: Metadata = {
   title: 'Postseason Bracket 2026 | Honkbal Hoofdklasse',
-  description: 'The Honkbal Hoofdklasse 2026 postseason bracket — semifinals and the Holland Series with live series scores, schedule, boxscores and win probability.',
+  description:
+    'The Honkbal Hoofdklasse 2026 postseason bracket — semifinals and the Holland Series with live series scores, schedule, boxscores and win probability.',
   alternates: { canonical: 'https://honkbalhoofdklasse.com/postseason' },
   openGraph: {
     title: 'Hoofdklasse Postseason Bracket 2026',

@@ -1,0 +1,36 @@
+import type { TeamRoster } from './types'
+
+export const kinheim: TeamRoster = {
+  players: [
+    { uniform: '34', name: 'Mart Blijleven', pos: 'OF', bt: 'L/L', yob: 2003 },
+    { uniform: '40', name: 'Finn Blokker', pos: 'P', bt: 'R/R', yob: 2001 },
+    { uniform: '19', name: 'Robyn Clara', pos: 'P', bt: 'R/R', yob: 1995 },
+    { uniform: '8', name: 'Max Draijer', pos: 'IF', bt: 'R/R', yob: 1997 },
+    { uniform: '21', name: 'Aidan Finnegan', pos: 'OF', bt: 'R/R', yob: 2000 },
+    { uniform: '29', name: 'Nick Hofer', pos: 'OF', bt: 'R/R', yob: 2001 },
+    { uniform: '74', name: 'Nick Keur', pos: 'P', bt: 'L/L', yob: 1997 },
+    { uniform: '32', name: 'Tristan Kuijer', pos: 'IF', bt: 'R/R', yob: 2007 },
+    { uniform: '12', name: 'Donny Kuijper', pos: 'IF', bt: 'R/R', yob: 1999 },
+    { uniform: '18', name: 'Thomas Maathuis', pos: 'IF', bt: 'R/R', yob: 2002 },
+    { uniform: '89', name: 'Fregin Martina', pos: 'P', bt: 'R/R', yob: 2004 },
+    { uniform: '6', name: 'Jayden Mohamed', pos: 'IF', bt: 'R/R', yob: 2004 },
+    { uniform: '55', name: 'Rick Rizvić', pos: 'P', bt: 'L/L', yob: 2003 },
+    { uniform: '20', name: 'Tom Stuifbergen', pos: 'P', bt: 'R/R', yob: 1988 },
+    { uniform: '30', name: 'Rick Timmermans', pos: 'P', bt: 'R/R', yob: 1999 },
+    { uniform: '23', name: 'Guus Toemen', pos: 'OF', bt: 'R/R', yob: 2008 },
+    { uniform: '27', name: 'Jair Van Borkulo', pos: 'C', bt: 'R/R', yob: 2002 },
+    { uniform: '28', name: 'Sander Van Der Meer', pos: 'IF', bt: 'R/R', yob: 2007 },
+    { uniform: '5', name: 'Luca Van Gorkum', pos: 'OF', bt: 'L/R', yob: 2002 },
+    { uniform: '9', name: 'Jayvon Vicario', pos: 'C/IF', bt: 'R/R', yob: 2006 },
+    { uniform: '41', name: 'Daniel Vos', pos: 'P', bt: 'R/R', yob: 2000 },
+    { uniform: '31', name: 'Lorenzo Willem', pos: 'C/IF', bt: 'R/R', yob: 2008 },
+    { uniform: '13', name: 'Noah Zavolas', pos: 'P', bt: 'R/R', yob: 1996 },
+  ],
+  coaches: [
+    { uniform: '4', name: 'Milan Lammerts', role: 'Manager/Head coach' },
+    { uniform: '47', name: 'David Bergman', role: 'Pitching Coach' },
+    { uniform: '43', name: 'Michael Crouwel', role: 'Coach' },
+    { uniform: '25', name: 'Al Morales Gomez', role: 'Pitching Coach' },
+    { uniform: '59', name: "Dirk Gijsbertus Van 't Klooster", role: 'Coach' },
+  ],
+}

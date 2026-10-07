@@ -1,0 +1,37 @@
+import type { TeamRoster } from './types'
+
+export const uvv: TeamRoster = {
+  players: [
+    { uniform: '31', name: 'Christopher Anasagasti', pos: 'C', bt: 'R/R', yob: 2003 },
+    { uniform: '10', name: 'Zico Atmopawiro', pos: 'IF', bt: 'R/R', yob: 2007 },
+    { uniform: '24', name: 'Lucas Bekker', pos: 'IF', bt: 'R/R', yob: 1999 },
+    { uniform: '8', name: 'Stijn Bruins Slot', pos: 'P', bt: 'R/R', yob: 2000 },
+    { uniform: '26', name: 'Jordy Burger', pos: 'OF', bt: 'L/L', yob: 1995 },
+    { uniform: '17', name: 'Raylano Clarke', pos: 'C', bt: 'R/R', yob: 2009 },
+    { uniform: '5', name: 'Ruben Dekker', pos: 'P', bt: 'R/R', yob: 2001 },
+    { uniform: '14', name: 'Riley Gonesh', pos: 'P', bt: 'R/R', yob: 1998 },
+    { uniform: '3', name: 'Valentijn Guillot', pos: 'P', bt: 'R/R', yob: 2008 },
+    { uniform: '23', name: 'Ingmar Hutzezon', pos: 'P', bt: 'R/R', yob: 2003 },
+    { uniform: '7', name: 'Edvin Irausquin', pos: 'P', bt: 'R/R', yob: 2002 },
+    { uniform: '11', name: 'Aaron Isenia', pos: 'P', bt: 'L/L', yob: 2000 },
+    { uniform: '66', name: 'Marvin Jakobus', pos: 'IF', bt: 'R/R', yob: 2001 },
+    { uniform: '50', name: 'Jenseley Keyzer', pos: 'P', bt: 'R/R', yob: 2000 },
+    { uniform: '16', name: 'Reyer Lind', pos: 'IF', bt: 'R/R', yob: 2007 },
+    { uniform: '27', name: 'Tilsaimy Melfor', pos: 'IF', bt: 'R/R', yob: 2001 },
+    { uniform: '32', name: 'Jorrit Patist', pos: 'C', bt: 'R/R', yob: 2007 },
+    { uniform: '25', name: 'Dayrell Pieternella', pos: 'OF', bt: 'R/R', yob: 1998 },
+    { uniform: '99', name: 'Ruendrick Piternella', pos: 'C', bt: 'R/R', yob: 2001 },
+    { uniform: '44', name: 'Elijah Rustenburg', pos: 'P', bt: 'R/R', yob: 2006 },
+    { uniform: '9', name: 'Casper Urbanus', pos: 'P', bt: 'R/R', yob: 2003 },
+    { uniform: '13', name: 'Jurjen Van Zijl', pos: 'P', bt: 'R/R', yob: 1984 },
+    { uniform: '95', name: 'Amar Van Zwieten', pos: 'OF', bt: 'R/R', yob: 2002 },
+    { uniform: '22', name: 'Geoffrey Verhoef', pos: 'OF', bt: 'R/R', yob: 1996 },
+    { uniform: '15', name: 'Jack Wagner', pos: 'P', bt: 'R/R', yob: 2002 },
+    { uniform: '29', name: 'Sean Wout', pos: 'P', bt: 'R/R', yob: 1992 },
+  ],
+  coaches: [
+    { uniform: '47', name: 'Chad Abernathy', role: 'Manager/Head coach' },
+    { uniform: '37', name: 'Jiorgeny Casimiri', role: 'Pitching Coach' },
+    { uniform: '53', name: 'Cliff Foster', role: 'Pitching Coach' },
+  ],
+}
