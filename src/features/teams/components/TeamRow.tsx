@@ -34,12 +34,10 @@ export default function TeamRow({
       href={`/teams/${teamId}`}
       className="flex items-center gap-4 bg-[var(--card)] border border-[var(--border)] rounded-2xl px-5 py-4 hover:border-[var(--accent)]/40 hover:bg-[var(--card-hover)] transition-all group"
     >
-      {/* Rank */}
       <span className="font-display font-800 text-2xl text-[var(--muted)] w-6 shrink-0 text-right">
         {rank}
       </span>
 
-      {/* Logo */}
       <div
         className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 p-2"
         style={{ backgroundColor: color }}
@@ -59,7 +57,6 @@ export default function TeamRow({
         )}
       </div>
 
-      {/* Name + record */}
       <div className="flex-1 min-w-0">
         <p className="font-display font-800 text-base md:text-lg uppercase tracking-wide text-white leading-none truncate">
           {name}
@@ -79,7 +76,6 @@ export default function TeamRow({
         )}
       </div>
 
-      {/* Batting stats (desktop) */}
       <div className="hidden md:flex gap-6 shrink-0">
         {BATTING_SORTS.map((btn) => (
           <div key={btn.key} className="text-center w-10">
@@ -99,7 +95,6 @@ export default function TeamRow({
 
       <div className="hidden md:block w-px h-8 bg-white/10 shrink-0" />
 
-      {/* Pitching stats (desktop) */}
       <div className="hidden md:flex gap-6 shrink-0">
         {PITCHING_SORTS.map((btn) => (
           <div key={btn.key} className="text-center w-10">
@@ -117,7 +112,6 @@ export default function TeamRow({
         ))}
       </div>
 
-      {/* Active sort value on mobile */}
       {activeStat && (
         <div className="md:hidden text-center shrink-0">
           <p className="font-display font-700 text-[10px] uppercase text-[var(--accent)] tracking-wider">

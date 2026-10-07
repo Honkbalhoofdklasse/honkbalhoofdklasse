@@ -12,7 +12,6 @@ export function InstagramCarousel() {
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl overflow-hidden">
         <div className="flex items-center gap-3 px-4 py-3 border-b border-[var(--border)]">
           <div className="w-9 h-9 rounded-full overflow-hidden bg-[var(--accent)]/20 flex items-center justify-center shrink-0 p-1">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="https://res.cloudinary.com/dn8c5398m/image/upload/q_auto/f_auto/v1780500111/573820232_17862847515514579_6349657726355167801_n_vs87hx.jpg"
               alt="HK"
@@ -36,10 +35,8 @@ export function InstagramCarousel() {
           className="relative bg-black border-b border-[var(--border)]"
           style={{ aspectRatio: '3/4' }}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={post.image} alt={post.partner} className="w-full h-full object-cover" />
           <div className="absolute bottom-3 right-3 bg-black/60 backdrop-blur-sm rounded-xl px-2.5 py-1.5">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={post.partnerLogo}
               alt={post.partner}

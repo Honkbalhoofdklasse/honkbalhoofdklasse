@@ -1,14 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { KNBSB_NUMERIC_ID_MAP } from '@/shared/teams/teams'
 
-const KNBSB_ID_TO_TEAM: Record<number, string> = {
-  39583: 'pirates',
-  39587: 'neptunus',
-  39584: 'hcaw',
-  39586: 'kinheim',
-  39588: 'twins',
-  39589: 'uvv',
-  39585: 'pioniers',
-}
+const KNBSB_ID_TO_TEAM = KNBSB_NUMERIC_ID_MAP
 const TUSSENVOEGSELS = new Set([
   'van',
   'de',

@@ -19,7 +19,6 @@ function deduplicateByPlayer<T extends { full_name?: unknown; team_id?: unknown 
       .toLowerCase()
       .trim()
       .split(/\s+/)
-    // Key = first word + last word + team — catches "Wyatt Lankford" vs "Wyatt Paul Lankford"
     const key = `${words[0]}|${words[words.length - 1]}|${String(r.team_id ?? '').toLowerCase()}`
     if (seen.has(key)) return false
     seen.add(key)

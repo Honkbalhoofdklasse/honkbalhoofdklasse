@@ -131,7 +131,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaOrg) }}
         />
-        {/* Google Analytics */}
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-85LWJHPVS1"></script>
         <script async src="/gtag.js"></script>
       </head>
@@ -141,7 +140,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
           <main className="pt-20">{children}</main>
 
-          {/* Sponsor balk */}
           <SponsorMarquee />
         </LanguageProvider>
         <SiteFooter />

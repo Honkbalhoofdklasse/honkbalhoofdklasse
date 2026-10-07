@@ -3,14 +3,13 @@
 import { useState } from 'react'
 import dynamic from 'next/dynamic'
 import { TEAM_NAMES, teamAccent } from '@/shared/teams/teams'
-import type { WinProbPoint } from '@/features/livescores/domain/winProbability'
+import type { WinProbPoint } from '@/shared/types/winProbability'
 import type { HSGame } from '@/features/postseason/api/holland-series'
 import { fmtDateTime } from '@/features/postseason/domain/feedDate'
 import { TeamBadge } from '@/features/postseason/components/TeamBadge'
 
 const WinProbChart = dynamic(() => import('@/shared/ui/WinProbChart'), { ssr: false })
 
-// ── Game row (inside the detail modal) ────────────────────────────────────────
 export function GameRow({
   game,
   index,

@@ -1,7 +1,5 @@
 import type { HLPlayer, StatKey } from './types'
 
-// ── Stats config ──────────────────────────────────────────────────────────────
-
 export const STATS: { key: StatKey; label: string; fmt: (v: number) => string }[] = [
   { key: 'avg', label: 'batting average', fmt: (v) => v.toFixed(3).replace(/^0\./, '.') },
   { key: 'ops', label: 'OPS', fmt: (v) => v.toFixed(3).replace(/^0\./, '.') },
@@ -9,8 +7,6 @@ export const STATS: { key: StatKey; label: string; fmt: (v: number) => string }[
   { key: 'hr', label: 'home runs', fmt: (v) => String(v) },
   { key: 'sb', label: 'stolen bases', fmt: (v) => String(v) },
 ]
-
-// ── Seeded shuffle ────────────────────────────────────────────────────────────
 
 function seededShuffle<T>(arr: T[], seed: number): T[] {
   const a = [...arr]

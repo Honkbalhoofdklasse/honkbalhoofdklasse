@@ -3,7 +3,6 @@ import { type RefObject, useEffect, useRef } from 'react'
 export function useModalFocusTrap(modalRef: RefObject<HTMLDivElement | null>, onClose: () => void) {
   const previousFocusRef = useRef<Element | null>(null)
 
-  // Focus trap + Escape handler
   useEffect(() => {
     previousFocusRef.current = document.activeElement
 

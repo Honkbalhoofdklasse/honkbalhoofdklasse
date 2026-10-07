@@ -26,7 +26,6 @@ export default function MobileMenu({
       className={`xl:hidden transition-all duration-300 ${open ? 'max-h-[85vh] overflow-y-auto' : 'max-h-0 overflow-hidden'}`}
     >
       <div className="bg-[var(--card)] border-t border-[var(--border)] px-4 py-4 space-y-1">
-        {/* Home */}
         <Link
           href="/"
           className={`block font-display font-800 text-sm uppercase tracking-wider px-4 py-3 rounded-xl transition-colors ${pathname === '/' ? 'bg-[var(--accent)] text-white' : 'text-white/60 hover:text-white hover:bg-[var(--card-hover)]'}`}
@@ -34,7 +33,6 @@ export default function MobileMenu({
           Home
         </Link>
 
-        {/* Entries */}
         {entries.map((entry) =>
           entry.type === 'link' ? (
             <Link
@@ -61,7 +59,6 @@ export default function MobileMenu({
           ),
         )}
 
-        {/* External + Lang */}
         <a
           href="https://app.honkbalsoftbal.tv/nl/home"
           target="_blank"
@@ -71,7 +68,6 @@ export default function MobileMenu({
           Honkbalsoftbal.tv
         </a>
 
-        {/* Mobile search */}
         <button
           onClick={onSearch}
           className="w-full flex items-center gap-3 font-display font-800 text-sm uppercase tracking-wider px-4 py-3 rounded-xl text-white/60 hover:text-white hover:bg-[var(--card-hover)] transition-colors"

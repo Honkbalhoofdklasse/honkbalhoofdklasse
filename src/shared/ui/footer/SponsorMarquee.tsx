@@ -89,7 +89,6 @@ export default function SponsorMarquee() {
             },
           ].map(({ src, w, h }, i) => (
             <div key={i} className={`${w} ${h} flex items-center justify-center shrink-0`}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={src}
                 alt="sponsor"

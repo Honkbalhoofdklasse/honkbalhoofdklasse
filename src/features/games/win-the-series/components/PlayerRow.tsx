@@ -4,7 +4,6 @@ import { TEAM_COLORS, TEAM_SHORT, teamAccent } from '@/shared/teams/teams'
 import { domColor, fmt3, isPitcher } from '../domain/sim'
 import type { HSHitter, HSPitcher } from '../domain/types'
 
-// ── Player row (in a position section) ────────────────────────────────────────
 export function PlayerRow({
   player,
   pct,

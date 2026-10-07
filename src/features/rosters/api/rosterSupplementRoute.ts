@@ -1,15 +1,6 @@
 import { NextResponse } from 'next/server'
 import { ROSTERS } from '@/shared/rosters/rosters-data'
-
-const KNBSB_TEAM_IDS: Record<string, number> = {
-  pirates: 39583,
-  neptunus: 39587,
-  hcaw: 39584,
-  kinheim: 39586,
-  twins: 39588,
-  uvv: 39589,
-  pioniers: 39585,
-}
+import { KNBSB_NUMERIC_ID_BY_SLUG } from '@/shared/teams/teams'
 
 const HEADERS = {
   'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
@@ -71,7 +62,7 @@ function inferPos(p: Record<string, unknown>): string {
 
 export async function GET(_req: Request, { params }: { params: Promise<{ teamId: string }> }) {
   const { teamId } = await params
-  const teamNum = KNBSB_TEAM_IDS[teamId]
+  const teamNum = KNBSB_NUMERIC_ID_BY_SLUG[teamId]
   if (!teamNum) return NextResponse.json([])
 
   const roster = ROSTERS[teamId]

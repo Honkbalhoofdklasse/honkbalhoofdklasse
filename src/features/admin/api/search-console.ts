@@ -1,14 +1,5 @@
 import crypto from 'crypto'
 
-// Google Search Console — Search Analytics via service account (JWT, no OAuth flow)
-//
-// Setup (one time):
-//  1. Google Cloud → create project → enable "Google Search Console API"
-//  2. Create a Service Account → create a JSON key → download it
-//  3. In Search Console → Settings → Users and permissions → add the service
-//     account email (xxx@yyy.iam.gserviceaccount.com) as a Full/Restricted user
-//  4. Put the whole JSON key in the Vercel env var GSC_SERVICE_ACCOUNT (one line)
-
 const SITE_URL = 'sc-domain:honkbalhoofdklasse.com'
 const TOKEN_URL = 'https://oauth2.googleapis.com/token'
 const SCOPE = 'https://www.googleapis.com/auth/webmasters.readonly'
@@ -19,9 +10,12 @@ function getServiceAccount(): ServiceAccount {
   const raw = process.env.GSC_SERVICE_ACCOUNT
   if (!raw) throw new Error('GSC_SERVICE_ACCOUNT not configured')
   const json = JSON.parse(raw) as ServiceAccount
-  // Vercel sometimes escapes newlines in the private key
-  json.private_key = json.private_key.replace(/\\n/g, '\n')
+  json.private_key = restoreEscapedNewlines(json.private_key)
   return json
+}
+
+function restoreEscapedNewlines(privateKey: string): string {
+  return privateKey.replace(/\\n/g, '\n')
 }
 
 function base64url(input: Buffer | string): string {
@@ -106,7 +100,7 @@ export type GscData = {
 }
 
 export async function fetchGscData(days: number): Promise<GscData> {
-  const endDate = new Date(Date.now() - 2 * 86400000) // GSC data lags ~2 days
+  const endDate = new Date(Date.now() - 2 * 86400000)
   const startDate = new Date(endDate.getTime() - (days - 1) * 86400000)
   const range = { startDate: fmtDate(startDate), endDate: fmtDate(endDate) }
 

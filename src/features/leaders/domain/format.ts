@@ -6,9 +6,9 @@ export function ipToDec(v: unknown): number {
   const s = String(v ?? '0')
   if (s.includes('.')) {
     const [f, o] = s.split('.').map((n) => parseInt(n, 10) || 0)
-    return f + o / 3 // baseball: .1 = 1 out = 1/3 inning
+    return f + o / 3
   }
-  return parseInt(s, 10) || 0 // integer = full innings (e.g. 19 = 19.0 IP)
+  return parseInt(s, 10) || 0
 }
 
 export const MONTH_NAMES = [

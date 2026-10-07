@@ -6,7 +6,6 @@ export async function GET(request: Request) {
   const code = searchParams.get('code')
   const error = searchParams.get('error')
 
-  // Supabase sent back an error directly
   if (error) {
     return NextResponse.redirect(`${origin}/admin/login?error=auth`)
   }

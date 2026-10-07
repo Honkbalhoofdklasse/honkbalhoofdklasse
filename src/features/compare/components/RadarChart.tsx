@@ -21,7 +21,6 @@ export default function RadarChart({
 
   return (
     <svg width={SIZE} height={SIZE} viewBox={`0 0 ${SIZE} ${SIZE}`} className="overflow-visible">
-      {/* Grid polygons */}
       {[0.25, 0.5, 0.75, 1].map((lvl) => (
         <polygon
           key={lvl}
@@ -33,7 +32,6 @@ export default function RadarChart({
         />
       ))}
 
-      {/* Axis lines */}
       {RADAR_AXES.map((_, i) => {
         const angle = (2 * Math.PI * i) / RADAR_AXES.length - Math.PI / 2
         return (
@@ -50,7 +48,6 @@ export default function RadarChart({
         )
       })}
 
-      {/* Player 2 polygon (behind) */}
       <polygon
         points={radarPoints(p2, all, cx, cy, R)}
         fill={c2}
@@ -60,7 +57,6 @@ export default function RadarChart({
         strokeOpacity={0.8}
       />
 
-      {/* Player 1 polygon (front) */}
       <polygon
         points={radarPoints(p1, all, cx, cy, R)}
         fill={c1}
@@ -70,7 +66,6 @@ export default function RadarChart({
         strokeOpacity={0.9}
       />
 
-      {/* Axis labels */}
       {RADAR_AXES.map(({ label }, i) => {
         const angle = (2 * Math.PI * i) / RADAR_AXES.length - Math.PI / 2
         const lx = cx + (R + 20) * Math.cos(angle)

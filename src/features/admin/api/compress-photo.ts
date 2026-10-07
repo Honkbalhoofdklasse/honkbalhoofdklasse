@@ -42,14 +42,12 @@ export async function POST(req: NextRequest) {
   const url = record?.[col] as string | null
   if (!url) return NextResponse.json({ skipped: 'no url' })
 
-  // Download current image
   const fetchRes = await fetch(url, { cache: 'no-store' })
   if (!fetchRes.ok) return NextResponse.json({ skipped: 'download failed' })
 
   const originalBuffer = Buffer.from(await fetchRes.arrayBuffer())
   const originalKb = Math.round(originalBuffer.length / 1024)
 
-  // Already small enough — just save the size and skip recompression
   if (originalBuffer.length <= TARGET_BYTES) {
     const sizeCol = photoType === 'banner' ? 'banner_size_kb' : 'headshot_size_kb'
     await supabaseAdmin
@@ -62,7 +60,6 @@ export async function POST(req: NextRequest) {
   const compressed = await compress(originalBuffer, photoType === 'headshot')
   const compressedKb = Math.round(compressed.length / 1024)
 
-  // Build storage path from URL
   const slug = playerName
     .toLowerCase()
     .normalize('NFD')

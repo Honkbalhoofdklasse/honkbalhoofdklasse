@@ -10,9 +10,7 @@ export function scorecardBackground({
   blob2: string
 }) {
   return [
-    /* ── Player photo background (top 72%) ──────────────────── */
     photoUrl ? (
-      // eslint-disable-next-line @next/next/no-img-element
       <img
         key="photo"
         src={photoUrl}
@@ -42,7 +40,6 @@ export function scorecardBackground({
           justifyContent: 'center',
         }}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={teamLogo}
           alt=""
@@ -51,7 +48,6 @@ export function scorecardBackground({
       </div>
     ),
 
-    /* ── Top-left color blobs ────────────────────────────────── */
     <div
       key="blob1"
       style={{
@@ -81,7 +77,6 @@ export function scorecardBackground({
       }}
     />,
 
-    /* ── Top gradient (readability) ──────────────────────────── */
     <div
       key="gradient"
       style={{

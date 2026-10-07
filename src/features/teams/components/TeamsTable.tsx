@@ -28,7 +28,6 @@ export default function TeamsTable({
   const pitMap = Object.fromEntries(pitching.map((p) => [p.teamId, p]))
   const stMap = Object.fromEntries(standings.map((s) => [s.team_id, s]))
 
-  // Build team list from union of all data sources
   const allIds = Array.from(
     new Set([...standings.map((s) => s.team_id), ...batting.map((b) => b.teamId)]),
   )
@@ -62,7 +61,6 @@ export default function TeamsTable({
 
   return (
     <div>
-      {/* Sort controls — horizontally scrollable on mobile */}
       <div className="flex items-center gap-2 overflow-x-auto pb-2 mb-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
         <button
           onClick={() => setSortKey('standings')}
@@ -84,7 +82,6 @@ export default function TeamsTable({
         ))}
       </div>
 
-      {/* Team rows */}
       <div className="space-y-3">
         {sorted.map((teamId, i) => (
           <TeamRow

@@ -66,20 +66,13 @@ async function fetchSection(section: string) {
   return data as Record<string, unknown>[]
 }
 
-// Regression toward the mean by playing time: a small sample counts less. K is
-// the amount of league-average "ballast" added — a player needs roughly K of
-// their own to be trusted, so a half-season stud and a full-season regular end
-// up weighed against each other rather than the small sample winning outright.
-const K_AB = 60 // hitters: AB of regression
-const K_IP = 40 // pitchers: IP of regression
+const K_AB = 60
+const K_IP = 40
 
 export async function GET() {
   try {
     const [bat, pit] = await Promise.all([fetchSection('batting'), fetchSection('pitching')])
 
-    // Baselines first — the adjusted rates regress toward these.
-    // Offense: AB-weighted league OPS (the average plate appearance) = a real
-    // average lineup, not the all-batter mean that scrubs drag down.
     let sumOpsAb = 0,
       sumAb = 0
     for (const p of bat) {
@@ -89,7 +82,6 @@ export async function GET() {
       sumAb += ab
     }
     const leagueOps = sumAb > 0 ? Number((sumOpsAb / sumAb).toFixed(3)) : 0.74
-    // Run environment: mean ERA of pitchers with a real workload (>=20 IP).
     const qEras = pit
       .map((p) => ({ era: num(p.era), ip: ipDec(p.pitch_ip) }))
       .filter((x) => x.ip >= 20 && x.era > 0)

@@ -12,7 +12,6 @@ import { BracketCard } from '@/features/postseason/components/BracketCard'
 import { SemiColumn } from '@/features/postseason/components/SemiColumn'
 import { SeriesDetailModal } from '@/features/postseason/components/SeriesDetailModal'
 
-// ── Main ──────────────────────────────────────────────────────────────────────
 export default function PostseasonBracket({ initial }: { initial: PostseasonData }) {
   const [data, setData] = useState(initial)
   const [openSeries, setOpenSeries] = useState<HSSeries | null>(null)
@@ -22,9 +21,7 @@ export default function PostseasonBracket({ initial }: { initial: PostseasonData
     try {
       const r = await fetch('/api/holland-series', { cache: 'no-store' })
       if (r.ok) setData(await r.json())
-    } catch {
-      /* keep */
-    }
+    } catch {}
   }, [])
   useEffect(() => {
     const t = setInterval(refresh, 30_000)
@@ -43,7 +40,6 @@ export default function PostseasonBracket({ initial }: { initial: PostseasonData
   const semiB = semifinals[1]
   const isLive = (s: HSSeries | null | undefined) => !!s?.games.some((g) => g.status === 'live')
 
-  // Finalists (from the final if present, else the semi winners).
   const finalLeft = final?.teamA ?? semiA?.clinchedBy ?? null
   const finalRight = final?.teamB ?? semiB?.clinchedBy ?? null
   const showFinalWins = !!final && (final.winsA > 0 || final.winsB > 0 || isLive(final))
@@ -68,7 +64,6 @@ export default function PostseasonBracket({ initial }: { initial: PostseasonData
         />
       )}
 
-      {/* Series detail modal */}
       {openSeries && (
         <SeriesDetailModal
           openSeries={openSeries}
@@ -78,7 +73,6 @@ export default function PostseasonBracket({ initial }: { initial: PostseasonData
         />
       )}
 
-      {/* Header */}
       <div className="mb-6">
         <p className="font-display font-700 text-[var(--accent)] uppercase tracking-widest text-sm mb-1">
           Season 2026
@@ -89,7 +83,6 @@ export default function PostseasonBracket({ initial }: { initial: PostseasonData
         </h1>
       </div>
 
-      {/* Champion banner */}
       {final?.clinchedBy && (
         <div className="rounded-2xl border border-[var(--accent)] bg-[var(--accent)]/10 p-4 mb-6 flex items-center justify-center gap-3">
           <TeamBadge teamId={final.clinchedBy} size={40} />
@@ -99,7 +92,6 @@ export default function PostseasonBracket({ initial }: { initial: PostseasonData
         </div>
       )}
 
-      {/* Bracket */}
       <div className="relative pt-11">
         <p className="absolute top-0 left-1/2 -translate-x-1/2 font-display font-800 italic text-sm sm:text-lg uppercase text-white text-center leading-none z-10">
           Holland
@@ -108,7 +100,6 @@ export default function PostseasonBracket({ initial }: { initial: PostseasonData
         </p>
         <div className="flex items-center justify-center gap-0.5 sm:gap-1">
           <SemiColumn s={semiA} side="left" seeds={seeds} setOpenSeries={setOpenSeries} />
-          {/* Final (center) */}
           <div className="flex items-center gap-0.5 shrink-0">
             <div className="w-11 sm:w-20 h-14 sm:h-24">
               <BracketCard
@@ -135,7 +126,6 @@ export default function PostseasonBracket({ initial }: { initial: PostseasonData
         </div>
       </div>
 
-      {/* Final status / countdown */}
       {final && !final.clinchedBy && (
         <div className="flex flex-col items-center gap-2 mt-6">
           {isLive(final) ? (

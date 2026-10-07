@@ -17,9 +17,7 @@ export function PartnerForm() {
         body: JSON.stringify(form),
       })
       if (res.ok) setSent(true)
-    } catch {
-      /* ignore */
-    }
+    } catch {}
     setSending(false)
   }
 

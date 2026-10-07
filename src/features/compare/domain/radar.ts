@@ -1,7 +1,5 @@
 import type { CmpPlayer } from '../api/compareRoute'
 
-// ── Radar chart config ────────────────────────────────────────────────────────
-
 export const RADAR_AXES: { key: keyof CmpPlayer; label: string }[] = [
   { key: 'avg', label: 'AVG' },
   { key: 'ops', label: 'OPS' },
@@ -38,6 +36,5 @@ export function gridPoints(level: number, cx: number, cy: number, R: number): st
   }).join(' ')
 }
 
-// Fixed colors for radar — guaranteed contrast regardless of team
-export const RADAR_C1 = '#fe3d00' // accent orange (player 1)
-export const RADAR_C2 = '#38bdf8' // sky blue (player 2)
+export const RADAR_C1 = '#fe3d00'
+export const RADAR_C2 = '#38bdf8'

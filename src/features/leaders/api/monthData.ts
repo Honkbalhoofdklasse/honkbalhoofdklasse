@@ -1,16 +1,8 @@
 import { supabaseAdmin } from '@/shared/supabase/legacy'
 import type { TabData } from '../domain/types'
-
-function ipToOuts(v: unknown): number {
-  const s = String(v ?? '0').trim()
-  if (!s || s === '0') return 0
-  if (s.includes('.')) {
-    const [full, frac] = s.split('.').map((n) => parseInt(n, 10) || 0)
-    return full * 3 + Math.min(frac, 2)
-  }
-  // Integer from numeric column: treat as full innings (e.g. 7 = 7.0 IP = 21 outs)
-  return (parseInt(s, 10) || 0) * 3
-}
+import { KNBSB_NUMERIC_ID_MAP } from '@/shared/teams/teams'
+import { ipToOuts } from '../domain/innings'
+import { qualifiedAtBats } from '../domain/qualification'
 
 function outsToIp(outs: number): string {
   return `${Math.floor(outs / 3)}.${outs % 3}`
@@ -20,15 +12,7 @@ function r3(n: number): number {
   return Math.round(n * 1000) / 1000
 }
 
-const KNBSB_ID_TO_TEAM: Record<number, string> = {
-  39583: 'pirates',
-  39587: 'neptunus',
-  39584: 'hcaw',
-  39586: 'kinheim',
-  39588: 'twins',
-  39589: 'uvv',
-  39585: 'pioniers',
-}
+const KNBSB_ID_TO_TEAM = KNBSB_NUMERIC_ID_MAP
 
 async function getTeamGamesInMonth(prefix: string): Promise<Record<string, number>> {
   try {
@@ -86,7 +70,6 @@ export async function getMonthData(monthPrefix?: string): Promise<TabData> {
       getTeamGamesInMonth(prefix),
     ])
 
-    // Normalize name key: first+last word (catches middle-name variants like "Wyatt Lankford" vs "Wyatt Paul Lankford")
     const normKey = (name: string, team: string) => {
       const w = String(name ?? '')
         .toLowerCase()
@@ -95,7 +78,6 @@ export async function getMonthData(monthPrefix?: string): Promise<TabData> {
       return `${w[0]}|${w[w.length - 1]}|${String(team ?? '').toLowerCase()}`
     }
 
-    // Aggregate batting by player
     const batMap = new Map<
       string,
       {
@@ -128,7 +110,6 @@ export async function getMonthData(monthPrefix?: string): Promise<TabData> {
       e.home_runs += r.home_runs ?? 0
       e.rbi += r.rbi ?? 0
       e.stolen_bases += r.stolen_bases ?? 0
-      // Weighted average of OBP (weight by AB for approximation)
       if (r.obp && r.at_bats) {
         e.obpSum += Number(r.obp) * r.at_bats
         e.obpWeight += r.at_bats
@@ -146,13 +127,11 @@ export async function getMonthData(monthPrefix?: string): Promise<TabData> {
       }))
       .sort((a, b) => (b.avg ?? 0) - (a.avg ?? 0)) as Record<string, unknown>[]
 
-    // 2.7 PA/G per team (same as Season 2026) — for rate stats AVG and OBP
     const battingQualified = allBatters.filter((p) => {
       const g = teamGames[p.team_id as string] ?? 8
-      return (p.at_bats as number) >= Math.max(5, Math.ceil(2.7 * g))
+      return (p.at_bats as number) >= qualifiedAtBats(g)
     }) as Record<string, unknown>[]
 
-    // Aggregate pitching by player
     const pitMap = new Map<
       string,
       {
@@ -189,7 +168,6 @@ export async function getMonthData(monthPrefix?: string): Promise<TabData> {
       e.earned_runs += r.earned_runs ?? 0
       pitMap.set(key, e)
     }
-    // 1 IP per game minimum — same rule as Season 2026
     const pitchers = [...pitMap.values()]
       .filter((p) => {
         const g = teamGames[p.team_id] ?? 8

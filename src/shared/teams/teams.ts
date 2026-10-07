@@ -52,7 +52,6 @@ export const TEAM_SHORT: Record<string, string> = {
   uvv: 'UVV',
 }
 
-/** Maps KNBSB numeric team IDs to internal team IDs */
 export const KNBSB_NUMERIC_ID_MAP: Record<number, string> = {
   39583: 'pirates',
   39587: 'neptunus',
@@ -63,7 +62,10 @@ export const KNBSB_NUMERIC_ID_MAP: Record<number, string> = {
   39585: 'pioniers',
 }
 
-/** Maps KNBSB API team codes to internal team IDs */
+export const KNBSB_NUMERIC_ID_BY_SLUG: Record<string, number> = Object.fromEntries(
+  Object.entries(KNBSB_NUMERIC_ID_MAP).map(([id, slug]) => [slug, Number(id)]),
+)
+
 export const KNBSB_TEAM_MAP: Record<string, string> = {
   NEP: 'neptunus',
   AMS: 'pirates',
@@ -75,7 +77,6 @@ export const KNBSB_TEAM_MAP: Record<string, string> = {
   TWI: 'twins',
 }
 
-/** Maps stenwessel IOC codes to internal team IDs */
 export const IOC_TO_TEAM: Record<string, string> = {
   NEP: 'neptunus',
   PIR: 'pirates',
@@ -87,7 +88,6 @@ export const IOC_TO_TEAM: Record<string, string> = {
   UVV: 'uvv',
 }
 
-/** Returns amber accent for dark Neptunus navy, otherwise the team color itself */
 export function teamAccent(teamId: string): string {
   return TEAM_COLORS[teamId] === '#121b31' ? '#f59e0b' : (TEAM_COLORS[teamId] ?? '#fe3d00')
 }

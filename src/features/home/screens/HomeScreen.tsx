@@ -19,13 +19,10 @@ export default async function HomeScreen() {
 
   return (
     <div>
-      {/* ── HERO ── */}
       <HeroSlideshow />
 
-      {/* ── NEWS TICKER ── */}
       {news.length > 0 && <NewsTicker news={news} />}
 
-      {/* ── RECENTE UITSLAGEN ── */}
       {results.length > 0 && (
         <section className="bg-[#04080f] pt-20 pb-14 px-6 md:px-12">
           <div className="max-w-6xl mx-auto">
@@ -44,27 +41,20 @@ export default async function HomeScreen() {
         </section>
       )}
 
-      {/* ── NOTIFICATIONS PROMO ── */}
       <NotificationsPromo />
 
-      {/* ── STAND + NEXT MATCH + LEADERS ── */}
       <section className="py-14 px-6 md:px-12 border-t border-[#0f1e2e]">
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-6 gap-8">
-          {/* STAND — left, 3 cols */}
           <HomeStandings standings={standings} />
 
-          {/* NEXT MATCH — 2 cols */}
           <UpcomingGames upcoming={upcoming} standingsMap={standingsMap} />
 
-          {/* MINI LEADERS — 1 col */}
           <MiniLeaders leaders={leaders} />
         </div>
       </section>
 
-      {/* ── MEDIA GRID ── */}
       {media.length > 0 && <MediaGrid media={media} />}
 
-      {/* ── LEAGUE LEADER CALLOUT ── */}
       {leader && <LeaderCallout leader={leader} />}
 
       <div className="h-1" />

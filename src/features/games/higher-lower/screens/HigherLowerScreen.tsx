@@ -8,8 +8,6 @@ import { TeamBadge } from '../components/TeamBadge'
 import { STATS, buildSequence, buildStatSequence, randomSeed } from '../domain/stats'
 import type { HLPlayer, Phase, StatKey } from '../domain/types'
 
-// ── Main game ─────────────────────────────────────────────────────────────────
-
 export default function HigherLowerScreen() {
   const [players, setPlayers] = useState<HLPlayer[]>([])
   const [sequence, setSequence] = useState<HLPlayer[]>([])
@@ -126,8 +124,6 @@ export default function HigherLowerScreen() {
     else navigator.clipboard.writeText(text).catch(() => {})
   }
 
-  // ── Loading ────────────────────────────────────────────────────────────────
-
   if (phase === 'loading') {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -137,8 +133,6 @@ export default function HigherLowerScreen() {
       </div>
     )
   }
-
-  // ── Game over ──────────────────────────────────────────────────────────────
 
   if (phase === 'gameover') {
     return (
@@ -155,17 +149,13 @@ export default function HigherLowerScreen() {
     )
   }
 
-  // ── Playing ────────────────────────────────────────────────────────────────
-
   const leftVal = left ? (left[statKey] as number) : 0
   const rightVal = right ? (right[statKey] as number) : 0
 
   return (
     <div className="relative flex flex-col md:flex-row pt-20" style={{ minHeight: '100dvh' }}>
-      {/* ── Left panel — revealed ── */}
       {left && <RevealedPanel left={left} leftVal={leftVal} score={score} stat={stat} />}
 
-      {/* ── VS circle — absolutely centered ── */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none">
         <div className="w-14 h-14 rounded-full bg-[#06101e] border-2 border-white/20 flex items-center justify-center shadow-xl">
           <span className="font-display font-800 text-xs uppercase tracking-widest text-white/60">
@@ -174,12 +164,10 @@ export default function HigherLowerScreen() {
         </div>
       </div>
 
-      {/* ── Right panel — question / reveal ── */}
       {right && (
         <div className="relative flex-1 flex flex-col items-center justify-center overflow-hidden px-8 py-12 md:py-0 min-h-[45dvh] md:min-h-0">
           <PanelBg player={right} flash={phase === 'reveal' ? lastResult : null} />
 
-          {/* High score — top-right overlay */}
           <div className="absolute top-4 right-5 z-10 text-right">
             <p className="font-display font-700 text-[9px] uppercase tracking-widest text-white/40">
               Best
@@ -199,7 +187,6 @@ export default function HigherLowerScreen() {
             </p>
 
             {phase === 'reveal' ? (
-              /* Revealed value */
               <p
                 className={`font-display font-800 text-8xl md:text-9xl leading-none tabular-nums drop-shadow-xl ${
                   lastResult === 'correct' ? 'text-green-400' : 'text-red-400'
@@ -208,7 +195,6 @@ export default function HigherLowerScreen() {
                 {stat.fmt(rightVal)}
               </p>
             ) : (
-              /* Higher / Lower buttons */
               <div className="flex flex-col gap-3 w-full">
                 <button
                   onClick={() => guess(true)}

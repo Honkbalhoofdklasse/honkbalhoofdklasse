@@ -23,7 +23,6 @@ export function WeekSection({
 
   return (
     <div key={week}>
-      {/* Round header */}
       <div className="flex items-center gap-3 mb-3">
         <div className="w-1 h-5 bg-[var(--accent)] shrink-0" />
         <h2 className="font-display font-800 text-sm uppercase text-white tracking-wide">
@@ -43,7 +42,6 @@ export function WeekSection({
         })()}
       </div>
 
-      {/* Games per date */}
       {dates.map((date) => (
         <div key={date} className="mb-4">
           <p className="font-display font-700 text-[10px] text-[var(--muted)] uppercase tracking-widest mb-2 pl-1">

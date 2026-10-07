@@ -13,7 +13,6 @@ export function validateSaveEnvelope(body: unknown, slot: number) {
   )
     return false
   try {
-    // Read metadata only. The original string is stored unchanged, never stringify(career).
     const career = JSON.parse(b.payload)
     const custom = career.customClub
     const clean = (s: unknown, max: number) =>

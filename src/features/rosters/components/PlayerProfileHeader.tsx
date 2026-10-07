@@ -29,7 +29,6 @@ export default function PlayerProfileHeader({
   return (
     <div className="relative rounded-2xl overflow-hidden border border-[var(--border)]">
       {photos.banner_url ? (
-        /* MLB-style: full banner photo */
         <div className="relative">
           <div className="relative h-48 md:h-64 w-full overflow-hidden">
             <Image
@@ -46,14 +45,12 @@ export default function PlayerProfileHeader({
           </div>
 
           <div className="relative px-6 pb-6 -mt-16 flex items-end gap-5 flex-wrap">
-            {/* Round headshot over banner */}
             {photos.headshot_url && (
               <div className="relative w-24 h-24 rounded-full overflow-hidden border-4 border-[#0a1220] shrink-0 shadow-xl">
                 <Image src={photos.headshot_url} alt={player.name} fill className="object-cover" />
               </div>
             )}
 
-            {/* Player info */}
             <div className="flex-1 min-w-0 pb-1">
               <p
                 className="font-display font-700 text-xs uppercase tracking-widest mb-1"
@@ -80,7 +77,6 @@ export default function PlayerProfileHeader({
               </div>
             </div>
 
-            {/* Instagram */}
             {player.instagram && (
               <a
                 href={`https://instagram.com/${player.instagram}`}
@@ -95,7 +91,6 @@ export default function PlayerProfileHeader({
           </div>
         </div>
       ) : (
-        /* Fallback: team color card */
         <>
           <div className="absolute inset-0" style={{ backgroundColor: teamColor, opacity: 0.15 }} />
           <div
@@ -104,7 +99,6 @@ export default function PlayerProfileHeader({
           />
 
           <div className="relative p-6 md:p-8 flex items-center gap-6 flex-wrap">
-            {/* Team logo */}
             <div
               className="w-20 h-20 rounded-2xl flex items-center justify-center shrink-0 p-3"
               style={{ backgroundColor: teamColor }}
@@ -118,7 +112,6 @@ export default function PlayerProfileHeader({
               />
             </div>
 
-            {/* Player info */}
             <div className="flex-1 min-w-0">
               <p
                 className="font-display font-700 text-xs uppercase tracking-widest mb-1"
@@ -145,7 +138,6 @@ export default function PlayerProfileHeader({
               </div>
             </div>
 
-            {/* Instagram link */}
             {player.instagram && (
               <a
                 href={`https://instagram.com/${player.instagram}`}

@@ -143,14 +143,12 @@ export default function NotifyButton({ tooltip }: { tooltip: string }) {
           </span>
         </button>
 
-        {/* Tooltip */}
         <div className="absolute bottom-full right-0 mb-2 w-52 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-20">
           <div className="bg-[#0d1b2e] border border-[var(--border)] rounded-xl px-3 py-2 shadow-xl">
             <p className="font-display font-700 text-[11px] text-white/70 leading-snug">
               {tooltip}
             </p>
           </div>
-          {/* Arrow */}
           <div className="absolute top-full right-4 border-4 border-transparent border-t-[var(--border)]" />
         </div>
       </div>

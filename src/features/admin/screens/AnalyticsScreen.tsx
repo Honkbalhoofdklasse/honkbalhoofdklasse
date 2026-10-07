@@ -100,7 +100,6 @@ export default function AnalyticsScreen() {
   return (
     <div className="min-h-screen bg-[#06101e] px-4 py-8">
       <div className="max-w-5xl mx-auto">
-        {/* Header */}
         <div className="flex items-center gap-4 mb-8 flex-wrap">
           <Link
             href="/admin"
@@ -135,7 +134,6 @@ export default function AnalyticsScreen() {
 
         {data && !loading && (
           <div className="space-y-6">
-            {/* Overview stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <StatCard label="Clicks" value={fmtNum(t?.clicks ?? 0)} />
               <StatCard label="Impressions" value={fmtNum(t?.impressions ?? 0)} />
@@ -143,16 +141,13 @@ export default function AnalyticsScreen() {
               <StatCard label="Avg Position" value={avgPos} />
             </div>
 
-            {/* Chart */}
             <TimeChart data={data.timeseries} />
 
-            {/* Queries + Pages */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <QueryTable rows={data.queries} />
               <PageTable rows={data.pages} />
             </div>
 
-            {/* Countries + Devices */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <BarList
                 title="Countries"

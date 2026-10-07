@@ -1,6 +1,5 @@
 import type { CardState } from '@/features/postseason/domain/cardState'
 
-// ── SVG connector (scales cleanly on every screen) ────────────────────────────
 export function Connector({
   side,
   top,

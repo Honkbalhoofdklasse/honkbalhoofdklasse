@@ -1,4 +1,3 @@
-// ── Public types ──────────────────────────────────────────────────────────────
 export type SeasonStats = {
   ab: number
   h: number

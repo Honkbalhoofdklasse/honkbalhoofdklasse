@@ -5,14 +5,14 @@ import BoxscoreModal from '@/shared/ui/BoxscoreModal'
 import NotifyButton from '@/shared/ui/NotifyButton'
 import ScoreRow from '../components/ScoreRow'
 import { formatTime } from '../domain/format'
-import type { Data, Game } from '../domain/types'
+import type { Data, LiveGame } from '../domain/types'
 
 export default function LivescoresScreen() {
   const [data, setData] = useState<Data | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null)
-  const [selected, setSelected] = useState<Game | null>(null)
+  const [selected, setSelected] = useState<LiveGame | null>(null)
 
   const fetchData = useCallback(async () => {
     try {
@@ -38,7 +38,6 @@ export default function LivescoresScreen() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 md:px-8 py-8 space-y-10">
-      {/* Header */}
       <div className="flex items-end justify-between">
         <div>
           <p className="font-display font-700 text-[var(--accent)] uppercase tracking-widest text-sm mb-1">
@@ -89,7 +88,6 @@ export default function LivescoresScreen() {
 
       {!loading && data && (
         <>
-          {/* Live games */}
           {data.live.length > 0 && (
             <section>
               <div className="flex items-center gap-3 mb-4">
@@ -112,7 +110,6 @@ export default function LivescoresScreen() {
             </section>
           )}
 
-          {/* No live games */}
           {!hasLive && (
             <div className="border border-[var(--border)] rounded-xl px-6 py-10 text-center">
               <p className="font-display font-800 text-xl uppercase text-[var(--muted)] italic mb-1">
@@ -124,7 +121,6 @@ export default function LivescoresScreen() {
             </div>
           )}
 
-          {/* Recent results */}
           {data.finished.length > 0 && (
             <section>
               <div className="flex items-center gap-3 mb-4">
@@ -146,7 +142,6 @@ export default function LivescoresScreen() {
             </section>
           )}
 
-          {/* Upcoming */}
           {data.upcoming.length > 0 && (
             <section>
               <div className="flex items-center gap-3 mb-4">
@@ -165,7 +160,6 @@ export default function LivescoresScreen() {
         </>
       )}
 
-      {/* Boxscore modal */}
       {selected && (
         <BoxscoreModal
           gameId={selected.id}

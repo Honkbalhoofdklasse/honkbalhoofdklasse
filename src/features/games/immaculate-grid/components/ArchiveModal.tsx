@@ -15,7 +15,6 @@ export function ArchiveModal({
   onSelect: (week: number) => void
   onClose: () => void
 }) {
-  // Build list of all past weeks (newest first, excluding current)
   const weeks = Array.from({ length: currentWeek }, (_, i) => currentWeek - 1 - i)
 
   function getScore(week: number): number | null {

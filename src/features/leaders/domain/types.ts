@@ -15,8 +15,8 @@ export type SeasonLeaders = {
 }
 
 export type TabData = {
-  batters: Row[] // all batters with ≥1 AB (for HR/RBI/SB tables)
-  battingQualified?: Row[] // 2.7 PA/G qualified batters (for AVG table only)
+  batters: Row[]
+  battingQualified?: Row[]
   pitchers: Row[]
 }
 

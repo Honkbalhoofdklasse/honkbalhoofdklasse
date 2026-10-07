@@ -58,14 +58,12 @@ export default function RosterTabs({ rosters }: { rosters: StaticRosters }) {
         />
       )}
       <div className="space-y-6">
-        {/* Team tabs */}
         <RosterTeamTabs
           availableTeams={availableTeams}
           activeTeam={activeTeam}
           onSelect={setActiveTeam}
         />
 
-        {/* Player sections */}
         <div className="space-y-6">
           {SECTIONS.map((section) => {
             const sectionPlayers = players
@@ -85,7 +83,6 @@ export default function RosterTabs({ rosters }: { rosters: StaticRosters }) {
             )
           })}
 
-          {/* Coaching Staff */}
           {coaches.length > 0 && <CoachingStaffTable coaches={coaches} color={color} />}
         </div>
       </div>

@@ -16,7 +16,6 @@ import { buildBatRow, buildPitRow } from './statRows'
 import type { Career, Photos, SeasonStats } from './types'
 import { useModalFocusTrap } from './useModalFocusTrap'
 
-// ── Main modal ─────────────────────────────────────────────────────────────
 export default function PlayerStatsModal({
   playerName,
   teamId,
@@ -109,12 +108,9 @@ export default function PlayerStatsModal({
           onClose={onClose}
         />
 
-        {/* Accent line */}
         <div style={{ height: 3, background: accentColor, flexShrink: 0 }} />
 
-        {/* ── BODY ──────────────────────────────────────────────────────── */}
         <div className="overflow-y-auto flex-1">
-          {/* Tab strip */}
           {!loading && st && hasBatting && hasPitching && (
             <div className="flex border-b border-[var(--border)] px-1">
               {(['batting', 'pitching'] as const).map((t) => (
@@ -138,7 +134,6 @@ export default function PlayerStatsModal({
             <LoadingSkeleton />
           ) : (
             <>
-              {/* ── BATTING ── */}
               {(tab === 'batting' || !hasPitching) && (
                 <BattingSection
                   accentColor={accentColor}
@@ -148,12 +143,10 @@ export default function PlayerStatsModal({
                 />
               )}
 
-              {/* ── PITCHING ── */}
               {(tab === 'pitching' || (!hasBatting && hasPitching)) && hasPitching && (
                 <PitchingSection accentColor={accentColor} pitRow={pitRow} career={career} />
               )}
 
-              {/* ── SPLITS ── */}
               <div className="px-5 pb-5 border-t border-[var(--border)] pt-4">
                 <p className="font-display font-700 text-[10px] text-[var(--muted)] uppercase tracking-widest mb-3">
                   Splits
@@ -161,13 +154,11 @@ export default function PlayerStatsModal({
                 <PlayerSplits playerName={playerName} teamId={teamId} statType={statType} />
               </div>
 
-              {/* ── AWARDS ── */}
               {awards.length > 0 && <AwardsSection awards={awards} accentColor={accentColor} />}
             </>
           )}
         </div>
 
-        {/* ── FOOTER ──────────────────────────────────────────────────────── */}
         <div className="shrink-0 border-t border-[var(--border)] px-5 py-2.5 flex items-center justify-between">
           <p className="font-display font-700 text-[10px] text-[var(--muted)] uppercase tracking-widest">
             KNBSB Hoofdklasse · Season 2026

@@ -1,6 +1,5 @@
 import { IOC_TO_TEAM, KNBSB_NUMERIC_ID_MAP } from '@/shared/teams/teams'
 
-// ── Types ─────────────────────────────────────────────────────────────────────
 export type HSGameStatus = 'scheduled' | 'live' | 'final'
 
 export type HSGame = {
@@ -18,7 +17,7 @@ export type HSGame = {
 
 export type HSSeries = {
   label: string
-  teamA: string // host of game 1 (higher seed / stable ordering)
+  teamA: string
   teamB: string
   winsA: number
   winsB: number
@@ -29,18 +28,14 @@ export type HSSeries = {
 }
 
 export type PostseasonData = {
-  semifinals: HSSeries[] // [Play-offs A (1v4), Play-offs B (2v3)]
-  final: HSSeries | null // from the feed, or synthesised from the schedule below
-  finalScheduled: boolean // true when `final` is the published-schedule fallback (not yet in the feed)
-  seeds: Record<string, number> // teamId -> playoff seed (1-4)
+  semifinals: HSSeries[]
+  final: HSSeries | null
+  finalScheduled: boolean
+  seeds: Record<string, number>
   updatedAt: string
 }
-// Back-compat alias for the previous name.
 export type HollandSeriesData = PostseasonData
 
-// Holland Series final schedule (not yet in the KNBSB feed). Odd games are hosted
-// by the top seed, even games by the runner-up. Used as a fallback until the feed
-// publishes the games with live scores.
 const FINAL_SCHEDULE = [
   { game: 1, date: '2026-09-05', time: '14:00', venue: 'Rotterdam', topHost: true },
   { game: 2, date: '2026-09-06', time: '14:00', venue: 'Amsterdam', topHost: false },
@@ -51,7 +46,6 @@ const FINAL_SCHEDULE = [
   { game: 7, date: '2026-09-20', time: '13:00', venue: 'Rotterdam', topHost: true, ifNec: true },
 ]
 
-// ── Feed parsing ──────────────────────────────────────────────────────────────
 const FEED = 'https://boxscore.stenwessel.nl/api/fetchschedule.php?competition=hb2026'
 
 type RawGame = Record<string, unknown>
@@ -138,7 +132,6 @@ function buildFromRaw(label: string, raw: RawGame[], forcedBestOf?: number): HSS
 
 const matches = (g: RawGame, re: RegExp) => re.test(String(g.gametypelabel ?? ''))
 
-// Synthesise the final from the known schedule when it isn't in the feed yet.
 function scheduledFinal(topSeed: string, runnerUp: string): HSSeries {
   const games: HSGame[] = FINAL_SCHEDULE.map((t) => ({
     id: `final-g${t.game}`,
@@ -187,7 +180,6 @@ export async function getHollandSeries(): Promise<PostseasonData> {
   )
   const semifinals = [semiA, semiB].filter((s): s is HSSeries => s !== null)
 
-  // Seeds: Play-offs A is 1v4 (host = seed 1), Play-offs B is 2v3 (host = seed 2).
   const seeds: Record<string, number> = {}
   if (semiA) {
     seeds[semiA.teamA] = 1
@@ -198,8 +190,6 @@ export async function getHollandSeries(): Promise<PostseasonData> {
     seeds[semiB.teamB] = 3
   }
 
-  // Final: prefer the real feed games; otherwise synthesise from the schedule once
-  // both semifinals are decided.
   let final = buildFromRaw(
     'Holland Series',
     games.filter((g) => matches(g, /holland|finale/i)),

@@ -55,7 +55,6 @@ export default function LeadersTabs({
       .catch(() => setLoadingMonth(false))
   }, [selectedMonth, month])
 
-  // Postseason leaders (semifinals / Holland Series) — only the teams that played.
   useEffect(() => {
     if (period !== 'semi' && period !== 'final') return
     setPsLoading(true)

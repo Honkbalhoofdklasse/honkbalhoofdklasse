@@ -35,7 +35,6 @@ export function GameCard({
               : 'border-[#1a2a3a] bg-[#0a1220]'
       }`}
     >
-      {/* Game time + status */}
       <div className="flex items-center justify-between px-4 pt-3 pb-1">
         <span className="font-display font-700 text-[10px] text-[var(--muted)] uppercase tracking-widest">
           {fmtTime(game.game_time)}
@@ -57,9 +56,7 @@ export function GameCard({
         </span>
       </div>
 
-      {/* Teams row */}
       <div className="flex items-stretch px-3 pb-3 gap-2">
-        {/* Away team */}
         <TeamButton
           teamId={game.away_team_id}
           picked={myPick === game.away_team_id}
@@ -71,12 +68,10 @@ export function GameCard({
           onClick={() => onPick(game.id, game.away_team_id)}
         />
 
-        {/* VS */}
         <div className="flex items-center justify-center px-1 shrink-0">
           <span className="font-display font-800 text-xs text-[var(--muted)]">VS</span>
         </div>
 
-        {/* Home team */}
         <TeamButton
           teamId={game.home_team_id}
           picked={myPick === game.home_team_id}
@@ -89,7 +84,6 @@ export function GameCard({
         />
       </div>
 
-      {/* Result feedback */}
       {isFinal && myPick && (
         <div
           className={`px-4 py-2 text-center border-t ${isCorrect ? 'border-green-500/20 bg-green-500/10' : 'border-red-500/20 bg-red-500/10'}`}

@@ -53,7 +53,6 @@ export function normName(s: string) {
 
 export function findPlayer(categories: KnbsbCategory[], name: string): Row | null {
   const target = normName(name)
-  // Merge across ALL categories — each category may only include its own stat columns
   const merged: Row = {}
   for (const cat of categories) {
     const found = (cat.data ?? []).find((p) => normName(parseKnbsbName(p)) === target)

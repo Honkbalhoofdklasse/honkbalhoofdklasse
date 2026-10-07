@@ -19,7 +19,6 @@ export default function CompareStatsTable({
 }) {
   return (
     <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl overflow-hidden">
-      {/* Table header */}
       <div className="grid grid-cols-[1fr_auto_1fr] border-b border-[var(--border)]">
         <div
           className="px-4 py-3 flex items-center gap-2"
@@ -68,7 +67,6 @@ export default function CompareStatsTable({
         </div>
       </div>
 
-      {/* Rows */}
       {STAT_ROWS.map((row, i) => {
         const v1 = p1[row.key] as number
         const v2 = p2[row.key] as number

@@ -11,7 +11,6 @@ import { buildDraftSections } from '../domain/draft-sections'
 import { firstOpen, isPitcher, openHitterSlots, pkey, simulateSeason } from '../domain/sim'
 import type { Data, Filled, HSHitter, HSPitcher, Mode, Phase, Sim } from '../domain/types'
 
-// ── Main ──────────────────────────────────────────────────────────────────────
 export default function WinTheSeriesScreen() {
   const [data, setData] = useState<Data | null>(null)
   const [error, setError] = useState(false)
@@ -23,7 +22,7 @@ export default function WinTheSeriesScreen() {
   const [spinning, setSpinning] = useState(false)
   const [cutoff, setCutoff] = useState(24)
   const [skips, setSkips] = useState(SKIPS)
-  const [revealed, setRevealed] = useState(false) // has this round's team been spun yet?
+  const [revealed, setRevealed] = useState(false)
   const [choosing, setChoosing] = useState<HSHitter | null>(null)
   const [sim, setSim] = useState<Sim | null>(null)
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -43,8 +42,6 @@ export default function WinTheSeriesScreen() {
 
   const picked = useMemo(() => new Set(Object.values(filled).map(pkey)), [filled])
   const pickCount = Object.keys(filled).length
-  // Pick-quality (sort + dominance bar) uses sample-adjusted rates, so small
-  // samples can't top the board on rate alone.
   const opsSorted = useMemo(
     () => (data?.hitters ?? []).map((h) => h.opsAdj).sort((a, b) => a - b),
     [data],
@@ -99,7 +96,7 @@ export default function WinTheSeriesScreen() {
         i++
         if (i < STEPS) {
           const p = i / STEPS
-          timer.current = setTimeout(step, 34 + 150 * p * p) // ease-out: steady then slowing
+          timer.current = setTimeout(step, 34 + 150 * p * p)
         } else {
           setDealt(final)
           setSpinning(false)
@@ -126,7 +123,7 @@ export default function WinTheSeriesScreen() {
     setFilled(next)
     setChoosing(null)
     if (Object.keys(next).length >= SLOTS.length) runSim(next, cutoff)
-    else setRevealed(false) // next round waits for a fresh spin
+    else setRevealed(false)
   }
 
   const clickPlayer = (p: HSHitter | HSPitcher) => {
@@ -138,7 +135,7 @@ export default function WinTheSeriesScreen() {
     }
     const opts = openHitterSlots(p, filled)
     if (opts.length === 1) assign(p, opts[0])
-    else setChoosing(p) // multi-position → let the user pick where
+    else setChoosing(p)
   }
 
   const reroll = () => {
@@ -175,12 +172,10 @@ export default function WinTheSeriesScreen() {
       </Shell>
     )
 
-  // ── Start ──
   if (phase === 'start') {
     return <StartScreen onStart={start} />
   }
 
-  // ── Draft ──
   if (phase === 'draft') {
     const roster = teamPlayers(dealt)
     const pctOf = (p: HSHitter | HSPitcher) => (isPitcher(p) ? pitPct(p.eraAdj) : hitPct(p.opsAdj))
@@ -209,7 +204,6 @@ export default function WinTheSeriesScreen() {
     )
   }
 
-  // ── Result ──
   const s = sim!
   return <ResultScreen s={s} data={data} filled={filled} onPlayAgain={() => setPhase('start')} />
 }

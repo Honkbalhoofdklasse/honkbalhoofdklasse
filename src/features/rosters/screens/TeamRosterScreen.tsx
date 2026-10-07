@@ -64,7 +64,6 @@ export default async function TeamRosterScreen({
       <div className="max-w-4xl mx-auto px-4 md:px-8 py-8 space-y-8">
         <BackButton fallback="/rosters" label="Back" />
 
-        {/* Team header */}
         <div className="relative rounded-2xl overflow-hidden border border-[var(--border)] p-6 md:p-8">
           <div className="absolute inset-0 opacity-10" style={{ backgroundColor: teamColor }} />
           <div
@@ -101,7 +100,6 @@ export default async function TeamRosterScreen({
           </div>
         </div>
 
-        {/* Players by position */}
         {sections.map((sec) => {
           const players = allPlayers.filter((p) => sec.filter(p.pos))
           if (!players.length) return null
@@ -128,7 +126,6 @@ export default async function TeamRosterScreen({
           )
         })}
 
-        {/* Coaching staff */}
         {roster.coaches.length > 0 && <TeamRosterCoaches coaches={roster.coaches} />}
       </div>
     </>

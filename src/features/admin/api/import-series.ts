@@ -13,7 +13,6 @@ import {
 } from '@/features/admin/domain/import-series'
 
 export async function POST(req: NextRequest) {
-  // Auth: must be super admin
   const supabase = await createClient()
   const {
     data: { user },
@@ -33,9 +32,6 @@ export async function POST(req: NextRequest) {
 
   const year = parseInt(seriesDate.slice(0, 4), 10)
 
-  // 1. Get schedule and find the series (cluster) matching seriesDate.
-  //    Grouped identically to the GET listing, so each game belongs to exactly
-  //    one series — no overlapping windows, no double-counting across weeks.
   const schedRes = await fetch(
     'https://boxscore.stenwessel.nl/api/fetchschedule.php?competition=hb2026',
     { cache: 'no-store' },
@@ -49,9 +45,6 @@ export async function POST(req: NextRequest) {
   const clusters = clusterSeries(finished)
   const clusterIdx = clusters.findIndex((c) => c.seriesDate === seriesDate)
   const seriesGames = clusterIdx === -1 ? [] : clusters[clusterIdx].games
-  // Rows are deleted for this whole series span (up to the next series' start),
-  // so stale sub-series left by earlier overlapping imports get cleaned up when
-  // clusters merge — e.g. a rescheduled game bridging a former gap.
   const nextSeriesDate = clusterIdx === -1 ? null : (clusters[clusterIdx + 1]?.seriesDate ?? null)
 
   if (seriesGames.length === 0) {
@@ -61,7 +54,6 @@ export async function POST(req: NextRequest) {
     )
   }
 
-  // 2. Aggregate per-player stats across all games in the series
   const map = new Map<string, Acc>()
 
   for (const game of seriesGames) {
@@ -128,7 +120,6 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // 3. Build rows
   const batRows: Record<string, unknown>[] = []
   const pitRows: Record<string, unknown>[] = []
 
@@ -171,9 +162,6 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // 4. Delete existing data for this series span (check errors), then insert
-  //    fresh. Deleting the range [seriesDate, nextSeriesDate) — not just the
-  //    exact key — clears any duplicate rows from earlier overlapping imports.
   let delBatQ = supabaseAdmin
     .from('batting_stats')
     .delete()

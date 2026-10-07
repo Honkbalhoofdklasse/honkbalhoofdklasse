@@ -2,7 +2,6 @@ import Image from 'next/image'
 import { TEAM_COLORS, TEAM_LOGOS, TEAM_SHORT, teamAccent } from '@/shared/teams/teams'
 import type { CardState } from '@/features/postseason/domain/cardState'
 
-// ── Bracket card ──────────────────────────────────────────────────────────────
 export function BracketCard({
   teamId,
   seed,

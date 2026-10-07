@@ -46,7 +46,6 @@ export default async function AdminHomeScreen() {
   return (
     <div className="min-h-screen bg-[#06101e] px-4 pt-20 pb-16">
       <div className="max-w-sm mx-auto">
-        {/* Header */}
         <div className="mb-8">
           <p className="font-display font-700 text-[var(--accent)] uppercase tracking-widest text-xs mb-1">
             Beheerportaal
@@ -57,7 +56,6 @@ export default async function AdminHomeScreen() {
           </p>
         </div>
 
-        {/* Sections */}
         <div className="space-y-3">
           {sections.map((s) => (
             <Link

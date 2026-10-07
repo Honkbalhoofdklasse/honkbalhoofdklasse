@@ -1,14 +1,14 @@
 import Link from 'next/link'
 import { TEAM_NAMES } from '@/shared/teams/teams'
 import type { HomeData } from '@/features/home/api/getHomeData'
-import { TeamLogo } from '@/features/home/components/TeamLogo'
+import { TeamLogo } from '@/shared/ui/TeamLogo'
 
 export function LeaderCallout({ leader }: { leader: HomeData['standings'][number] }) {
   return (
     <section className="bg-[var(--accent)] py-10 px-6 md:px-12">
       <div className="max-w-6xl mx-auto flex items-center justify-between gap-6 flex-wrap">
         <div className="flex items-center gap-5">
-          <TeamLogo teamId={leader.team_id} size={64} />
+          <TeamLogo teamId={leader.team_id} size={64} useShortName />
           <div>
             <p className="font-display font-700 text-white/70 uppercase tracking-[0.3em] text-xs mb-1">
               Current Leader

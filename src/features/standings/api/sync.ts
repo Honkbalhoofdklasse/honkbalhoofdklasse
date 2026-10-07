@@ -10,8 +10,10 @@ import {
   type SteGame,
 } from '../domain/sync'
 
+const LIVE_NOTIFY_TOLERANCE_MS = 5 * 60_000
+const STREAM_GO_LIVE_LEAD_MS = 15 * 60_000
+
 export async function GET(req: Request) {
-  // Auth: Vercel sends "Authorization: Bearer {CRON_SECRET}" for cron jobs
   const secret = process.env.CRON_SECRET
   if (secret) {
     const auth = req.headers.get('Authorization')
@@ -21,7 +23,6 @@ export async function GET(req: Request) {
   }
 
   try {
-    // ── 1. Fetch schedule (all games + scores + standings in one call) ──────
     const res = await fetch(`${BASE_URL}/fetchschedule.php?competition=${COMPETITION}`, {
       cache: 'no-store',
     })
@@ -31,7 +32,6 @@ export async function GET(req: Request) {
     const steGames: SteGame[] = json?.games ?? []
     if (!steGames.length) throw new Error('No games returned from schedule')
 
-    // ── 2. Load current Supabase games ───────────────────────────────────────
     const { data: sbGames, error: sbErr } = await supabaseAdmin
       .from('games')
       .select(
@@ -43,7 +43,6 @@ export async function GET(req: Request) {
 
     const sbByExtId = new Map((sbGames ?? []).map((g) => [String(g.external_id), g]))
 
-    // ── 3. Diff & build updates ──────────────────────────────────────────────
     const gameUpdates: { id: number; patch: Record<string, unknown> }[] = []
     const newlyLive: { homeTeamId: string; awayTeamId: string; dbId: number }[] = []
     let newFinals = 0
@@ -67,20 +66,16 @@ export async function GET(req: Request) {
         if (newStatus === 'final' && sb.status !== 'final') newFinals++
       }
 
-      // Track games that just went live and haven't been notified yet.
-      // Guard: only notify once the scheduled start time has actually passed (±5 min),
-      // so stenwessel marking a game "live" prematurely doesn't fire early notifications.
       if (
         newStatus === 'live' &&
         sb.status !== 'live' &&
         !sb.live_notified &&
-        Date.now() >= scheduledStartUtcMs(String(sg.start ?? '')) - 5 * 60_000
+        Date.now() >= scheduledStartUtcMs(String(sg.start ?? '')) - LIVE_NOTIFY_TOLERANCE_MS
       ) {
         newlyLive.push({ homeTeamId: sb.home_team_id, awayTeamId: sb.away_team_id, dbId: sb.id })
       }
     }
 
-    // ── 4. Apply game updates ────────────────────────────────────────────────
     let gameErrors = 0
     for (const { id, patch } of gameUpdates) {
       try {
@@ -91,9 +86,6 @@ export async function GET(req: Request) {
       }
     }
 
-    // ── 5. Recalculate standings from stenwessel team data ───────────────────
-    // Each game carries the latest groupwins/losses for both teams.
-    // Collect the most recent entry per team (highest games_played).
     const teamBest: Record<
       string,
       {
@@ -128,7 +120,6 @@ export async function GET(req: Request) {
       }
     }
 
-    // Apply standings updates
     let standingsUpdated = 0
     for (const [teamId, s] of Object.entries(teamBest)) {
       const winPct = s.gp > 0 ? s.wins / s.gp : 0
@@ -152,8 +143,6 @@ export async function GET(req: Request) {
       }
     }
 
-    // ── 6. Auto-toggle streams based on linked game status ──────────────────
-    // Re-fetch current game statuses (after updates were applied)
     const { data: currentGames } = await supabaseAdmin
       .from('games')
       .select('id, status, game_date, game_time')
@@ -173,11 +162,10 @@ export async function GET(req: Request) {
 
       const shouldOff = game.status === 'final'
 
-      // Go live when the game is live, or 15 minutes before scheduled start.
       let shouldLive = game.status === 'live'
       if (!shouldLive && game.status === 'scheduled' && game.game_date && game.game_time) {
         const startUtcMs = scheduledStartUtcMs(`${game.game_date} ${game.game_time}`)
-        shouldLive = startUtcMs > 0 && Date.now() >= startUtcMs - 15 * 60_000
+        shouldLive = startUtcMs > 0 && Date.now() >= startUtcMs - STREAM_GO_LIVE_LEAD_MS
       }
 
       if (shouldLive && !s.is_live) {
@@ -189,7 +177,6 @@ export async function GET(req: Request) {
       }
     }
 
-    // ── 7. Send live notifications ───────────────────────────────────────────
     let notificationsSent = 0
     if (newlyLive.length > 0) {
       const { data: subscribers } = await supabaseAdmin.from('subscribers').select('email, token')
@@ -202,7 +189,6 @@ export async function GET(req: Request) {
         notificationsSent = subscribers.length
       }
 
-      // Mark games as notified
       for (const g of newlyLive) {
         await supabaseAdmin.from('games').update({ live_notified: true }).eq('id', g.dbId)
       }

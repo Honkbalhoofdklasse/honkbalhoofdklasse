@@ -44,7 +44,6 @@ export default function StatsImportScreen() {
   async function loadSeries() {
     setLoading(true)
     try {
-      // Fetch schedule from stenwessel
       const schedRes = await fetch('/api/admin/import-series')
       if (!schedRes.ok) throw new Error('Failed to load schedule')
       const data = await schedRes.json()

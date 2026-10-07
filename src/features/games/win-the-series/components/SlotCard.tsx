@@ -4,7 +4,6 @@ import { TEAM_SHORT, teamAccent } from '@/shared/teams/teams'
 import { fmt3, isPitcher } from '../domain/sim'
 import type { HSHitter, HSPitcher, Slot } from '../domain/types'
 
-// ── Roster board ──────────────────────────────────────────────────────────────
 export function SlotCard({
   slot,
   player,

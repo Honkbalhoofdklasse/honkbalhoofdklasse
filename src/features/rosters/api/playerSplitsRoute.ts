@@ -58,7 +58,6 @@ export async function GET(req: NextRequest) {
           const opp = IOC_SHORT[oppIoc] ?? oppIoc
           const date = g.start.slice(0, 10)
 
-          // Try batting spots 1-9 first
           const sortedSpots = Object.entries(spots).sort(
             ([a], [b]) => (parseInt(a) || 999) - (parseInt(b) || 999),
           )
@@ -75,7 +74,6 @@ export async function GET(req: NextRequest) {
               if (!last.includes(playerLast) && !playerNorm.includes(last)) continue
 
               if (spot === '90') {
-                // Pitcher — collect pitching stats
                 isPitcher = true
                 pitGames.push({
                   date,
@@ -89,7 +87,6 @@ export async function GET(req: NextRequest) {
                   l: Number(p.pitch_loss ?? 0),
                 })
               } else {
-                // Batter — collect batting stats
                 batGames.push({
                   date,
                   opponent: opp,
@@ -108,13 +105,10 @@ export async function GET(req: NextRequest) {
             }
             if (found) break
           }
-        } catch {
-          /* skip */
-        }
+        } catch {}
       }),
     )
 
-    // Build pitching splits
     let pitchingSplits = null
     if (pitGames.length > 0) {
       pitGames.sort((a, b) => b.date.localeCompare(a.date))
@@ -151,7 +145,6 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    // Build batting splits
     batGames.sort((a, b) => b.date.localeCompare(a.date))
     type BatKey = 'ab' | 'r' | 'h' | 'hr' | 'rbi' | 'bb' | 'so' | 'sb'
     const batKeys: BatKey[] = ['ab', 'r', 'h', 'hr', 'rbi', 'bb', 'so', 'sb']
@@ -170,7 +163,6 @@ export async function GET(req: NextRequest) {
       })
       .filter(Boolean)
 
-    // Pure pitcher: only show pitching
     if (batGames.length === 0 && pitchingSplits) {
       return NextResponse.json(
         { type: 'pitching', ...pitchingSplits },
@@ -180,7 +172,6 @@ export async function GET(req: NextRequest) {
       )
     }
 
-    // Batter or two-way: return batting + pitching (if available)
     return NextResponse.json(
       {
         type: 'batting',

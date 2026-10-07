@@ -24,7 +24,7 @@ export default function WeekPitchingTables({
     .sort((a, b) => {
       const eraA = (Number(a.earned_runs ?? 0) / ipToDec(a.innings_pitched)) * 9
       const eraB = (Number(b.earned_runs ?? 0) / ipToDec(b.innings_pitched)) * 9
-      return eraA - eraB // ascending: lower ERA is better
+      return eraA - eraB
     })
   const byWHIP = [...pitchers]
     .filter((p) => ipToDec(p.innings_pitched) >= 1)
@@ -33,7 +33,7 @@ export default function WeekPitchingTables({
         (Number(a.walks ?? 0) + Number(a.hits_allowed ?? 0)) / ipToDec(a.innings_pitched)
       const whipB =
         (Number(b.walks ?? 0) + Number(b.hits_allowed ?? 0)) / ipToDec(b.innings_pitched)
-      return whipA - whipB // ascending: lower WHIP is better
+      return whipA - whipB
     })
 
   const fmtERA = (r: Row) =>

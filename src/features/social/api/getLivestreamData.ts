@@ -1,4 +1,5 @@
 import { supabaseAdmin as supabase } from '@/shared/supabase/legacy'
+import type { GameRow } from '@/shared/types/game'
 
 export type Stream = {
   id: number
@@ -10,13 +11,7 @@ export type Stream = {
   scheduled_at: string | null
 }
 
-export type Game = {
-  id: number
-  game_date: string
-  game_time: string | null
-  home_team_id: string
-  away_team_id: string
-}
+export type Game = Pick<GameRow, 'id' | 'game_date' | 'game_time' | 'home_team_id' | 'away_team_id'>
 
 export async function getData() {
   const today = new Date().toISOString().split('T')[0]

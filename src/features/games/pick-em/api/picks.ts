@@ -15,7 +15,6 @@ type GameRow = {
 export async function GET(req: NextRequest) {
   const userToken = req.nextUrl.searchParams.get('token')
 
-  // Fetch all games this season sorted by date
   const { data: games, error } = await supabaseAdmin
     .from('games')
     .select('id, game_date, game_time, home_team_id, away_team_id, status, home_score, away_score')
@@ -44,7 +43,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Missing fields' }, { status: 400 })
   }
 
-  // Check game hasn't started yet
   const { data: game } = await supabaseAdmin
     .from('games')
     .select('game_date, game_time, status')

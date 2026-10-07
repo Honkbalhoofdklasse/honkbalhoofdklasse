@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/shared/supabase/legacy'
 import { type FinishedGame, clusterSeries } from '@/features/admin/domain/import-series'
 
-// GET: return list of completed series + which are already imported
 export async function GET() {
   const [schedRes, { data: existing }] = await Promise.all([
     fetch('https://boxscore.stenwessel.nl/api/fetchschedule.php?competition=hb2026', {

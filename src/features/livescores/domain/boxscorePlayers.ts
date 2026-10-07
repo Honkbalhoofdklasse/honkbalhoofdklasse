@@ -1,4 +1,8 @@
-import type { BatterStat, PitcherStat, RawPlayer } from './boxscoreTypes'
+import type { BatterStat, PitcherStat, RawPlayer } from '@/shared/types/boxscore'
+
+const PITCHER_SPOT = 90
+const FIRST_BATTING_SPOT = 1
+const LAST_BATTING_SPOT = 9
 
 export function n(v: unknown): number {
   const x = Number(v)
@@ -28,11 +32,9 @@ export function extractBatters(players: RawPlayer[]): BatterStat[] {
     const sub = n(p.sub)
     const pos = String(p.pos ?? '')
 
-    // Skip pitchers (spot === 90)
-    if (spot === 90) continue
+    if (spot === PITCHER_SPOT) continue
 
-    // Include if: has valid batting spot (1-9) AND (has plate appearance OR is substitute)
-    const hasBattingSpot = spot >= 1 && spot <= 9
+    const hasBattingSpot = spot >= FIRST_BATTING_SPOT && spot <= LAST_BATTING_SPOT
     const hasPA =
       n(p.ab) > 0 ||
       n(p.bb) > 0 ||
@@ -61,9 +63,7 @@ export function extractBatters(players: RawPlayer[]): BatterStat[] {
     })
   }
 
-  // Sort by spot, then by sub (substitutes come after starter in same spot)
   return result.sort((a, b) => {
-    // Need to get spot from original players for sorting
     const aPlayer = players.find((p) => `${p.firstname} ${p.lastname}` === a.name)
     const bPlayer = players.find((p) => `${p.firstname} ${p.lastname}` === b.name)
     const aSpot = n(aPlayer?.spot)
@@ -101,8 +101,6 @@ export function extractPitchers(players: RawPlayer[]): PitcherStat[] {
   return result
 }
 
-// Returns players sorted by batting-order slot (the numeric section key in the API).
-// Each slot may contain multiple players (starter + substitutes in that spot).
 export function getTeamPlayers(
   boxScore: Record<string, unknown>,
   teamId: string | number,
@@ -110,7 +108,6 @@ export function getTeamPlayers(
   const team = boxScore[String(teamId)] as Record<string, unknown> | undefined
   if (!team) return []
 
-  // Group entries by their numeric key (= batting-order slot 1-9) vs non-numeric
   const slots: [number, RawPlayer[]][] = []
   const extra: RawPlayer[] = []
 

@@ -49,7 +49,6 @@ export async function DELETE(req: NextRequest) {
 
   const col = photoType === 'banner' ? 'banner_url' : 'headshot_url'
 
-  // Fetch the current URL so we can remove the file from storage too
   const { data: existing } = await supabaseAdmin
     .from('player_photos')
     .select('id, banner_url, headshot_url')

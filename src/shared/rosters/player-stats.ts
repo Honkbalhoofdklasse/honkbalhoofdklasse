@@ -6,10 +6,6 @@ import { fmtIp, ipToInnings, num } from './stats/stat-format'
 
 export type { PlayerPhotos, SeasonStats } from './stats/season-stats'
 
-// ── computeSeasonStats ────────────────────────────────────────────────────────
-// Uses section=players (no threshold) for individual pages.
-// Falls back to section=leaders categories (for players who appear there but
-// have a different name format in section=players).
 export async function computeSeasonStats(name: string): Promise<SeasonStats> {
   const [batList, pitList, batCats, pitCats] = await Promise.all([
     fetchAllPlayerStats('batting'),
@@ -18,17 +14,14 @@ export async function computeSeasonStats(name: string): Promise<SeasonStats> {
     fetchKnbsbCategories('pitching'),
   ])
 
-  // Prefer section=players (all players, no threshold)
   let bat: Row | null = findInList(batList, name)
   let pit: Row | null = findInList(pitList, name)
 
-  // Fall back to section=leaders categories (catches edge-case name format diffs)
   if (!bat) bat = findPlayer(batCats, name)
   if (!pit) pit = findPlayer(pitCats, name)
 
   if (!bat && !pit) return { ...ZERO_STATS }
 
-  // section=players stores rates as integers (219 = .219); section=leaders uses decimals (0.219)
   function normalizeRate(v: unknown): number | null {
     if (v == null || v === '') return null
     const x = Number(v)

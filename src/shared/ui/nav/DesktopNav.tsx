@@ -44,7 +44,6 @@ export default function DesktopNav({ entries, pathname, onSearchOpen }: Props) {
         Honkbalsoftbal.tv
       </a>
 
-      {/* Bell + Search + Partner — far right on desktop */}
       <div className="flex items-center gap-2 ml-2 pl-4 border-l border-white/10">
         <PushNotifications />
         <button

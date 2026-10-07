@@ -3,12 +3,10 @@ export default function SiteFooter() {
     <footer className="border-t border-[var(--border)] bg-[var(--card)]">
       <div className="max-w-5xl mx-auto px-4 py-10">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-          {/* Branding */}
           <div>
             <p className="font-display font-800 text-xl text-white">@honkbalhoofdklasse</p>
           </div>
 
-          {/* Navigatie */}
           <div>
             <p className="font-display font-800 text-xs text-[var(--muted)] uppercase tracking-widest mb-3">
               Navigation
@@ -37,13 +35,11 @@ export default function SiteFooter() {
             </div>
           </div>
 
-          {/* Socials */}
           <div>
             <p className="font-display font-800 text-xs text-[var(--muted)] uppercase tracking-widest mb-3">
               Follow us
             </p>
             <div className="space-y-2">
-              {/* Instagram */}
               <a
                 href="https://www.instagram.com/honkbalhoofdklasse/"
                 target="_blank"
@@ -59,7 +55,6 @@ export default function SiteFooter() {
                   Instagram
                 </span>
               </a>
-              {/* TikTok */}
               <a
                 href="https://www.tiktok.com/@honkbalhoofdklasse"
                 target="_blank"
@@ -75,7 +70,6 @@ export default function SiteFooter() {
                   TikTok
                 </span>
               </a>
-              {/* YouTube */}
               <a
                 href="https://www.youtube.com/@Honkbalhoofdklasse"
                 target="_blank"
@@ -91,7 +85,6 @@ export default function SiteFooter() {
                   YouTube
                 </span>
               </a>
-              {/* Facebook */}
               <a
                 href="https://www.facebook.com/profile.php?id=61579476197609"
                 target="_blank"

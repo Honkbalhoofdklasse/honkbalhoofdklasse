@@ -19,7 +19,6 @@ export function PartnersSection() {
               key={p.name}
               className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-8 flex items-center justify-center hover:border-[var(--accent)]/40 transition-colors group"
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={p.logo}
                 alt={p.name}

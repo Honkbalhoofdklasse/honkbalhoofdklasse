@@ -1,17 +1,7 @@
 import { NextResponse } from 'next/server'
 import { ROSTERS } from '@/shared/rosters/rosters-data'
 import { TEAM_NAMES } from '@/shared/teams/teams'
-
-const KNBSB_TEAM_IDS: Record<string, number> = {
-  pirates: 39583,
-  neptunus: 39587,
-  hcaw: 39584,
-  kinheim: 39586,
-  twins: 39588,
-  uvv: 39589,
-  pioniers: 39585,
-}
-const KNBSB_ID_TO_TEAM = Object.fromEntries(Object.entries(KNBSB_TEAM_IDS).map(([k, v]) => [v, k]))
+import { KNBSB_NUMERIC_ID_MAP } from '@/shared/teams/teams'
 
 const HEADERS = {
   'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
@@ -57,7 +47,7 @@ async function fetchSection(
     return (data as Record<string, unknown>[])
       .map((p) => ({
         name: parseName(String(p.name ?? '')),
-        teamId: KNBSB_ID_TO_TEAM[Number(p.teamid)] ?? '',
+        teamId: KNBSB_NUMERIC_ID_MAP[Number(p.teamid)] ?? '',
         isPitcher: section === 'pitching',
       }))
       .filter((p) => p.name && p.teamId)
@@ -67,7 +57,6 @@ async function fetchSection(
 }
 
 export async function GET() {
-  // Start with all static roster players
   const staticPlayers = Object.entries(ROSTERS).flatMap(([teamId, roster]) =>
     roster.players.map((p) => ({
       name: p.name,
@@ -84,7 +73,6 @@ export async function GET() {
     knownByTeam[teamId] = new Set(roster.players.map((p) => p.name.toLowerCase()))
   }
 
-  // Fetch KNBSB stats players
   const [batters, pitchers] = await Promise.all([fetchSection('batting'), fetchSection('pitching')])
 
   const pitcherSet = new Set(pitchers.map((p) => `${p.teamId}:${p.name.toLowerCase()}`))

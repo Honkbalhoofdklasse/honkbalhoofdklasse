@@ -1,11 +1,10 @@
-export type Game = {
-  id: number
-  game_date: string
-  game_time: string | null
-  home_team_id: string
-  away_team_id: string
-  status: string
-}
+import type { GameRow } from '@/shared/types/game'
+import { WEEKDAY_DAY_MONTH, formatGameDate } from '@/shared/dates/gameDate'
+
+export type Game = Pick<
+  GameRow,
+  'id' | 'game_date' | 'game_time' | 'home_team_id' | 'away_team_id' | 'status'
+>
 
 export type Stream = {
   id: number
@@ -27,8 +26,7 @@ export const TEAM_NAME: Record<string, string> = {
 }
 
 export function fmtGame(g: Game) {
-  const d = new Date(g.game_date + 'T12:00:00')
-  const date = d.toLocaleDateString('nl-NL', { weekday: 'short', day: 'numeric', month: 'short' })
+  const date = formatGameDate(g.game_date, WEEKDAY_DAY_MONTH, 'nl-NL')
   const time = g.game_time ? g.game_time.slice(0, 5) : ''
   return `${date}${time ? ' · ' + time : ''}`
 }

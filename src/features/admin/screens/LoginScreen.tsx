@@ -36,7 +36,6 @@ function LoginContent() {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden bg-[#06101e]">
-      {/* Background gradient */}
       <div className="absolute inset-0 pointer-events-none">
         <div
           className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] rounded-full opacity-20"
@@ -48,7 +47,6 @@ function LoginContent() {
         />
       </div>
 
-      {/* Grid pattern overlay */}
       <div
         className="absolute inset-0 opacity-[0.03]"
         style={{
@@ -58,10 +56,8 @@ function LoginContent() {
         }}
       />
 
-      {/* Card */}
       <div className="relative w-full max-w-sm">
         <div className="bg-[#0a1220]/80 backdrop-blur-xl border border-[#1a2a3a] rounded-2xl p-8 shadow-2xl">
-          {/* Logo + branding */}
           <div className="flex flex-col items-center text-center mb-8">
             <div className="w-20 h-20 mb-4">
               <Image
@@ -83,14 +79,12 @@ function LoginContent() {
             </p>
           </div>
 
-          {/* Error */}
           {error && (
             <div className="mb-6 bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3">
               <p className="font-display font-700 text-sm text-red-400 text-center">{error}</p>
             </div>
           )}
 
-          {/* Google sign-in button */}
           <button
             onClick={signInWithGoogle}
             disabled={loading}

@@ -17,7 +17,6 @@ export default function PickEmScreen() {
   const [tab, setTab] = useState<'picks' | 'leaderboard'>('picks')
   const [loading, setLoading] = useState(true)
 
-  // Load user from localStorage
   useEffect(() => {
     const stored = localStorage.getItem('pickem_user')
     if (stored) {
@@ -61,7 +60,6 @@ export default function PickEmScreen() {
     const game = games.find((g) => g.id === gameId)
     if (!game || isLocked(game)) return
 
-    // Optimistic update
     setPicks((prev) => new Map(prev).set(gameId, teamId))
     setSaving(gameId)
 
@@ -78,7 +76,6 @@ export default function PickEmScreen() {
     setSaving(null)
   }
 
-  // Group games by week
   const grouped = games.reduce<Record<string, Game[]>>((acc, g) => {
     const key = getWeekKey(g.game_date)
     if (!acc[key]) acc[key] = []
@@ -88,7 +85,6 @@ export default function PickEmScreen() {
 
   const weekKeys = Object.keys(grouped).sort()
 
-  // Find current/upcoming week
   const today = new Date().toISOString().split('T')[0]
   const activeWeek =
     weekKeys.find((k) => {
@@ -105,7 +101,6 @@ export default function PickEmScreen() {
   const myRank = user ? leaderboard.findIndex((e) => e.token === user.token) + 1 : 0
   const myEntry = user ? leaderboard.find((e) => e.token === user.token) : null
 
-  // Nickname screen
   if (!user) {
     return <NicknameScreen nickInput={nickInput} setNickInput={setNickInput} saveUser={saveUser} />
   }
@@ -113,7 +108,6 @@ export default function PickEmScreen() {
   return (
     <div className="min-h-screen bg-[#06101e] px-4 pt-20 pb-16">
       <div className="max-w-2xl mx-auto">
-        {/* Header */}
         <div className="mb-6">
           <p className="font-display font-700 text-[var(--accent)] uppercase tracking-widest text-xs mb-1">
             Honkbal Hoofdklasse
@@ -148,7 +142,6 @@ export default function PickEmScreen() {
           </p>
         </div>
 
-        {/* Tabs */}
         <div className="flex gap-1 mb-6 bg-[#0a1220] border border-[#1a2a3a] rounded-xl p-1">
           {(['picks', 'leaderboard'] as const).map((t) => (
             <button
@@ -171,7 +164,6 @@ export default function PickEmScreen() {
           </div>
         )}
 
-        {/* Picks tab */}
         {!loading && tab === 'picks' && (
           <div className="space-y-8">
             {visibleWeeks.map((week) => (
@@ -188,7 +180,6 @@ export default function PickEmScreen() {
           </div>
         )}
 
-        {/* Leaderboard tab */}
         {!loading && tab === 'leaderboard' && (
           <PickEmLeaderboard leaderboard={leaderboard} user={user} />
         )}

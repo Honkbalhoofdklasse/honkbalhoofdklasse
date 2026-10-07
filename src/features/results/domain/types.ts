@@ -1,11 +1,9 @@
-export type Game = {
-  id: number
-  external_id: string
-  game_date: string
-  home_team_id: string
-  away_team_id: string
-  home_score: number | null
-  away_score: number | null
-}
+import type { GameRow } from '@/shared/types/game'
+import type { StandingRow } from '@/shared/types/standing'
 
-export type StandingsEntry = { team_id: string; wins: number; losses: number }
+export type Game = Pick<
+  GameRow,
+  'id' | 'external_id' | 'game_date' | 'home_team_id' | 'away_team_id' | 'home_score' | 'away_score'
+>
+
+export type StandingsEntry = Pick<StandingRow, 'team_id' | 'wins' | 'losses'>

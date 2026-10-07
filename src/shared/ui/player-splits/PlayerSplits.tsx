@@ -40,7 +40,6 @@ export default function PlayerSplits({
             setPitSplits(d.pitching.splits ?? [])
             setPitGames(d.pitching.games ?? [])
           }
-          // Use statType prop as initial view, default to batting
           setActiveView(statType === 'pitching' ? 'pitching' : 'batting')
         }
       })
@@ -66,7 +65,6 @@ export default function PlayerSplits({
 
   return (
     <div className="space-y-4">
-      {/* Toggle for two-way players */}
       {isTwoWay && (
         <div className="flex gap-1.5">
           <button
@@ -84,10 +82,8 @@ export default function PlayerSplits({
         </div>
       )}
 
-      {/* ── BATTING SPLITS ── */}
       {hasBat && !showPitching && <BattingSplits batSplits={batSplits} batGames={batGames} />}
 
-      {/* ── PITCHING SPLITS ── */}
       {hasPit && showPitching && <PitchingSplits pitSplits={pitSplits} pitGames={pitGames} />}
     </div>
   )

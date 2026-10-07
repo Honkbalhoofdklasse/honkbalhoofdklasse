@@ -1,16 +1,13 @@
 import { supabase } from '@/shared/supabase/legacy'
+import type { GameRow } from '@/shared/types/game'
+import type { StandingRow } from '@/shared/types/standing'
 
-export type Game = {
-  id: number
-  game_date: string
-  game_time: string | null
-  home_team_id: string
-  away_team_id: string
-  status: string
-  venue: string | null
-}
+export type Game = Pick<
+  GameRow,
+  'id' | 'game_date' | 'game_time' | 'home_team_id' | 'away_team_id' | 'status' | 'venue'
+>
 
-export type StandingsEntry = { team_id: string; wins: number; losses: number }
+export type StandingsEntry = Pick<StandingRow, 'team_id' | 'wins' | 'losses'>
 
 export async function getSchedule() {
   const today = new Date().toISOString().split('T')[0]

@@ -1,17 +1,13 @@
 import type { TeamBatting, TeamPitching } from '@/shared/teams/team-stats'
+import type { StandingRow } from '@/shared/types/standing'
 
-export type Standing = {
-  team_id: string
-  wins: number
-  losses: number
-  win_pct: number
-  runs_scored: number
-  runs_allowed: number
-  games_played: number
-}
+export type Standing = Pick<
+  StandingRow,
+  'team_id' | 'wins' | 'losses' | 'win_pct' | 'runs_scored' | 'runs_allowed' | 'games_played'
+>
 
 export type SortKey = 'standings' | 'avg' | 'hr' | 'r' | 'era' | 'so' | 'whip' | 'ops' | 'sb'
-export const ASC_KEYS: SortKey[] = ['era', 'whip'] // lower = better
+export const ASC_KEYS: SortKey[] = ['era', 'whip']
 
 export type StatButton = { key: SortKey; label: string }
 export const BATTING_SORTS: StatButton[] = [

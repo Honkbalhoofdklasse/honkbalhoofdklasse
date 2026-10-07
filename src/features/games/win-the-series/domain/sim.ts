@@ -21,7 +21,6 @@ const winP = (rs: number, ra: number) => {
     b = ra ** e
   return a / (a + b)
 }
-// log5: probability team A (win% a) beats team B (win% b) head-to-head.
 const log5 = (a: number, b: number) => {
   const d = a + b - 2 * a * b
   return d <= 0 ? 0.5 : (a - a * b) / d
@@ -41,7 +40,6 @@ export function domColor(pct: number) {
 }
 export const firstOpen = (keys: string[], filled: Filled) => keys.find((k) => !filled[k]) ?? null
 
-// Monte-Carlo the team's chance to actually win it all; grounds the result.
 function champOdds(talent: number, cutoff: number, N = 2500): number {
   let ch = 0
   for (let i = 0; i < N; i++) {
@@ -61,7 +59,6 @@ export const armGrade = (era: number, lg: number): Grade => {
   return r >= 1.38 ? 'A' : r >= 1.15 ? 'B' : r >= 1.0 ? 'C' : r >= 0.88 ? 'D' : 'F'
 }
 
-// Open positions a hitter can still be assigned to (their field spots + DH).
 export const openHitterSlots = (h: HSHitter, filled: Filled) => [
   ...h.positions.filter((p) => !filled[p]),
   ...(!filled['DH'] ? ['DH'] : []),
@@ -76,7 +73,7 @@ export function simulateSeason(f: Filled, cut: number, data: Data): Sim {
   const spEra = sp.reduce((s, p) => s + p.eraAdj, 0) / sp.length
   const rpEra = rp.reduce((s, p) => s + p.eraAdj, 0) / rp.length
   const staffEra = Math.max(RA_FLOOR, 0.7 * spEra + 0.3 * rpEra)
-  const talent = winP(rs, staffEra) // your win% vs a league-average team
+  const talent = winP(rs, staffEra)
   let wins = 0
   for (let i = 0; i < REG_GAMES; i++) if (Math.random() < talent) wins++
   const madePlayoffs = wins >= cut

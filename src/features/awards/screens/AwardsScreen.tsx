@@ -35,7 +35,6 @@ export default function AwardsScreen() {
               key={cat.key}
               className="bg-[var(--card)] border border-[var(--border)] rounded-2xl overflow-hidden"
             >
-              {/* Category header */}
               <div className="flex items-center justify-between gap-4 px-6 py-5 border-b border-[var(--border)]">
                 <div>
                   <h2 className="font-display font-800 italic text-2xl uppercase text-white leading-none">
@@ -47,7 +46,6 @@ export default function AwardsScreen() {
                 </div>
                 {cat.sponsorLogo && (
                   <div className="h-8 w-24 flex items-center justify-end shrink-0">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={cat.sponsorLogo}
                       alt="sponsor"
@@ -57,7 +55,6 @@ export default function AwardsScreen() {
                 )}
               </div>
 
-              {/* Winners list */}
               {winners.length === 0 ? (
                 <div className="px-6 py-8 text-center">
                   <p className="font-display font-700 text-[var(--muted)] text-sm uppercase tracking-widest">
@@ -72,7 +69,6 @@ export default function AwardsScreen() {
                       href={`/rosters/${award.teamId}/${slugify(award.playerName)}`}
                       className="flex items-center gap-4 px-6 py-4 hover:bg-[var(--card-hover)] transition-colors group"
                     >
-                      {/* Label (week/month) */}
                       {award.label && (
                         <div className="shrink-0 w-16">
                           <span className="font-display font-800 text-xs uppercase tracking-widest text-[var(--accent)]">
@@ -81,7 +77,6 @@ export default function AwardsScreen() {
                         </div>
                       )}
 
-                      {/* Team logo */}
                       <div
                         className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 p-1.5"
                         style={{ backgroundColor: TEAM_COLORS[award.teamId] ?? '#1e335a' }}
@@ -95,7 +90,6 @@ export default function AwardsScreen() {
                         />
                       </div>
 
-                      {/* Player info */}
                       <div className="flex-1 min-w-0">
                         <p className="font-display font-800 text-lg uppercase text-white group-hover:text-[var(--accent)] transition-colors leading-tight truncate">
                           <strong>{award.playerName}</strong>
@@ -105,7 +99,6 @@ export default function AwardsScreen() {
                         </p>
                       </div>
 
-                      {/* Note */}
                       {award.note && (
                         <p className="font-display font-700 text-xs text-[var(--muted)] shrink-0 hidden sm:block max-w-[140px] text-right">
                           {award.note}

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/shared/supabase/legacy'
 import sharp from 'sharp'
 
-const TARGET_BYTES = 500 * 1024 // 500 KB
+const TARGET_BYTES = 500 * 1024
 
 async function compress(
   buffer: Buffer,
@@ -29,7 +29,6 @@ async function compress(
 }
 
 function storagePathFromUrl(url: string): string | null {
-  // e.g. https://xxx.supabase.co/storage/v1/object/public/player-photos/slug/banner-123.jpg?v=...
   const match = url.match(/\/player-photos\/(.+?)(?:\?|$)/)
   return match ? match[1] : null
 }
@@ -64,7 +63,6 @@ export async function POST(req: NextRequest) {
   const rawBuffer = Buffer.from(await file.arrayBuffer())
   const { data: compressed, contentType } = await compress(rawBuffer, photoType === 'headshot')
 
-  // Unique path — timestamp ensures a fresh CDN entry every upload
   const path = `${slug}/${photoType}-${Date.now()}.jpg`
 
   const { error: uploadError } = await supabaseAdmin.storage
@@ -88,7 +86,6 @@ export async function POST(req: NextRequest) {
     .maybeSingle()
 
   if (existing) {
-    // Delete old file from storage so it doesn't linger
     const oldUrl = photoType === 'banner' ? existing.banner_url : existing.headshot_url
     if (oldUrl) {
       const oldPath = storagePathFromUrl(oldUrl)

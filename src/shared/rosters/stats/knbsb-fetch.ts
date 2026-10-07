@@ -1,4 +1,3 @@
-// ── KNBSB stats API (same source as /leaders page) ───────────────────────────
 const KNBSB_BASE =
   'https://stats.knbsbstats.nl/api/v1/stats/events/2026-lucky-day-hoofdklasse/index'
 const BROWSER_HEADERS = {
@@ -12,7 +11,6 @@ const BROWSER_HEADERS = {
 export type Row = Record<string, unknown>
 export type KnbsbCategory = { type: string; label: string; data: Row[] }
 
-// section=players → one row per player with all stats, no minimum threshold
 export async function fetchAllPlayerStats(section: 'batting' | 'pitching'): Promise<Row[]> {
   try {
     const res = await fetch(
@@ -28,7 +26,6 @@ export async function fetchAllPlayerStats(section: 'batting' | 'pitching'): Prom
     if (!res.ok) return []
     const data = (await res.json()).data ?? []
     if (!Array.isArray(data) || data.length === 0) return []
-    // If items have a nested 'data' array it's category structure → flatten
     if (Array.isArray((data[0] as KnbsbCategory)?.data)) {
       return (data as KnbsbCategory[]).flatMap((cat) => cat.data ?? [])
     }
@@ -38,7 +35,6 @@ export async function fetchAllPlayerStats(section: 'batting' | 'pitching'): Prom
   }
 }
 
-// section=leaders → used by the leaders page; also a category-based fallback
 export async function fetchKnbsbCategories(
   section: 'batting' | 'pitching',
 ): Promise<KnbsbCategory[]> {

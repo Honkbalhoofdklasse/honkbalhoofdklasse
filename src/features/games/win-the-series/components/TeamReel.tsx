@@ -3,9 +3,6 @@
 import Image from 'next/image'
 import { TEAM_COLORS, TEAM_LOGOS, TEAM_NAMES, TEAM_SHORT } from '@/shared/teams/teams'
 
-// ── Slot machine ──────────────────────────────────────────────────────────────
-// Fixed-size reel so nothing shifts as it spins; during the spin we render just
-// the team abbreviation + colour (no image) so every frame swaps instantly.
 export function TeamReel({
   teamId,
   spinning,

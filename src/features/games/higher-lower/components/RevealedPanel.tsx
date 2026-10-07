@@ -20,7 +20,6 @@ export function RevealedPanel({
     <div className="relative flex-1 flex flex-col items-center justify-center overflow-hidden px-8 py-12 md:py-0 min-h-[45dvh] md:min-h-0">
       <PanelBg player={left} />
 
-      {/* Score — top-left overlay */}
       <div className="absolute top-4 left-5 z-10 text-left">
         <p className="font-display font-700 text-[9px] uppercase tracking-widest text-white/40">
           Score

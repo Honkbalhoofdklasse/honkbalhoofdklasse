@@ -81,7 +81,6 @@ export default function StatsTabs({ stats, teamId }: { stats: SeasonStats; teamI
 
   return (
     <div>
-      {/* Tab bar */}
       <div className="flex border-b border-white/10 mb-6">
         <button
           onClick={() => setTab('batting')}
@@ -103,7 +102,6 @@ export default function StatsTabs({ stats, teamId }: { stats: SeasonStats; teamI
 
       {tab === 'batting' && (
         <>
-          {/* Key stats */}
           <div className="grid grid-cols-4 gap-3 mb-8">
             <BigStatCard label="AVG" value={fmtAvg(stats.avg, stats.ab)} teamColor={teamColor} />
             <BigStatCard label="HR" value={fmtStat(stats.hr)} teamColor={teamColor} />
@@ -115,7 +113,6 @@ export default function StatsTabs({ stats, teamId }: { stats: SeasonStats; teamI
             />
           </div>
 
-          {/* Full batting table */}
           <div className="overflow-x-auto rounded-xl border border-white/10">
             <table className="w-full">
               <thead>
@@ -167,7 +164,6 @@ export default function StatsTabs({ stats, teamId }: { stats: SeasonStats; teamI
 
       {tab === 'pitching' && hasPitching && (
         <>
-          {/* Key pitching stats */}
           <div className="grid grid-cols-4 gap-3 mb-8">
             <BigStatCard
               label="ERA"
@@ -183,7 +179,6 @@ export default function StatsTabs({ stats, teamId }: { stats: SeasonStats; teamI
             />
           </div>
 
-          {/* Full pitching table */}
           <div className="overflow-x-auto rounded-xl border border-white/10">
             <table className="w-full">
               <thead>

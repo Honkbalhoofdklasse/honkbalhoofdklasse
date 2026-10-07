@@ -37,7 +37,6 @@ export default function HeroSlideshow() {
       className="relative flex items-end overflow-hidden"
       style={{ height: '100vh', marginTop: '-80px' }}
     >
-      {/* Previous image (fading out) */}
       {prev !== null && (
         <Image
           key={`prev-${prev}`}
@@ -50,7 +49,6 @@ export default function HeroSlideshow() {
         />
       )}
 
-      {/* Current image */}
       <Image
         key={`cur-${current}`}
         src={IMAGES[current]}
@@ -61,15 +59,10 @@ export default function HeroSlideshow() {
         priority={current === 0}
       />
 
-      {/* Gradient overlays */}
-      {/* Mobile: softer full overlay + strong bottom */}
       <div className="absolute inset-0 bg-[#04080f]/50 md:hidden" />
-      {/* Desktop: directional gradient from left */}
       <div className="absolute inset-0 hidden md:block bg-gradient-to-r from-[#04080f] from-30% via-[#04080f]/70 via-55% to-transparent" />
-      {/* Both: fade to dark at bottom */}
       <div className="absolute inset-0 bg-gradient-to-t from-[#04080f] via-[#04080f]/30 to-transparent" />
 
-      {/* Text */}
       <div className="relative z-10 px-6 md:px-12 pb-20 max-w-6xl">
         <p className="font-display font-700 text-white/60 uppercase tracking-[0.3em] text-sm mb-2">
           Lucky Day
@@ -84,7 +77,6 @@ export default function HeroSlideshow() {
         </h1>
       </div>
 
-      {/* Dot indicators */}
       <div className="absolute bottom-8 right-8 flex gap-2 z-10">
         {IMAGES.map((_, i) => (
           <button
