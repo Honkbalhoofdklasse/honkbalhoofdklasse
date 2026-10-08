@@ -111,15 +111,30 @@ export async function GET() {
       }
     })
 
-    const { data: finishedRows } = await supabase
-      .from('games')
-      .select(
-        'external_id, game_date, game_time, home_team_id, away_team_id, home_score, away_score',
-      )
-      .eq('status', 'final')
-      .order('game_date', { ascending: false })
-      .order('game_time', { ascending: false })
-      .limit(8)
+    const [{ data: finishedRows }, { data: upcomingRows }, { data: standingsRows }] =
+      await Promise.all([
+        supabase
+          .from('games')
+          .select(
+            'external_id, game_date, game_time, home_team_id, away_team_id, home_score, away_score',
+          )
+          .eq('status', 'final')
+          .order('game_date', { ascending: false })
+          .order('game_time', { ascending: false })
+          .limit(8),
+        supabase
+          .from('games')
+          .select('external_id, game_date, game_time, home_team_id, away_team_id')
+          .eq('status', 'scheduled')
+          .gte('game_date', today)
+          .order('game_date', { ascending: true })
+          .order('game_time', { ascending: true })
+          .limit(10),
+        supabase
+          .from('standings')
+          .select('team_id, wins, losses')
+          .eq('season', new Date().getFullYear()),
+      ])
 
     const finished = (finishedRows ?? []).map((g) => ({
       id: g.external_id,
@@ -132,15 +147,6 @@ export async function GET() {
       awayScore: g.away_score,
     }))
 
-    const { data: upcomingRows } = await supabase
-      .from('games')
-      .select('external_id, game_date, game_time, home_team_id, away_team_id')
-      .eq('status', 'scheduled')
-      .gte('game_date', today)
-      .order('game_date', { ascending: true })
-      .order('game_time', { ascending: true })
-      .limit(10)
-
     const upcoming = (upcomingRows ?? []).map((g) => ({
       id: g.external_id,
       gameDate: g.game_date,
@@ -152,23 +158,21 @@ export async function GET() {
       awayScore: null,
     }))
 
-    const { data: standingsRows } = await supabase
-      .from('standings')
-      .select('team_id, wins, losses')
-      .eq('season', new Date().getFullYear())
-
     const standings: Record<string, { wins: number; losses: number }> = {}
     for (const s of standingsRows ?? []) {
       standings[s.team_id] = { wins: s.wins, losses: s.losses }
     }
 
-    return NextResponse.json({
-      live,
-      finished,
-      upcoming,
-      standings,
-      updatedAt: new Date().toISOString(),
-    })
+    return NextResponse.json(
+      {
+        live,
+        finished,
+        upcoming,
+        standings,
+        updatedAt: new Date().toISOString(),
+      },
+      { headers: { 'Cache-Control': 'public, s-maxage=20, stale-while-revalidate=40' } },
+    )
   } catch (err) {
     console.error('[livescores]', err)
     return NextResponse.json({ error: 'Internal error' }, { status: 500 })

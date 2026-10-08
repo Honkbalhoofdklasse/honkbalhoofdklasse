@@ -19,19 +19,19 @@ export default function PostseasonBracket({ initial }: { initial: PostseasonData
 
   const refresh = useCallback(async () => {
     try {
-      const r = await fetch('/api/holland-series', { cache: 'no-store' })
+      const r = await fetch('/api/holland-series')
       if (r.ok) setData(await r.json())
     } catch {}
   }, [])
   useEffect(() => {
-    const t = setInterval(refresh, 30_000)
-    const onVis = () => {
+    const tick = () => {
       if (!document.hidden) refresh()
     }
-    document.addEventListener('visibilitychange', onVis)
+    const t = setInterval(tick, 30_000)
+    document.addEventListener('visibilitychange', tick)
     return () => {
       clearInterval(t)
-      document.removeEventListener('visibilitychange', onVis)
+      document.removeEventListener('visibilitychange', tick)
     }
   }, [refresh])
 

@@ -35,7 +35,7 @@ function parseName(raw: string): string {
 async function fetchSection(section: string, teamNum: number): Promise<Record<string, unknown>[]> {
   try {
     const url = `https://stats.knbsbstats.nl/api/v1/stats/events/2026-lucky-day-hoofdklasse/index?section=players&stats-section=${section}&round=&team=&split=&language=en`
-    const res = await fetch(url, { headers: HEADERS, cache: 'no-store' })
+    const res = await fetch(url, { headers: HEADERS, next: { revalidate: 600 } })
     if (!res.ok) return []
     const d = await res.json()
     let data = d.data ?? []
@@ -60,10 +60,11 @@ function inferPos(p: Record<string, unknown>): string {
   return 'UTL'
 }
 
-export async function GET(_req: Request, { params }: { params: Promise<{ teamId: string }> }) {
-  const { teamId } = await params
+export type SupplementPlayer = { name: string; pos: string }
+
+export async function getRosterSupplement(teamId: string): Promise<SupplementPlayer[]> {
   const teamNum = KNBSB_NUMERIC_ID_BY_SLUG[teamId]
-  if (!teamNum) return NextResponse.json([])
+  if (!teamNum) return []
 
   const roster = ROSTERS[teamId]
   const knownNames = new Set(roster?.players.map((p) => p.name.toLowerCase()) ?? [])
@@ -80,7 +81,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ teamId:
   )
 
   const seen = new Set<string>()
-  const result: { name: string; pos: string }[] = []
+  const result: SupplementPlayer[] = []
 
   for (const row of [...batters, ...pitchers]) {
     const name = parseName(String(row.name ?? ''))
@@ -98,5 +99,10 @@ export async function GET(_req: Request, { params }: { params: Promise<{ teamId:
     result.push({ name, pos })
   }
 
-  return NextResponse.json(result)
+  return result
+}
+
+export async function GET(_req: Request, { params }: { params: Promise<{ teamId: string }> }) {
+  const { teamId } = await params
+  return NextResponse.json(await getRosterSupplement(teamId))
 }

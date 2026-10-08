@@ -6,15 +6,17 @@ import { getAvailableMonths } from '../domain/months'
 import LeadersTabs from './LeadersTabs'
 
 export default async function LeadersScreen() {
+  const seasonPromise = getSeasonLeaders()
+  const monthPromise = getMonthData()
   const seriesWeek = await getLatestSeriesWeek()
   const now = new Date()
   const monthLabel = `${MONTH_NAMES[now.getMonth()]} ${now.getFullYear()}`
 
   const availableMonths = getAvailableMonths()
   const [season, week, month] = await Promise.all([
-    getSeasonLeaders(),
+    seasonPromise,
     seriesWeek ? getSerieData(seriesWeek) : Promise.resolve(null),
-    getMonthData(),
+    monthPromise,
   ])
   const seriesLabel = seriesWeek ? 'This Series' : null
 

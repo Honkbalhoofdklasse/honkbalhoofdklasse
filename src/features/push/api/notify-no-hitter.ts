@@ -33,13 +33,17 @@ export async function notifyNoHitters(ctx: LiveGameContext) {
         `Watch out! ${pitcherName} has no-hit ${awayName} through ${inningsStr}.`,
         `🚫 ${pitcherName} and ${homeName} in no-hit territory. ${inningsStr} innings, 0 hits for ${awayName}.`,
       ])
-      await sendToTeams(teams, {
-        title: `${awayName} @ ${homeName}`,
-        body: noHitterBody,
-        icon: `${BASE}/api/notification-icon/${homeTeamId}`,
-        url: gameUrl,
-        tag: `nohitter-home-${gameId}`,
-      })
+      await sendToTeams(
+        teams,
+        {
+          title: `${awayName} @ ${homeName}`,
+          body: noHitterBody,
+          icon: `${BASE}/api/notification-icon/${homeTeamId}`,
+          url: gameUrl,
+          tag: `nohitter-home-${gameId}`,
+        },
+        ctx.subscriptions,
+      )
       newState.noHitterHome = true
       ctx.notifications.push(`no-hitter:${homeName}`)
     }
@@ -67,13 +71,17 @@ export async function notifyNoHitters(ctx: LiveGameContext) {
         `Watch out! ${pitcherName} has no-hit ${homeName} through ${inningsStr}.`,
         `🚫 ${pitcherName} and ${awayName} in no-hit territory. ${inningsStr} innings, 0 hits for ${homeName}.`,
       ])
-      await sendToTeams(teams, {
-        title: `${awayName} @ ${homeName}`,
-        body: noHitterBody,
-        icon: `${BASE}/api/notification-icon/${awayTeamId}`,
-        url: gameUrl,
-        tag: `nohitter-away-${gameId}`,
-      })
+      await sendToTeams(
+        teams,
+        {
+          title: `${awayName} @ ${homeName}`,
+          body: noHitterBody,
+          icon: `${BASE}/api/notification-icon/${awayTeamId}`,
+          url: gameUrl,
+          tag: `nohitter-away-${gameId}`,
+        },
+        ctx.subscriptions,
+      )
       newState.noHitterAway = true
       ctx.notifications.push(`no-hitter:${awayName}`)
     }

@@ -15,13 +15,17 @@ export async function notifyGameStart(ctx: LiveGameContext) {
           `⚾ Starting at ${startTime}.`,
         ])
       : pick([`Game is live.`, `Ball game underway.`, `Play ball!`])
-    await sendToTeams(teams, {
-      title: `${awayName} @ ${homeName}`,
-      body: startBody,
-      icon,
-      url: gameUrl,
-      tag: `game-start-${gameId}`,
-    })
+    await sendToTeams(
+      teams,
+      {
+        title: `${awayName} @ ${homeName}`,
+        body: startBody,
+        icon,
+        url: gameUrl,
+        tag: `game-start-${gameId}`,
+      },
+      ctx.subscriptions,
+    )
     newState.notifiedStart = true
     ctx.notifications.push(`start:${gameId}`)
   }
@@ -44,13 +48,17 @@ export async function notifyInningScores(ctx: LiveGameContext) {
         `${runText} for ${homeName}. ${score}`,
         `⚾ ${homeName} adds ${runText}. ${score}`,
       ])
-      await sendToTeams(teams, {
-        title: `${awayName} @ ${homeName} — ${ordinal(i)} inning`,
-        body: scoreBody,
-        icon: `${BASE}/api/notification-icon/${homeTeamId}`,
-        url: gameUrl,
-        tag: `score-home-${gameId}-${i}-${cur.home}`,
-      })
+      await sendToTeams(
+        teams,
+        {
+          title: `${awayName} @ ${homeName} — ${ordinal(i)} inning`,
+          body: scoreBody,
+          icon: `${BASE}/api/notification-icon/${homeTeamId}`,
+          url: gameUrl,
+          tag: `score-home-${gameId}-${i}-${cur.home}`,
+        },
+        ctx.subscriptions,
+      )
       ctx.notifications.push(`score-home:${i}`)
     }
 
@@ -63,13 +71,17 @@ export async function notifyInningScores(ctx: LiveGameContext) {
         `${runText} for ${awayName}. ${score}`,
         `⚾ ${awayName} adds ${runText}. ${score}`,
       ])
-      await sendToTeams(teams, {
-        title: `${awayName} @ ${homeName} — ${ordinal(i)} inning`,
-        body: scoreBody,
-        icon: `${BASE}/api/notification-icon/${awayTeamId}`,
-        url: gameUrl,
-        tag: `score-away-${gameId}-${i}-${cur.away}`,
-      })
+      await sendToTeams(
+        teams,
+        {
+          title: `${awayName} @ ${homeName} — ${ordinal(i)} inning`,
+          body: scoreBody,
+          icon: `${BASE}/api/notification-icon/${awayTeamId}`,
+          url: gameUrl,
+          tag: `score-away-${gameId}-${i}-${cur.away}`,
+        },
+        ctx.subscriptions,
+      )
       ctx.notifications.push(`score-away:${i}`)
     }
   }
@@ -87,13 +99,17 @@ export async function notifyFinal(ctx: LiveGameContext) {
       ? `${winner} beat ${loser}, ${winScore}–${loseScore}. WP: ${wpName}`
       : `Final: ${winner} ${winScore}, ${loser} ${loseScore}`
 
-    await sendToTeams(teams, {
-      title: `Final: ${awayName} @ ${homeName}`,
-      body,
-      icon,
-      url: gameUrl,
-      tag: `final-${gameId}`,
-    })
+    await sendToTeams(
+      teams,
+      {
+        title: `Final: ${awayName} @ ${homeName}`,
+        body,
+        icon,
+        url: gameUrl,
+        tag: `final-${gameId}`,
+      },
+      ctx.subscriptions,
+    )
     newState.notifiedFinal = true
     ctx.notifications.push(`final:${gameId}`)
   }

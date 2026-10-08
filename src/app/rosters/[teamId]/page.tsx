@@ -3,7 +3,7 @@ import { ROSTERS } from '@/shared/rosters/rosters-data'
 import { buildTeamRosterMetadata } from '@/features/rosters/api/teamRosterMetadata'
 import TeamRosterScreen from '@/features/rosters/screens/TeamRosterScreen'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 300
 
 export async function generateMetadata({
   params,

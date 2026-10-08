@@ -60,7 +60,7 @@ export async function getSeasonLeaders(): Promise<SeasonLeaders> {
             Referer:
               'https://stats.knbsbstats.nl/events/2026-lucky-day-hoofdklasse/stats/leaders/batting',
           },
-          cache: 'no-store',
+          next: { revalidate: 300 },
         },
       ),
       fetch(
@@ -71,7 +71,7 @@ export async function getSeasonLeaders(): Promise<SeasonLeaders> {
             Referer:
               'https://stats.knbsbstats.nl/events/2026-lucky-day-hoofdklasse/stats/leaders/pitching',
           },
-          cache: 'no-store',
+          next: { revalidate: 300 },
         },
       ),
     ])

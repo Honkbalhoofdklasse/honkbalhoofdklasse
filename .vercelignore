@@ -2,5 +2,6 @@
 /.git/
 /node_modules/
 /scripts/
+/public/franchise/Assets/Photos/
 /supabase/
 /.env*
