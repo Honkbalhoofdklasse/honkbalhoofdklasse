@@ -3,7 +3,6 @@ import { supabaseAdmin } from '@/shared/supabase/legacy'
 import { createClient } from '@/shared/supabase/server'
 
 async function getStreamUser(req: NextRequest) {
-  // Legacy password auth (keep for backwards compat)
   const pw = process.env.ADMIN_PASSWORD
   if (pw && req.headers.get('x-admin-password') === pw) {
     return { can_livestream: true, is_super_admin: true, stream_team: null }

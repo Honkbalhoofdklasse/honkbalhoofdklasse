@@ -11,5 +11,5 @@ export function getForm(games: GameRow[], teamId: string): ('W' | 'L' | 'T')[] {
       if (mine == null || opp == null) return 'T'
       return mine > opp ? 'W' : mine < opp ? 'L' : 'T'
     })
-    .reverse() // oldest left → newest right
+    .reverse()
 }

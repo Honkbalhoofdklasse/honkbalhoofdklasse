@@ -5,8 +5,6 @@ import Image from 'next/image'
 import { TEAM_COLORS, TEAM_LOGOS, TEAM_NAMES } from '@/shared/teams/teams'
 import type { CmpPlayer } from '../api/compareRoute'
 
-// ── Player selector ───────────────────────────────────────────────────────────
-
 export default function PlayerSelector({
   players,
   selected,
@@ -44,7 +42,6 @@ export default function PlayerSelector({
 
   return (
     <div ref={ref} className="relative flex-1 min-w-0">
-      {/* Trigger */}
       {selected ? (
         <div
           className="flex items-center gap-3 px-4 py-3 rounded-2xl border-2 cursor-pointer transition-colors hover:opacity-90"
@@ -98,7 +95,6 @@ export default function PlayerSelector({
         </button>
       )}
 
-      {/* Dropdown */}
       {open && (
         <div className="absolute top-full left-0 right-0 mt-2 bg-[var(--card)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-2xl z-50">
           <div className="p-2 border-b border-[var(--border)]">

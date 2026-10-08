@@ -1,18 +1,14 @@
+import { KNBSB_NUMERIC_ID_MAP } from '@/shared/teams/teams'
+
 export type FinishedGame = { id: number; date: string }
 
-// Monday (UTC) of the ISO week containing dateStr ('YYYY-MM-DD').
 function mondayOf(dateStr: string): string {
   const d = new Date(`${dateStr}T00:00:00Z`)
-  const diff = (d.getUTCDay() + 6) % 7 // days since Monday (Mon=0 … Sun=6)
+  const diff = (d.getUTCDay() + 6) % 7
   d.setUTCDate(d.getUTCDate() - diff)
   return d.toISOString().slice(0, 10)
 }
 
-// Group finished games into one series per calendar week (Mon–Sun). Returns
-// series sorted by date, each keyed by its earliest game date; every game
-// belongs to exactly one week, so series never overlap and the keys are stable
-// as more games finish (no merging). GET (the list) and POST (the import) both
-// use this, so a game can never be counted under two series_week values.
 export function clusterSeries(
   finished: FinishedGame[],
 ): { seriesDate: string; games: FinishedGame[] }[] {
@@ -28,15 +24,7 @@ export function clusterSeries(
     .sort((a, b) => a.seriesDate.localeCompare(b.seriesDate))
 }
 
-export const KNBSB_ID_TO_TEAM: Record<number, string> = {
-  39583: 'pirates',
-  39587: 'neptunus',
-  39584: 'hcaw',
-  39586: 'kinheim',
-  39588: 'twins',
-  39589: 'uvv',
-  39585: 'pioniers',
-}
+export const KNBSB_ID_TO_TEAM = KNBSB_NUMERIC_ID_MAP
 
 const TUSSENVOEGSELS = new Set([
   'van',

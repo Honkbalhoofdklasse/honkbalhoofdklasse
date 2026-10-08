@@ -2,8 +2,6 @@ import { avg, d, ip } from './format'
 import type { SeasonStats } from './types'
 
 export function buildBatRow(st: SeasonStats | null) {
-  // Build batting stat row
-  // G, PA, AB, R, H, 2B, 3B, HR, RBI, BB, IBB, HBP, SO, SB, CS, SF, SH, GDP, AVG, OBP, SLG, OPS
   return st
     ? [
         d(st.games),
@@ -33,8 +31,6 @@ export function buildBatRow(st: SeasonStats | null) {
 }
 
 export function buildPitRow(st: SeasonStats | null) {
-  // Build pitching stat row
-  // App, GS, CG, SHO, IP, W, L, SV, BF, H, R, ER, BB, IBB, HBP, HR, SO, WP, BK, ERA, WHIP
   return st
     ? [
         d(st.pitch_appear),

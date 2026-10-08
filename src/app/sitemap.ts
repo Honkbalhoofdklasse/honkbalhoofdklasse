@@ -25,7 +25,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/immaculate-grid`, priority: 0.4, changeFrequency: 'weekly' as const },
   ]
 
-  // Team roster pages
   const teams = ['neptunus', 'pirates', 'kinheim', 'hcaw', 'twins', 'pioniers', 'uvv']
   const teamRoutes = teams.map((team) => ({
     url: `${base}/rosters/${team}`,
@@ -33,7 +32,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     changeFrequency: 'weekly' as const,
   }))
 
-  // Individual player pages
   const playerRoutes = Object.entries(ROSTERS).flatMap(([teamId, roster]) =>
     roster.players.map((player) => ({
       url: `${base}/rosters/${teamId}/${slugify(player.name)}`,

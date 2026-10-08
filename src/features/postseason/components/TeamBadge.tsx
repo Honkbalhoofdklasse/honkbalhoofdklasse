@@ -1,7 +1,6 @@
 import Image from 'next/image'
 import { TEAM_COLORS, TEAM_LOGOS, TEAM_SHORT } from '@/shared/teams/teams'
 
-// ── Team logo (used in detail) ────────────────────────────────────────────────
 export function TeamBadge({
   teamId,
   seed,

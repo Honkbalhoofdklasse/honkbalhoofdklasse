@@ -1,7 +1,8 @@
 import type { Game } from './types'
+import { LONG_DAY_MONTH, formatGameDate, toLocalNoon } from '@/shared/dates/gameDate'
 
 export function getWeekKey(dateStr: string) {
-  const d = new Date(dateStr + 'T12:00:00')
+  const d = toLocalNoon(dateStr)
   const day = d.getDay()
   const diff = d.getDate() - day + (day === 0 ? -6 : 1)
   const monday = new Date(d.setDate(diff))
@@ -9,8 +10,7 @@ export function getWeekKey(dateStr: string) {
 }
 
 export function fmtDate(dateStr: string) {
-  const d = new Date(dateStr + 'T12:00:00')
-  return d.toLocaleDateString('nl-NL', { weekday: 'long', day: 'numeric', month: 'long' })
+  return formatGameDate(dateStr, LONG_DAY_MONTH, 'nl-NL')
 }
 
 export function fmtTime(t: string | null) {

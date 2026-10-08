@@ -25,7 +25,6 @@ export default async function StandingsScreen() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
       />
-      {/* Header */}
       <div className="mb-8">
         <p className="font-display font-700 text-[var(--accent)] uppercase tracking-widest text-sm mb-1">
           Season 2026
@@ -39,9 +38,7 @@ export default async function StandingsScreen() {
         </p>
       </div>
 
-      {/* Tabel */}
       <div className="rounded-2xl overflow-hidden border border-[var(--border)]">
-        {/* Kolomkoppen */}
         <div className="grid grid-cols-[1.25rem_1fr_1.75rem_1.75rem_2.75rem] md:grid-cols-[2rem_1fr_3rem_3rem_3rem_6rem_4rem] gap-2 md:gap-2 px-3 md:px-5 py-3 bg-[var(--navy)] text-white/60 font-display font-700 uppercase text-[10px] md:text-xs tracking-widest">
           <span>#</span>
           <span>Team</span>
@@ -76,14 +73,12 @@ export default async function StandingsScreen() {
                 }
               `}
             >
-              {/* Rang */}
               <span
                 className={`font-display font-800 text-base md:text-lg ${isLeader ? 'text-white' : 'text-[var(--muted)]'}`}
               >
                 {i + 1}
               </span>
 
-              {/* Team */}
               <div className="flex items-center gap-2.5 md:gap-3 min-w-0">
                 <div
                   className="w-9 h-9 md:w-10 md:h-10 rounded-lg flex items-center justify-center shrink-0 p-1.5"
@@ -120,7 +115,6 @@ export default async function StandingsScreen() {
                 </div>
               </div>
 
-              {/* Stats */}
               <span
                 className={`text-center font-display font-800 text-sm md:text-base ${isLeader ? 'text-white' : 'text-white'}`}
               >
@@ -135,7 +129,6 @@ export default async function StandingsScreen() {
                 {pct}
               </span>
 
-              {/* Last 5 form dots */}
               <div className="hidden md:flex items-center justify-center gap-1">
                 {form.map((result, fi) => (
                   <span

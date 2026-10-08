@@ -25,7 +25,6 @@ export default function SeasonStatsSection({
       </div>
 
       <>
-        {/* Key stats grid */}
         <div className="grid grid-cols-4 sm:grid-cols-5 gap-2 mb-3">
           {[
             { label: 'AVG', value: season.avg != null ? season.avg.toFixed(3) : '—' },
@@ -58,7 +57,6 @@ export default function SeasonStatsSection({
           ))}
         </div>
 
-        {/* Full stats table */}
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl overflow-x-auto">
           <table className="w-full text-xs">
             <thead>

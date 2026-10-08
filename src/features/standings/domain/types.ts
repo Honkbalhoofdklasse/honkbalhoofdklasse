@@ -1,18 +1,19 @@
-export type StandingRow = {
-  team_id: string
-  games_played: number
-  wins: number
-  losses: number
-  ties: number
-  win_pct: number
-  runs_scored: number
-  runs_allowed: number
-}
+import type { GameRow as SharedGameRow } from '@/shared/types/game'
+import type { StandingRow as SharedStandingRow } from '@/shared/types/standing'
 
-export type GameRow = {
-  home_team_id: string
-  away_team_id: string
-  home_score: number | null
-  away_score: number | null
-  game_date: string
-}
+export type StandingRow = Pick<
+  SharedStandingRow,
+  | 'team_id'
+  | 'games_played'
+  | 'wins'
+  | 'losses'
+  | 'ties'
+  | 'win_pct'
+  | 'runs_scored'
+  | 'runs_allowed'
+>
+
+export type GameRow = Pick<
+  SharedGameRow,
+  'home_team_id' | 'away_team_id' | 'home_score' | 'away_score' | 'game_date'
+>

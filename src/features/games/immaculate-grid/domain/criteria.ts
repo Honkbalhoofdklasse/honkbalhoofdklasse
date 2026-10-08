@@ -1,8 +1,6 @@
 import { ROSTERS, type Player } from '@/shared/rosters/rosters-data'
 import { TEAM_LOGOS } from '@/shared/teams/teams'
 
-// ── Criterion types ────────────────────────────────────────────────────────────
-
 export type Criterion =
   | { type: 'team'; teamId: string; label: string; logo: string }
   | { type: 'position'; positions: string[]; label: string; icon: string }
@@ -15,9 +13,7 @@ function team(id: string, label: string): Criterion {
   return { type: 'team', teamId: id, label, logo: TEAM_LOGOS[id] }
 }
 
-// Pre-built criteria
 export const C = {
-  // Teams
   neptunus: team('neptunus', 'Neptunus'),
   pirates: team('pirates', 'Amsterdam Pirates'),
   kinheim: team('kinheim', 'Kinheim'),
@@ -26,7 +22,6 @@ export const C = {
   pioniers: team('pioniers', 'Hoofddorp Pioniers'),
   uvv: team('uvv', 'UVV'),
 
-  // Position groups
   pitcher: { type: 'position', positions: ['P'], label: 'Pitcher', icon: '⚾' } as Criterion,
   catcher: {
     type: 'position',
@@ -53,7 +48,6 @@ export const C = {
     icon: '🏏',
   } as Criterion,
 
-  // Handedness
   switchHitter: { type: 'bats', value: 'S', label: 'Switch Hitter', icon: '↔️' } as Criterion,
   leftBatter: { type: 'bats', value: 'L', label: 'Left-handed Batter', icon: '🫲' } as Criterion,
   rightBatter: { type: 'bats', value: 'R', label: 'Right-handed Batter', icon: '🫱' } as Criterion,
@@ -70,13 +64,10 @@ export const C = {
     icon: '🤛',
   } as Criterion,
 
-  // Age
   veteran: { type: 'yob_max', year: 1997, label: "Born '97 or Earlier", icon: '📅' } as Criterion,
   young: { type: 'yob_min', year: 2002, label: "Born '02 or Later", icon: '🌱' } as Criterion,
   mid: { type: 'yob_max', year: 2001, label: "Born '98–'01", icon: '📆' } as Criterion,
 }
-
-// ── Validity check ─────────────────────────────────────────────────────────────
 
 export function playerMatchesCriterion(player: Player, teamId: string, crit: Criterion): boolean {
   switch (crit.type) {
@@ -111,7 +102,6 @@ export function isValidAnswer(
   )
 }
 
-// Find all valid answers for a cell (used for autocomplete)
 export function getValidPlayers(
   rowCrit: Criterion,
   colCrit: Criterion,

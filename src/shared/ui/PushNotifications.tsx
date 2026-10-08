@@ -63,9 +63,7 @@ export default function PushNotifications() {
       setSubscription(sub)
       setStatus('subscribed')
       setOpen(false)
-    } catch {
-      /* ignore */
-    }
+    } catch {}
     setSaving(false)
   }
 
@@ -92,7 +90,6 @@ export default function PushNotifications() {
 
   return (
     <>
-      {/* Bell button */}
       <button
         onClick={() => (status === 'subscribed' ? unsubscribe() : setOpen(true))}
         disabled={saving || status === 'denied' || status === 'unsupported'}
@@ -121,7 +118,6 @@ export default function PushNotifications() {
         )}
       </button>
 
-      {/* Modal */}
       {open && (
         <div
           className="fixed inset-0 z-[300] flex items-end sm:items-center justify-center sm:px-4 bg-black/60 backdrop-blur-sm"

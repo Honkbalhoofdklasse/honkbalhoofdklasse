@@ -39,7 +39,6 @@ export async function GET() {
       { headers: HEADERS, next: { revalidate: 3600 } },
     )
     let data = (await res.json()).data ?? []
-    // Flatten category structure if needed
     if (data.length && Array.isArray(data[0]?.data)) {
       data = data.flatMap((cat: { data: unknown[] }) => cat.data)
     }

@@ -35,7 +35,6 @@ export default function PhotosScreen() {
     const list: PlayerPhoto[] = await res.json()
     setPhotos(list)
 
-    // For photos without a stored size, fetch it via HEAD request (no recompression)
     const needsSize = list.filter(
       (p) =>
         (p.banner_url && p.banner_size_kb == null) ||
@@ -53,7 +52,6 @@ export default function PhotosScreen() {
       }
     }
 
-    // Fetch in parallel, update state as results come in
     await Promise.all(
       needsSize.map(async (p) => {
         const bannerKb =

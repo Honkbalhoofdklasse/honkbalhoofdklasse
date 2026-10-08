@@ -14,8 +14,6 @@ export function scorecardBottom({
   statItems: { label: string; value: string }[]
 }) {
   return [
-    /* ── Bottom light section with diagonal top edge ─────────── */
-    /* The diagonal: left side lower, right side higher */
     <div
       key="light"
       style={{
@@ -30,7 +28,6 @@ export function scorecardBottom({
       }}
     />,
 
-    /* Bottom content */
     <div
       key="content"
       style={{
@@ -44,9 +41,7 @@ export function scorecardBottom({
         padding: '0 28px',
       }}
     >
-      {/* Left: team logo + position */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 4 }}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={teamLogo} alt="" style={{ width: 72, height: 72, objectFit: 'contain' }} />
         <span
           style={{
@@ -61,7 +56,6 @@ export function scorecardBottom({
         </span>
       </div>
 
-      {/* Right: player name */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 0 }}>
         {firstName && (
           <span
@@ -92,7 +86,6 @@ export function scorecardBottom({
       </div>
     </div>,
 
-    /* ── Stats strip at very bottom ──────────────────────────── */
     <div
       key="stats"
       style={{
@@ -144,7 +137,6 @@ export function scorecardBottom({
       ))}
     </div>,
 
-    /* ── Card border ─────────────────────────────────────────── */
     <div
       key="border"
       style={{

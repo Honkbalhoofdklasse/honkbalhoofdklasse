@@ -16,7 +16,6 @@ export default async function PlayerScreen({ params }: { params: Promise<{ slug:
   const teamName = TEAM_NAMES[teamId] ?? teamId
   const teamLogo = TEAM_LOGOS[teamId]
 
-  // Fetch stats and photos in parallel
   const [stats, photos] = await Promise.all([
     computeSeasonStats(player.name),
     fetchPlayerPhotos(player.name),
@@ -27,14 +26,11 @@ export default async function PlayerScreen({ params }: { params: Promise<{ slug:
   const bannerPosition = `${photos?.banner_focal_x ?? 50}% ${photos?.banner_focal_y ?? 50}%`
   const age = calcAge(player.yob)
 
-  // For Neptunus the team color is very dark; use amber as accent on it
   const accentColor = teamColor === '#121b31' ? '#f59e0b' : teamColor
 
   return (
     <main className="min-h-screen" style={{ background: '#060e1b' }}>
-      {/* ── HERO ─────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden">
-        {/* Gradient background */}
         <div
           className="absolute inset-0"
           style={{
@@ -42,7 +38,6 @@ export default async function PlayerScreen({ params }: { params: Promise<{ slug:
           }}
         />
 
-        {/* Banner photo overlay */}
         {bannerUrl && (
           <div className="absolute inset-0">
             <Image
@@ -56,12 +51,9 @@ export default async function PlayerScreen({ params }: { params: Promise<{ slug:
           </div>
         )}
 
-        {/* Hero content */}
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-0">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
-            {/* Jersey number + headshot */}
             <div className="relative flex-shrink-0">
-              {/* Huge jersey number behind */}
               <span
                 className="absolute -left-4 -top-6 font-display font-800 select-none pointer-events-none leading-none"
                 style={{
@@ -74,7 +66,6 @@ export default async function PlayerScreen({ params }: { params: Promise<{ slug:
                 {player.uniform}
               </span>
 
-              {/* Headshot */}
               {headshotUrl ? (
                 <div className="relative w-[200px] h-[200px] rounded-2xl overflow-hidden border-2 border-white/20 shadow-2xl z-10">
                   <Image
@@ -97,14 +88,11 @@ export default async function PlayerScreen({ params }: { params: Promise<{ slug:
               )}
             </div>
 
-            {/* Player info */}
             <div className="flex-1 min-w-0 z-10">
-              {/* Name */}
               <h1 className="font-display font-800 text-5xl sm:text-6xl uppercase text-white leading-none mb-3 tracking-tight">
                 {player.name}
               </h1>
 
-              {/* Position pill */}
               <span
                 className="inline-block font-display font-700 text-xs uppercase tracking-widest px-3 py-1 rounded-full mb-4"
                 style={{
@@ -115,7 +103,6 @@ export default async function PlayerScreen({ params }: { params: Promise<{ slug:
                 {player.pos}
               </span>
 
-              {/* Team */}
               <div className="flex items-center gap-2 mb-3">
                 {teamLogo && (
                   <div
@@ -136,7 +123,6 @@ export default async function PlayerScreen({ params }: { params: Promise<{ slug:
                 </span>
               </div>
 
-              {/* Bats/Throws · YOB · Age */}
               <div className="flex flex-wrap gap-4 text-sm text-white/50 font-display font-700 uppercase tracking-widest">
                 <span>
                   Bats/Throws: <span className="text-white/80">{player.bt}</span>
@@ -152,11 +138,9 @@ export default async function PlayerScreen({ params }: { params: Promise<{ slug:
           </div>
         </div>
 
-        {/* Bottom accent line */}
         <div className="relative mt-8" style={{ height: 3, background: accentColor }} />
       </section>
 
-      {/* ── STATS ────────────────────────────────────────────────── */}
       <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         {stats ? (
           <StatsTabs stats={stats} teamId={teamId} />

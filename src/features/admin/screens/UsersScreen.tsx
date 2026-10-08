@@ -122,7 +122,6 @@ export default function UsersScreen() {
           </p>
         </div>
 
-        {/* Add user */}
         <div className="bg-[#0a1220] border border-[#1a2a3a] rounded-2xl p-6 mb-6">
           <p className="font-display font-800 text-sm uppercase text-white tracking-wide mb-4">
             Gebruiker toevoegen
@@ -147,7 +146,6 @@ export default function UsersScreen() {
           {error && <p className="font-display font-700 text-xs text-red-400 mt-2">{error}</p>}
         </div>
 
-        {/* Users list */}
         <div className="space-y-3">
           {loading && (
             <div className="bg-[#0a1220] border border-[#1a2a3a] rounded-2xl px-6 py-8 text-center">
@@ -167,7 +165,6 @@ export default function UsersScreen() {
 
           {users.map((user) => (
             <div key={user.email} className="bg-[#0a1220] border border-[#1a2a3a] rounded-2xl p-5">
-              {/* Top row: email + delete */}
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <p className="font-display font-800 text-sm text-white">{user.email}</p>
@@ -185,7 +182,6 @@ export default function UsersScreen() {
                 </button>
               </div>
 
-              {/* Permissions grid */}
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {PERMISSIONS.map((p) => {
                   const val = user[p.key as keyof AdminUser] as boolean
@@ -209,7 +205,6 @@ export default function UsersScreen() {
                 })}
               </div>
 
-              {/* Stream team selector — only shown when can_livestream is on */}
               {user.can_livestream && (
                 <div className="mt-4 pt-4 border-t border-[#1a2a3a] flex items-center gap-3">
                   <span className="font-display font-700 text-xs text-[var(--muted)] uppercase tracking-wider shrink-0">

@@ -1,6 +1,6 @@
 'use client'
 
-import type { WinProbPoint } from '@/features/livescores/domain/winProbability'
+import type { WinProbPoint } from '@/shared/types/winProbability'
 
 const W = 480
 const H = 140
@@ -42,7 +42,6 @@ export default function WinProbChart({
     'Z',
   ].join(' ')
 
-  // Show every other label on X axis if many points
   const showLabel = (i: number) => {
     if (n <= 10) return true
     return i === 0 || i === n - 1 || points[i].label.startsWith('B')
@@ -85,7 +84,6 @@ export default function WinProbChart({
           </clipPath>
         </defs>
 
-        {/* Grid lines */}
         {[0.25, 0.5, 0.75].map((p) => (
           <line
             key={p}
@@ -99,7 +97,6 @@ export default function WinProbChart({
           />
         ))}
 
-        {/* Y axis labels */}
         {[75, 50, 25].map((pct) => (
           <text
             key={pct}
@@ -114,12 +111,9 @@ export default function WinProbChart({
           </text>
         ))}
 
-        {/* Area fill — home above 50% */}
         <path d={areaPath} fill="url(#homeGrad)" clipPath="url(#above50)" />
-        {/* Area fill — away below 50% */}
         <path d={areaPath} fill="url(#awayGrad)" clipPath="url(#below50)" />
 
-        {/* Win probability line */}
         <path
           d={linePath}
           fill="none"
@@ -129,7 +123,6 @@ export default function WinProbChart({
           strokeLinecap="round"
         />
 
-        {/* X axis labels — evenly spaced inning numbers */}
         {(() => {
           const maxInn = points.reduce((m, p) => {
             const match = p.label.match(/^[TB](\d+)$/)
@@ -154,7 +147,6 @@ export default function WinProbChart({
           })
         })()}
 
-        {/* Data points */}
         {points.map((p, i) => (
           <circle
             key={i}

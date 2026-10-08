@@ -23,7 +23,6 @@ export default async function SocialScreen() {
         </h1>
       </div>
 
-      {/* Instagram profiel card */}
       <div className="bg-gradient-to-r from-[#833ab4] via-[#fd1d1d] to-[#fcb045] p-px rounded-2xl">
         <div className="bg-[var(--card)] rounded-2xl px-6 py-5 flex items-center justify-between gap-4 flex-wrap">
           <div className="flex items-center gap-4">
@@ -56,7 +55,6 @@ export default async function SocialScreen() {
         </div>
       </div>
 
-      {/* Instagram feed via Behold */}
       <section>
         <h2 className="font-display font-800 uppercase tracking-widest text-xs text-[var(--muted)] mb-4">
           Laatste Posts
@@ -64,7 +62,6 @@ export default async function SocialScreen() {
         <InstagramFeed feedId={BEHOLD_FEED_ID} />
       </section>
 
-      {/* Media uit Supabase */}
       {media.length > 0 && (
         <section>
           <h2 className="font-display font-800 uppercase tracking-widest text-xs text-[var(--muted)] mb-4">

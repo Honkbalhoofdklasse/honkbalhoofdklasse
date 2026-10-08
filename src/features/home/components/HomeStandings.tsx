@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { TEAM_NAMES } from '@/shared/teams/teams'
 import type { HomeData } from '@/features/home/api/getHomeData'
-import { TeamLogo } from '@/features/home/components/TeamLogo'
+import { TeamLogo } from '@/shared/ui/TeamLogo'
 import { SectionLabel } from '@/features/home/components/SectionLabel'
 
 export function HomeStandings({ standings }: { standings: HomeData['standings'] }) {
@@ -17,7 +17,6 @@ export function HomeStandings({ standings }: { standings: HomeData['standings'] 
         </Link>
       </div>
 
-      {/* Header row */}
       <div className="grid grid-cols-[1.5rem_1fr_4rem_3.5rem] md:grid-cols-[2rem_1fr_4rem_3.5rem_2.5rem] gap-2 px-4 pb-3 border-b border-[#0f1e2e]">
         {['#', 'Team', 'W-L', 'PCT'].map((h) => (
           <span
@@ -52,7 +51,7 @@ export function HomeStandings({ standings }: { standings: HomeData['standings'] 
                 {i + 1}
               </span>
               <div className="flex items-center gap-2 min-w-0">
-                <TeamLogo teamId={s.team_id} size={32} />
+                <TeamLogo teamId={s.team_id} size={32} useShortName />
                 <div className="min-w-0">
                   <p className="font-display font-800 text-sm uppercase text-white leading-none truncate">
                     {TEAM_NAMES[s.team_id] ?? s.team_id}

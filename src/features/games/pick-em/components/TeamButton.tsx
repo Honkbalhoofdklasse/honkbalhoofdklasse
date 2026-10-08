@@ -43,7 +43,6 @@ export function TeamButton({
       }`}
       style={picked ? { background: color + '22' } : {}}
     >
-      {/* Logo */}
       <div
         className="w-12 h-12 rounded-xl flex items-center justify-center p-2"
         style={{ backgroundColor: color }}
@@ -57,14 +56,12 @@ export function TeamButton({
         />
       </div>
 
-      {/* Name */}
       <span
         className={`font-display font-800 text-xs uppercase tracking-wide ${picked ? 'text-white' : 'text-white/70'}`}
       >
         {TEAM_SHORT[teamId] ?? teamId.toUpperCase()}
       </span>
 
-      {/* Score (final) */}
       {isFinal && score !== null && (
         <span
           className={`font-display font-900 text-xl ${winner ? 'text-white' : 'text-white/40'}`}
@@ -73,7 +70,6 @@ export function TeamButton({
         </span>
       )}
 
-      {/* Picked indicator */}
       {picked && !isFinal && (
         <span className="font-display font-700 text-[9px] text-[var(--accent)] uppercase tracking-widest">
           Jouw keuze

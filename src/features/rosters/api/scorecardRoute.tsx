@@ -37,7 +37,6 @@ export async function GET(
   const ops = searchParams.get('ops') ?? '—'
   const sb = searchParams.get('sb') ?? '—'
 
-  // OPS → rating 40–99
   const opsNum = parseFloat(ops)
   const rating = !isNaN(opsNum) ? Math.min(99, Math.max(40, Math.round(opsNum * 100))) : null
 
@@ -49,7 +48,6 @@ export async function GET(
     { label: 'SB', value: sb },
   ]
 
-  // Fetch player photo
   let photoUrl: string | null = null
   try {
     const { supabaseAdmin } = await import('@/shared/supabase/legacy')
@@ -66,7 +64,6 @@ export async function GET(
   const firstName = nameParts.slice(0, -1).join(' ').toUpperCase()
   const lastName = nameParts[nameParts.length - 1].toUpperCase()
 
-  // Second team color for blob (slightly lighter/complementary)
   const blob2 = '#fe3d00'
 
   const W = 630,

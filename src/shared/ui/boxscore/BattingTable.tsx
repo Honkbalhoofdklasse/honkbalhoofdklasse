@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import type { BatterStat } from '@/features/livescores/domain/boxscoreTypes'
+import type { BatterStat } from '@/shared/types/boxscore'
 import { slugify } from '@/shared/rosters/rosters-data'
 
 export function BattingTable({

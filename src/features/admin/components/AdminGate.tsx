@@ -30,7 +30,6 @@ export default function AdminGate({ checkAuth, onAuth, children }: Props) {
     } else {
       setChecking(false)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const login = useCallback(async () => {
@@ -53,12 +52,9 @@ export default function AdminGate({ checkAuth, onAuth, children }: Props) {
 
   return (
     <div className="min-h-screen flex bg-[#04080f]">
-      {/* ── Left branding panel (desktop only) ───────────────────────────── */}
       <div className="hidden lg:flex w-[55%] relative overflow-hidden flex-col items-center justify-center">
-        {/* Background gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-[#04080f] via-[#07101e] to-[#0a1525]" />
 
-        {/* Ripple rings */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           {[1, 2, 3, 4].map((i) => (
             <span
@@ -74,10 +70,8 @@ export default function AdminGate({ checkAuth, onAuth, children }: Props) {
           ))}
         </div>
 
-        {/* Diagonal accent stripe */}
         <div className="absolute top-0 bottom-0 w-[3px] right-0 bg-gradient-to-b from-transparent via-[var(--accent)]/40 to-transparent" />
 
-        {/* Content */}
         <div className="relative z-10 flex flex-col items-center gap-8 px-12">
           <Image
             src="https://res.cloudinary.com/dn8c5398m/image/upload/q_auto/f_auto/v1781607525/hk_logo_iets_groter_tumykq.png"
@@ -106,9 +100,7 @@ export default function AdminGate({ checkAuth, onAuth, children }: Props) {
         </div>
       </div>
 
-      {/* ── Right form panel ─────────────────────────────────────────────── */}
       <div className="flex-1 flex flex-col items-center justify-center px-8 py-12">
-        {/* Mobile logo */}
         <div
           className="lg:hidden flex flex-col items-center gap-3 mb-10 animate-fade-slide-up"
           style={{ animationDelay: '0ms' }}
@@ -125,7 +117,6 @@ export default function AdminGate({ checkAuth, onAuth, children }: Props) {
         </div>
 
         <div className="w-full max-w-sm space-y-8">
-          {/* Header */}
           <div className="animate-fade-slide-up" style={{ animationDelay: '60ms' }}>
             <p className="font-display font-700 text-[var(--accent)] uppercase tracking-[0.35em] text-xs mb-2">
               Restricted Access
@@ -141,7 +132,6 @@ export default function AdminGate({ checkAuth, onAuth, children }: Props) {
             </p>
           </div>
 
-          {/* Divider */}
           <div
             className="animate-fade-slide-up flex items-center gap-4"
             style={{ animationDelay: '120ms' }}
@@ -151,13 +141,11 @@ export default function AdminGate({ checkAuth, onAuth, children }: Props) {
             <div className="flex-1 h-px bg-[var(--border)]" />
           </div>
 
-          {/* Password field */}
           <div className="animate-fade-slide-up space-y-2" style={{ animationDelay: '180ms' }}>
             <label className="font-display font-700 text-xs text-[var(--muted)] uppercase tracking-widest block">
               Password
             </label>
             <div className="relative group">
-              {/* Glow border wrapper */}
               <div className="absolute -inset-[1px] rounded-xl bg-gradient-to-r from-transparent via-[var(--accent)]/0 to-transparent group-focus-within:via-[var(--accent)]/50 transition-all duration-300" />
               <input
                 type={showPw ? 'text' : 'password'}
@@ -180,7 +168,6 @@ export default function AdminGate({ checkAuth, onAuth, children }: Props) {
               </button>
             </div>
 
-            {/* Error */}
             {error && (
               <p className="font-display font-700 text-xs text-red-400 uppercase tracking-widest flex items-center gap-2 pt-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-red-400 shrink-0" />
@@ -189,7 +176,6 @@ export default function AdminGate({ checkAuth, onAuth, children }: Props) {
             )}
           </div>
 
-          {/* Submit */}
           <div className="animate-fade-slide-up" style={{ animationDelay: '240ms' }}>
             <button
               onClick={login}
@@ -211,7 +197,6 @@ export default function AdminGate({ checkAuth, onAuth, children }: Props) {
                   </>
                 )}
               </span>
-              {/* Shimmer */}
               <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-500" />
             </button>
           </div>

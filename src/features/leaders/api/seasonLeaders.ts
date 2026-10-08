@@ -1,10 +1,5 @@
 import type { KnbsbCategory, SeasonLeaders } from '../domain/types'
 
-// Build an OPS (OBP + SLG) leader category from the KNBSB batting leaders.
-// KNBSB does not return OPS directly, so we compute it per player from the raw
-// components. The candidate pool is the union of the AVG/SLG/OBP leaderboards —
-// all already filtered to qualified batters (min 2.7 PA/G) — which reliably
-// contains the true OPS leaders.
 function buildOpsCategory(batting: KnbsbCategory[]): KnbsbCategory | null {
   const num = (v: unknown) => {
     const n = Number(v)

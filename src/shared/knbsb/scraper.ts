@@ -63,13 +63,13 @@ export interface StenwesselGame {
   innings?: number
   location?: string
   stadium?: string
-  [key: string]: any
+  [key: string]: unknown
 }
 
 export interface StenwesselBoxScore {
-  gameData: Record<string, any>
-  boxScore?: Record<string, any>
-  [key: string]: any
+  gameData: Record<string, unknown>
+  boxScore?: Record<string, Record<string, unknown[]>>
+  [key: string]: unknown
 }
 
 export async function fetchSchedule(): Promise<{ games: StenwesselGame[] }> {
@@ -89,7 +89,6 @@ export async function fetchGameBoxscore(gameId: string | number): Promise<Stenwe
   const gd = orig.gameData
   const bs = orig.boxScore || {}
 
-  // Build compatible boxScore structure
   function collect(teamKey: string): Record<string, any> {
     const byP: Record<string, any> = {}
     const sec = bs[teamKey] || {}
@@ -110,19 +109,16 @@ export async function fetchGameBoxscore(gameId: string | number): Promise<Stenwe
 
   const aK = String(gd.awayid)
   const hK = String(gd.homeid)
-  const awayPlayers = Object.values(collect(aK)) as any[]
-  const homePlayers = Object.values(collect(hK)) as any[]
+  const awayPlayers = Object.values(collect(aK)) as Record<string, unknown>[]
+  const homePlayers = Object.values(collect(hK)) as Record<string, unknown>[]
 
-  // Mark starters: players without pinch designation (PR, PH, etc) are starters
-  const isSubstitute = (p: any) => {
+  const isSubstitute = (p: Record<string, unknown>) => {
     const pos = String(p.pos || '').toUpperCase()
     return /^(PR|PH|DD|C\/PH|OF\/PH)/.test(pos)
   }
 
-  // Format into stenwessel-compatible structure
-  const boxScore: Record<string, any> = {}
+  const boxScore: Record<string, Record<string, unknown[]>> = {}
 
-  // Away team
   boxScore[aK] = {}
   for (let spot = 1; spot <= 9; spot++) {
     const players = awayPlayers.filter((p) => nv(p.spot) === spot || nv(p.sub) === spot)
@@ -134,7 +130,6 @@ export async function fetchGameBoxscore(gameId: string | number): Promise<Stenwe
   }
   boxScore[aK]['90'] = awayPlayers.filter((p) => nv(p.spot) === 90 || nv(p.sub) === 90)
 
-  // Home team
   boxScore[hK] = {}
   for (let spot = 1; spot <= 9; spot++) {
     const players = homePlayers.filter((p) => nv(p.spot) === spot || nv(p.sub) === spot)

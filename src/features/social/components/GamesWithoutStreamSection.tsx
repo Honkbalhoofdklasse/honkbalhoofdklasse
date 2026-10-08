@@ -1,7 +1,7 @@
 import { TEAM_NAMES } from '@/shared/teams/teams'
 import type { Game } from '@/features/social/api/getLivestreamData'
-import { formatDate } from '@/features/social/domain/livestreamFormat'
-import { TeamLogo } from '@/features/social/components/TeamLogo'
+import { TeamLogo } from '@/shared/ui/TeamLogo'
+import { WEEKDAY_DAY_MONTH, formatGameDate } from '@/shared/dates/gameDate'
 
 export function GamesWithoutStreamSection({ gamesWithoutStream }: { gamesWithoutStream: Game[] }) {
   return (
@@ -21,7 +21,7 @@ export function GamesWithoutStreamSection({ gamesWithoutStream }: { gamesWithout
             <div className="px-4 pt-3 pb-3">
               <div className="flex items-center justify-between mb-3">
                 <p className="font-display font-800 text-sm uppercase text-white leading-none">
-                  {formatDate(g.game_date)}
+                  {formatGameDate(g.game_date, WEEKDAY_DAY_MONTH)}
                   {g.game_time && (
                     <span className="text-[var(--muted)] ml-2">{g.game_time.slice(0, 5)}</span>
                   )}
@@ -35,13 +35,13 @@ export function GamesWithoutStreamSection({ gamesWithoutStream }: { gamesWithout
                   <p className="font-display font-800 text-base md:text-xl uppercase text-white text-right leading-none truncate">
                     <strong>{TEAM_NAMES[g.away_team_id] ?? g.away_team_id}</strong>
                   </p>
-                  <TeamLogo teamId={g.away_team_id} />
+                  <TeamLogo teamId={g.away_team_id} size={36} padding="p-1" />
                 </div>
                 <div className="shrink-0 w-10 text-center">
                   <p className="font-display font-800 italic text-base text-[var(--muted)]">VS</p>
                 </div>
                 <div className="flex items-center gap-2 flex-1 min-w-0">
-                  <TeamLogo teamId={g.home_team_id} />
+                  <TeamLogo teamId={g.home_team_id} size={36} padding="p-1" />
                   <p className="font-display font-800 text-base md:text-xl uppercase text-white leading-none truncate">
                     <strong>{TEAM_NAMES[g.home_team_id] ?? g.home_team_id}</strong>
                   </p>

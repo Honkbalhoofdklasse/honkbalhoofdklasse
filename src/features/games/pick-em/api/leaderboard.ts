@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/shared/supabase/legacy'
 
 export async function GET() {
-  // Get all final games
   const { data: games } = await supabaseAdmin
     .from('games')
     .select('id, home_team_id, away_team_id, home_score, away_score, status')
@@ -11,7 +10,6 @@ export async function GET() {
 
   const finalGames = games ?? []
 
-  // Build winner map
   const winners = new Map<number, string>()
   for (const g of finalGames) {
     if (g.home_score == null || g.away_score == null) continue
@@ -19,7 +17,6 @@ export async function GET() {
     else if (g.away_score > g.home_score) winners.set(g.id, g.away_team_id)
   }
 
-  // Get all picks for final games
   const finalIds = finalGames.map((g) => g.id)
   if (!finalIds.length) return NextResponse.json([])
 
@@ -30,7 +27,6 @@ export async function GET() {
 
   if (!picks?.length) return NextResponse.json([])
 
-  // Group by user
   const userMap = new Map<string, { nickname: string; correct: number; total: number }>()
   for (const pick of picks) {
     if (!userMap.has(pick.user_token)) {

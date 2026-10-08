@@ -14,7 +14,6 @@ export function BaseDiamond({
   const empty = '#1a2a3a'
   return (
     <svg width={s * 3} height={s * 2.4} viewBox="0 0 30 24">
-      {/* 2B top-center */}
       <rect
         x="11"
         y="0"
@@ -23,7 +22,6 @@ export function BaseDiamond({
         transform="rotate(45 15 4)"
         fill={r2 ? filled : empty}
       />
-      {/* 1B right */}
       <rect
         x="20"
         y="8"
@@ -32,7 +30,6 @@ export function BaseDiamond({
         transform="rotate(45 24 12)"
         fill={r1 ? filled : empty}
       />
-      {/* 3B left */}
       <rect
         x="2"
         y="8"

@@ -9,8 +9,6 @@ import PlayerSelector from '../components/PlayerSelector'
 import RadarChart from '../components/RadarChart'
 import { RADAR_C1, RADAR_C2 } from '../domain/radar'
 
-// ── Main page ─────────────────────────────────────────────────────────────────
-
 export default function CompareContent() {
   const searchParams = useSearchParams()
   const nav = useRouter()
@@ -54,13 +52,11 @@ export default function CompareContent() {
 
   const both = p1 && p2
 
-  // Team colors — used for logos/selectors only
   const tc1 = p1 ? (TEAM_COLORS[p1.teamId] ?? '#1e335a') : '#1e335a'
   const tc2 = p2 ? (TEAM_COLORS[p2.teamId] ?? '#1e335a') : '#1e335a'
 
   return (
     <div className="max-w-3xl mx-auto px-4 pt-28 pb-16">
-      {/* Header */}
       <div className="text-center mb-8">
         <p className="font-display font-700 text-[var(--accent)] uppercase tracking-widest text-xs mb-1">
           Honkbal Hoofdklasse
@@ -70,7 +66,6 @@ export default function CompareContent() {
         </h1>
       </div>
 
-      {/* Selectors */}
       <div className="flex gap-3 items-center mb-8">
         <PlayerSelector
           players={players}
@@ -91,7 +86,6 @@ export default function CompareContent() {
         />
       </div>
 
-      {/* Empty state */}
       {!both && !loading && (
         <div className="text-center py-20 text-[var(--muted)]">
           <p className="font-display font-700 text-sm uppercase tracking-wider">
@@ -108,14 +102,11 @@ export default function CompareContent() {
         </div>
       )}
 
-      {/* Comparison */}
       {both && (
         <div className="flex flex-col gap-8">
-          {/* Radar chart */}
           <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6 flex flex-col items-center gap-5">
             <RadarChart p1={p1} p2={p2} all={players} />
 
-            {/* Legend */}
             <div className="flex gap-6">
               {[
                 { p: p1, c: RADAR_C1 },
@@ -131,10 +122,8 @@ export default function CompareContent() {
             </div>
           </div>
 
-          {/* Stats table */}
           <CompareStatsTable p1={p1} p2={p2} tc1={tc1} tc2={tc2} />
 
-          {/* Share */}
           <div className="flex justify-center">
             <button
               onClick={() => {

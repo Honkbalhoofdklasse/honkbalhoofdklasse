@@ -1,61 +1,31 @@
 'use client'
 
 import { useState } from 'react'
-import Image from 'next/image'
 import BoxscoreModal from '@/shared/ui/BoxscoreModal'
-import { TEAM_COLORS, TEAM_LOGOS, TEAM_NAMES, TEAM_SHORT } from '@/shared/teams/teams'
+import { TEAM_COLORS, TEAM_NAMES } from '@/shared/teams/teams'
+import { TeamLogo } from '@/shared/ui/TeamLogo'
+import type { GameRow } from '@/shared/types/game'
+import type { WinLoss } from '@/shared/types/standing'
+import { DAY_MONTH, formatGameDate } from '@/shared/dates/gameDate'
 
-type Game = {
-  id: number | string
-  external_id: string | null
-  game_date: string
-  home_team_id: string
-  away_team_id: string
-  home_score: number | null
-  away_score: number | null
-  status: string
-}
-
-type StandingEntry = { wins: number; losses: number }
-
-function TeamLogo({ teamId, size = 40 }: { teamId: string; size?: number }) {
-  const logo = TEAM_LOGOS[teamId]
-  const color = TEAM_COLORS[teamId] ?? '#1e335a'
-  return (
-    <div
-      className="rounded-lg flex items-center justify-center shrink-0 p-1.5"
-      style={{ backgroundColor: color, width: size, height: size }}
-    >
-      {logo ? (
-        <Image
-          src={logo}
-          alt={teamId}
-          width={size - 8}
-          height={size - 8}
-          className="object-contain w-full h-full"
-        />
-      ) : (
-        <span className="font-display font-800 text-white" style={{ fontSize: size * 0.25 }}>
-          {TEAM_SHORT[teamId] ?? teamId.slice(0, 3).toUpperCase()}
-        </span>
-      )}
-    </div>
-  )
-}
-
-function formatDate(dateStr: string) {
-  return new Date(dateStr + 'T12:00:00').toLocaleDateString('en-US', {
-    day: 'numeric',
-    month: 'short',
-  })
-}
+type Game = Pick<
+  GameRow,
+  | 'id'
+  | 'external_id'
+  | 'game_date'
+  | 'home_team_id'
+  | 'away_team_id'
+  | 'home_score'
+  | 'away_score'
+  | 'status'
+>
 
 export default function HomeRecentResults({
   results,
   standingsMap,
 }: {
   results: Game[]
-  standingsMap: Record<string, StandingEntry>
+  standingsMap: Record<string, WinLoss>
 }) {
   const [selected, setSelected] = useState<Game | null>(null)
 
@@ -77,9 +47,8 @@ export default function HomeRecentResults({
               <div className="h-[3px]" style={{ backgroundColor: winColor }} />
 
               <div className="p-4">
-                {/* Away */}
                 <div className={`flex items-center gap-2 mb-1.5 ${awayWon ? '' : 'opacity-35'}`}>
-                  <TeamLogo teamId={g.away_team_id} size={32} />
+                  <TeamLogo teamId={g.away_team_id} size={32} useShortName />
                   <div className="flex flex-col min-w-0 flex-1">
                     <span className="font-display font-800 text-[0.72rem] uppercase text-white truncate leading-tight">
                       {TEAM_NAMES[g.away_team_id] ?? g.away_team_id}
@@ -97,9 +66,8 @@ export default function HomeRecentResults({
                   </span>
                 </div>
 
-                {/* Home */}
                 <div className={`flex items-center gap-2 ${homeWon ? '' : 'opacity-35'}`}>
-                  <TeamLogo teamId={g.home_team_id} size={32} />
+                  <TeamLogo teamId={g.home_team_id} size={32} useShortName />
                   <div className="flex flex-col min-w-0 flex-1">
                     <span className="font-display font-800 text-[0.72rem] uppercase text-white truncate leading-tight">
                       {TEAM_NAMES[g.home_team_id] ?? g.home_team_id}
@@ -120,7 +88,7 @@ export default function HomeRecentResults({
 
               <div className="px-4 py-2 border-t border-[#1a2a3a] flex items-center justify-between">
                 <span className="font-display font-700 text-[11px] text-[#4a6a8a] uppercase tracking-widest">
-                  {formatDate(g.game_date)}
+                  {formatGameDate(g.game_date, DAY_MONTH)}
                 </span>
                 <span className="font-display font-800 text-[11px] text-[var(--accent)] uppercase tracking-widest">
                   Final

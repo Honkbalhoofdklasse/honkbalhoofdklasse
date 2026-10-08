@@ -38,7 +38,6 @@ export default function PlayerRow({
       <div
         className={`bg-[var(--card)] border rounded-xl px-4 py-3 flex items-center gap-4 flex-wrap transition-colors ${isSuccess ? 'border-green-500/50' : 'border-[var(--border)]'}`}
       >
-        {/* Name */}
         <div className="flex-1 min-w-[160px]">
           <p className="font-display font-800 text-sm uppercase text-white leading-none">{name}</p>
           <p className="font-display font-700 text-[10px] text-[var(--muted)] uppercase tracking-widest mt-0.5">
@@ -46,9 +45,7 @@ export default function PlayerRow({
           </p>
         </div>
 
-        {/* Banner */}
         <div className="flex items-center gap-2">
-          {/* Thumbnail — clickable to edit focal if banner exists */}
           {photo?.banner_url ? (
             <button
               onClick={() => setEditingFocal(true)}
@@ -56,7 +53,6 @@ export default function PlayerRow({
               style={{ width: 96, height: 32 }}
               title="Klik om positie aan te passen"
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={photo.banner_url}
                 alt="Banner"
@@ -113,10 +109,8 @@ export default function PlayerRow({
           </div>
         </div>
 
-        {/* Headshot */}
         <div className="flex items-center gap-2">
           {photo?.headshot_url ? (
-            // eslint-disable-next-line @next/next/no-img-element
             <img
               src={photo.headshot_url}
               alt="Headshot"
@@ -160,7 +154,6 @@ export default function PlayerRow({
         )}
       </div>
 
-      {/* Focal point editor modal */}
       {editingFocal && photo?.banner_url && (
         <FocalPointEditor
           playerName={name}

@@ -44,13 +44,11 @@ export default async function TeamScreen({ params }: { params: Promise<{ teamId:
 
   const rd = standing ? standing.runs_scored - standing.runs_allowed : 0
 
-  // All teams for league rank sorting
   const allTeams = [...batting].sort((a, b) => b.avg - a.avg)
   const avgRank = allTeams.findIndex((t) => t.teamId === teamId) + 1
 
   return (
     <div className="max-w-6xl mx-auto px-4 md:px-8 py-8 space-y-8">
-      {/* Back */}
       <Link
         href="/teams"
         className="inline-flex items-center gap-2 font-display font-700 text-sm text-[var(--muted)] hover:text-white transition-colors uppercase tracking-wider"
@@ -58,7 +56,6 @@ export default async function TeamScreen({ params }: { params: Promise<{ teamId:
         ← All Teams
       </Link>
 
-      {/* Hero header */}
       <div
         className="rounded-3xl overflow-hidden border border-[var(--border)] relative"
         style={{ backgroundColor: color }}
@@ -113,22 +110,16 @@ export default async function TeamScreen({ params }: { params: Promise<{ teamId:
         </div>
       </div>
 
-      {/* Stats grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Batting */}
         {bat && <TeamBattingSection bat={bat} />}
 
-        {/* Pitching */}
         {pit && <TeamPitchingSection pit={pit} />}
 
-        {/* Recent results */}
         {games.length > 0 && <RecentResultsSection games={games} teamId={teamId} />}
 
-        {/* Roster */}
         {roster && <TeamRosterSection roster={roster} />}
       </div>
 
-      {/* League rank teaser */}
       {bat && (
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl px-5 py-4">
           <p className="font-display font-700 text-xs uppercase text-[var(--muted)] tracking-wider mb-1">

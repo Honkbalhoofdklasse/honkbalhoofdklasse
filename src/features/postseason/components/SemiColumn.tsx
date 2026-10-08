@@ -5,7 +5,6 @@ import { type CardState, stateOf } from '@/features/postseason/domain/cardState'
 import { BracketCard } from '@/features/postseason/components/BracketCard'
 import { Connector } from '@/features/postseason/components/Connector'
 
-// For each semi: top card = the lower seed (teamB), bottom = the host / higher seed (teamA).
 export function SemiColumn({
   s,
   side,

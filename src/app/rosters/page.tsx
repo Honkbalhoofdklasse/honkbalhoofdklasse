@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://honkbalhoofdklasse.com/rosters' },
 }
 
-export const revalidate = false // static data — no revalidation needed
+export const revalidate = false
 
 export default function RostersPage() {
   return <RostersScreen />

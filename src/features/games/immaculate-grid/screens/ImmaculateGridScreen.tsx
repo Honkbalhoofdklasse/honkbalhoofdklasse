@@ -27,12 +27,10 @@ export default function ImmaculateGridScreen() {
   const [flashes, setFlashes] = useState<Record<number, { ok: boolean }>>({})
   const [showArchive, setShowArchive] = useState(false)
 
-  // Prevent the save effect from firing right after a week switch
   const skipNextSaveRef = useRef(false)
 
   const grid: GridConfig = getGridForFridayNum(selectedWeek)
 
-  // When selectedWeek changes, load that week's state
   function handleWeekChange(week: number) {
     skipNextSaveRef.current = true
     setSelectedWeek(week)
@@ -43,14 +41,13 @@ export default function ImmaculateGridScreen() {
     setFlashes({})
   }
 
-  // Save whenever cells or guessesLeft change (but skip right after a week switch)
   useEffect(() => {
     if (skipNextSaveRef.current) {
       skipNextSaveRef.current = false
       return
     }
     saveWeekState(selectedWeek, cells, guessesLeft)
-  }, [cells, guessesLeft]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [cells, guessesLeft])
 
   const handleGuess = useCallback(
     (cellIdx: number, playerName: string) => {
@@ -118,7 +115,6 @@ export default function ImmaculateGridScreen() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 md:px-8 py-8">
-      {/* Header */}
       <GridHeader
         gridDate={gridDate}
         isArchive={isArchive}
@@ -131,7 +127,6 @@ export default function ImmaculateGridScreen() {
 
       {done && <DoneBanner score={score} isArchive={isArchive} />}
 
-      {/* The 4×4 grid */}
       <div
         className="grid gap-2"
         style={{ gridTemplateColumns: '1fr 1fr 1fr 1fr', gridTemplateRows: 'auto auto auto auto' }}
@@ -183,7 +178,6 @@ export default function ImmaculateGridScreen() {
         ))}
       </div>
 
-      {/* Rules */}
       <RulesCard />
 
       {activeCell !== null && (

@@ -1,7 +1,8 @@
-// Postseason runs late Aug / Sep (CEST = UTC+2): a fixed offset gives a correct instant for every viewer.
+const AMSTERDAM_SUMMER_TIME_OFFSET = '+02:00'
+
 export function feedDate(iso: string | null): Date | null {
   if (!iso) return null
-  const d = new Date(`${iso.replace(' ', 'T')}+02:00`)
+  const d = new Date(`${iso.replace(' ', 'T')}${AMSTERDAM_SUMMER_TIME_OFFSET}`)
   return isNaN(d.getTime()) ? null : d
 }
 export const fmtDateTime = (iso: string | null) => {

@@ -1,7 +1,7 @@
 import { TEAM_NAMES, TEAM_SHORT } from '@/shared/teams/teams'
-import { formatDate } from '../domain/format'
 import type { Game, StandingsEntry } from '../domain/types'
-import TeamLogo from './TeamLogo'
+import { TeamLogo } from '@/shared/ui/TeamLogo'
+import { WEEKDAY_DAY_MONTH, formatGameDate } from '@/shared/dates/gameDate'
 
 export default function ResultCard({
   game,
@@ -24,7 +24,7 @@ export default function ResultCard({
     >
       <div className="flex items-center justify-between mb-2.5">
         <p className="font-display font-800 text-sm uppercase text-white leading-none">
-          {formatDate(game.game_date)}
+          {formatGameDate(game.game_date, WEEKDAY_DAY_MONTH)}
         </p>
         <p className="font-display font-700 text-xs text-[var(--muted)] uppercase tracking-widest group-hover:text-[var(--accent)] transition-colors">
           Boxscore →
@@ -52,7 +52,7 @@ export default function ResultCard({
               </span>
             )}
           </div>
-          <TeamLogo teamId={game.away_team_id} />
+          <TeamLogo teamId={game.away_team_id} size={36} padding="p-1" />
         </div>
 
         <div className="shrink-0 w-14 text-center">
@@ -72,7 +72,7 @@ export default function ResultCard({
         </div>
 
         <div className={`flex items-center gap-2 flex-1 min-w-0 ${homeWon ? '' : 'opacity-50'}`}>
-          <TeamLogo teamId={game.home_team_id} />
+          <TeamLogo teamId={game.home_team_id} size={36} padding="p-1" />
           <div className="flex flex-col min-w-0 flex-1">
             <p className="font-display font-800 text-base md:text-xl uppercase text-white leading-none truncate">
               <strong>

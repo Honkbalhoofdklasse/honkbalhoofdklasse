@@ -27,7 +27,6 @@ export function PlayerHero({
 }) {
   return (
     <div className="relative shrink-0 overflow-hidden" style={{ height: 240 }}>
-      {/* Banner photo — prominent, like MLB */}
       {bannerUrl ? (
         <Image
           src={bannerUrl}
@@ -44,7 +43,6 @@ export function PlayerHero({
         />
       )}
 
-      {/* Dark gradient so text is always readable */}
       <div
         className="absolute inset-0"
         style={{
@@ -57,7 +55,6 @@ export function PlayerHero({
         style={{ background: `linear-gradient(to right, ${teamColor}cc 0%, transparent 50%)` }}
       />
 
-      {/* Jersey number watermark */}
       {rosterPlayer?.uniform && (
         <div className="absolute right-0 top-0 bottom-0 flex items-center pr-6 select-none pointer-events-none">
           <span
@@ -69,7 +66,6 @@ export function PlayerHero({
         </div>
       )}
 
-      {/* Close button */}
       <button
         onClick={onClose}
         className="absolute top-3 right-3 z-20 w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-white/80 hover:text-white hover:bg-black/70 transition-colors text-lg leading-none"
@@ -77,9 +73,7 @@ export function PlayerHero({
         ×
       </button>
 
-      {/* Player info anchored at bottom */}
       <div className="absolute bottom-0 left-0 right-0 px-5 pb-5 flex items-end gap-4 z-10">
-        {/* Headshot */}
         {headshotUrl ? (
           <div
             className="relative shrink-0 rounded-xl overflow-hidden shadow-2xl"
@@ -114,9 +108,7 @@ export function PlayerHero({
           </div>
         )}
 
-        {/* Name + info */}
         <div className="flex-1 min-w-0 pb-1">
-          {/* Team logo + name */}
           <div className="flex items-center gap-1.5 mb-1">
             {TEAM_LOGOS[teamId] && (
               <div className="w-4 h-4 shrink-0 flex items-center justify-center">
@@ -137,7 +129,6 @@ export function PlayerHero({
             </span>
           </div>
 
-          {/* Name + number */}
           <h2
             className="font-display font-800 uppercase text-white leading-none tracking-tight mb-1.5"
             style={{ fontSize: 'clamp(1.25rem, 4vw, 1.875rem)' }}
@@ -153,7 +144,6 @@ export function PlayerHero({
             )}
           </h2>
 
-          {/* Bio chips */}
           <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-white/50 font-display font-700 uppercase tracking-widest text-[10px]">
             {rosterPlayer?.pos && <span className="text-white/75">{rosterPlayer.pos}</span>}
             {rosterPlayer?.bt && (

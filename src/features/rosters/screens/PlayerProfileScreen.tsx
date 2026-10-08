@@ -68,7 +68,6 @@ export default async function PlayerProfileScreen({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
       />
       <div className="max-w-4xl mx-auto px-4 md:px-8 py-8 space-y-8">
-        {/* Terug knop + acties */}
         <div className="flex items-center justify-between flex-wrap gap-3">
           <BackButton fallback="/rosters" label="Back" />
           <Link
@@ -79,7 +78,6 @@ export default async function PlayerProfileScreen({
           </Link>
         </div>
 
-        {/* Player header card */}
         <PlayerProfileHeader
           player={player}
           photos={photos}
@@ -90,7 +88,6 @@ export default async function PlayerProfileScreen({
           posLabel={posLabel}
         />
 
-        {/* Splits — client component, fetches live after page load */}
         <section>
           <div className="flex items-center gap-3 mb-4">
             <div className="w-1 h-6 shrink-0" style={{ backgroundColor: teamColor }} />
@@ -101,18 +98,14 @@ export default async function PlayerProfileScreen({
           <PlayerSplits playerName={player.name} teamId={teamId} />
         </section>
 
-        {/* Career Stats */}
         {(career.batting.length > 0 || career.pitching.length > 0) && (
           <CareerStatsSection career={career} bbrefId={player.bbref_id} teamColor={teamColor} />
         )}
 
-        {/* 2026 Season Stats */}
         <SeasonStatsSection season={season} teamColor={teamColor} />
 
-        {/* Awards sectie */}
         <PlayerAwardsSection awards={awards} />
 
-        {/* Instagram team feed */}
         <InstagramFeedSection />
       </div>
     </>

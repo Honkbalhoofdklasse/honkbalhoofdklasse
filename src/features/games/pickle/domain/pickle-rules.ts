@@ -1,8 +1,6 @@
 import { MAX_GUESSES, YOB_CLOSE } from './constants'
 import type { GuessFeedback, PoolPlayer } from './types'
 
-// ── Evaluate ──────────────────────────────────────────────────────────────────
-
 export function evaluate(guess: PoolPlayer, target: PoolPlayer): GuessFeedback {
   const yobDiff = target.yob - guess.yob
   return {
@@ -15,8 +13,6 @@ export function evaluate(guess: PoolPlayer, target: PoolPlayer): GuessFeedback {
     yobDir: guess.yob === target.yob ? null : yobDiff > 0 ? 'up' : 'down',
   }
 }
-
-// ── Share ─────────────────────────────────────────────────────────────────────
 
 export function buildShareText(guesses: GuessFeedback[], won: boolean, dateStr: string): string {
   const row = (fb: GuessFeedback) =>

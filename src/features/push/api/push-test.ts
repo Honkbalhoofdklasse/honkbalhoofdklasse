@@ -32,9 +32,7 @@ export async function GET(req: Request) {
         { TTL: 60 },
       )
       sent++
-    } catch {
-      /* ignore */
-    }
+    } catch {}
   }
 
   return NextResponse.json({ ok: true, sent, total: subs.length })

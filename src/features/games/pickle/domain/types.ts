@@ -2,8 +2,6 @@ import type { Player } from '@/shared/rosters/rosters-data'
 
 export type PoolPlayer = Player & { teamId: string }
 
-// ── Feedback types ────────────────────────────────────────────────────────────
-
 export type Hit = 'correct' | 'close' | 'wrong'
 export type Dir = 'up' | 'down' | null
 

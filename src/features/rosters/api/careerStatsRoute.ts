@@ -23,7 +23,6 @@ const HEADERS = {
 type StatRow = Record<string, string>
 
 function extractTable(html: string, tableId: string): StatRow[] {
-  // Baseball-reference wraps some tables in HTML comments — strip them first
   const clean = html.replace(/<!--([\s\S]*?)-->/g, '$1')
 
   const tableMatch = clean.match(new RegExp(`<table[^>]+id="${tableId}"[^>]*>([\\s\\S]*?)</table>`))
@@ -112,7 +111,6 @@ export async function GET(req: NextRequest) {
 
     const html = await res.text()
 
-    // Quick check: if we got a bot-block page, tables won't exist
     if (html.length < 5000) {
       return NextResponse.json({ batting: [], pitching: [], error: 'blocked' })
     }

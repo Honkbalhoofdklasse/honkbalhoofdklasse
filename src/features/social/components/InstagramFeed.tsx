@@ -5,7 +5,6 @@ import Script from 'next/script'
 export default function InstagramFeed({ feedId }: { feedId: string }) {
   return (
     <>
-      {/* @ts-expect-error custom element */}
       <behold-widget feed-id={feedId} />
       <Script
         id="behold-widget-script"

@@ -30,7 +30,6 @@ export default function PickleScreen() {
 
   const target = getPlayerForDayNum(activeDayNum)
 
-  // Load save on mount + migrate old date-based key
   useEffect(() => {
     migrateOldSave(currentDayNum)
     const s = loadDay(currentDayNum)
@@ -39,7 +38,6 @@ export default function PickleScreen() {
     setLost(s.lost)
   }, [currentDayNum])
 
-  // Persist state after any guess, skip once after a day switch
   useEffect(() => {
     if (skipNextSaveRef.current) {
       skipNextSaveRef.current = false
@@ -131,7 +129,6 @@ export default function PickleScreen() {
         />
       )}
 
-      {/* Header */}
       <PickleHeader
         activeDayNum={activeDayNum}
         currentDayNum={currentDayNum}
@@ -141,7 +138,6 @@ export default function PickleScreen() {
         onDayChange={handleDayChange}
       />
 
-      {/* Win / Lose banner */}
       {(won || lost) && (
         <ResultBanner
           won={won}
@@ -152,7 +148,6 @@ export default function PickleScreen() {
         />
       )}
 
-      {/* Search input */}
       {!won && !lost && (
         <PlayerSearch
           inputRef={inputRef}
@@ -166,7 +161,6 @@ export default function PickleScreen() {
         />
       )}
 
-      {/* Column headers */}
       <div className="grid grid-cols-5 gap-1 mb-1 px-0">
         {['Team', 'Pos', 'Bats', 'Throws', 'YOB'].map((h) => (
           <p
@@ -178,7 +172,6 @@ export default function PickleScreen() {
         ))}
       </div>
 
-      {/* Guesses */}
       <div className="space-y-2">
         {guesses.map((fb, i) => (
           <GuessRow key={i} fb={fb} target={target} />
@@ -186,7 +179,6 @@ export default function PickleScreen() {
         <EmptyRows count={MAX_GUESSES - guesses.length} />
       </div>
 
-      {/* Legend */}
       <Legend />
     </div>
   )

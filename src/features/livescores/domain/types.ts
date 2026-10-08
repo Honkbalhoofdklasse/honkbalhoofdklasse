@@ -1,4 +1,6 @@
-export type Game = {
+import type { WinLoss } from '@/shared/types/standing'
+
+export type LiveGame = {
   id: string
   gameDate: string
   gameTime: string | null
@@ -7,7 +9,6 @@ export type Game = {
   status: 'live' | 'final' | 'scheduled'
   homeScore: number | null
   awayScore: number | null
-  // live situation
   inning?: number
   isBottom?: boolean
   outs?: number
@@ -16,12 +17,10 @@ export type Game = {
   runner3?: boolean
 }
 
-export type StandingsEntry = { wins: number; losses: number }
-
 export type Data = {
-  live: Game[]
-  finished: Game[]
-  upcoming: Game[]
-  standings: Record<string, StandingsEntry>
+  live: LiveGame[]
+  finished: LiveGame[]
+  upcoming: LiveGame[]
+  standings: Record<string, WinLoss>
   updatedAt: string
 }

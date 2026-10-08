@@ -7,7 +7,6 @@ export function MiniLeaders({ leaders }: { leaders: MiniLeadersData }) {
     <div className="lg:col-span-1">
       <SectionLabel>Leaders</SectionLabel>
       <div className="space-y-4">
-        {/* Batting */}
         <div>
           <p className="font-display font-700 text-[10px] text-[var(--muted)] uppercase tracking-widest mb-2">
             Batting AVG
@@ -28,7 +27,6 @@ export function MiniLeaders({ leaders }: { leaders: MiniLeadersData }) {
             ))}
           </div>
         </div>
-        {/* Pitching */}
         <div>
           <p className="font-display font-700 text-[10px] text-[var(--muted)] uppercase tracking-widest mb-2">
             ERA

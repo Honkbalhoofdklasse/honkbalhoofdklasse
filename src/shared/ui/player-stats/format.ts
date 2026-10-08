@@ -6,7 +6,6 @@ export function d(v: unknown, decimals = 0): string {
   const x = Number(v)
   if (isNaN(x) || (decimals === 0 && x === 0 && String(v) === '0'))
     return decimals === 0 ? '0' : '—'
-  // Keep leading zero for ERA/whole-number decimals (0.00, not .00)
   return decimals > 0 ? x.toFixed(decimals) : String(x)
 }
 export function avg(v: unknown): string {

@@ -14,7 +14,3 @@ export function formatDateTime(dt: string) {
     minute: '2-digit',
   })
 }
-export function formatDate(dateStr: string) {
-  const d = new Date(dateStr + 'T12:00:00')
-  return d.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short' })
-}

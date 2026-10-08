@@ -1,27 +1,15 @@
-export type Standing = {
-  wins: number
-  losses: number
-  win_pct: number
-  runs_scored: number
-  runs_allowed: number
-  games_played: number
-}
-export type Game = {
-  external_id: string
-  game_date: string
-  home_team_id: string
-  away_team_id: string
-  home_score: number | null
-  away_score: number | null
-}
+import type { GameRow } from '@/shared/types/game'
+import type { StandingRow } from '@/shared/types/standing'
+
+export type Standing = Pick<
+  StandingRow,
+  'wins' | 'losses' | 'win_pct' | 'runs_scored' | 'runs_allowed' | 'games_played'
+>
+export type Game = Pick<
+  GameRow,
+  'external_id' | 'game_date' | 'home_team_id' | 'away_team_id' | 'home_score' | 'away_score'
+>
 
 export function fmtRate(v: number): string {
   return v.toFixed(3).replace(/^0\./, '.')
-}
-export function fmtDate(d: string) {
-  return new Date(d + 'T12:00:00').toLocaleDateString('en-US', {
-    weekday: 'short',
-    day: 'numeric',
-    month: 'short',
-  })
 }

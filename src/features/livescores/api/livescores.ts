@@ -58,11 +58,9 @@ export async function GET() {
   try {
     const today = new Date().toISOString().split('T')[0]
 
-    // Fetch schedule for live game detection
     const schedData = await fetchSchedule()
     const allGames = schedData.games ?? []
 
-    // Live games — real-time from KNBSB scraper
     const liveGameIds = allGames
       .filter((g) => String(g.gamestatus) === '1')
       .map((g) => ({ id: String(g.id), game: g }))
@@ -73,9 +71,7 @@ export async function GET() {
         try {
           const bs = await fetchGameBoxscore(id)
           liveBoxscores[id] = bs
-        } catch {
-          /* skip */
-        }
+        } catch {}
       }),
     )
 
@@ -89,7 +85,6 @@ export async function GET() {
         homeScore = calcScore(boxScore, String(gd.homeid))
         awayScore = calcScore(boxScore, String(gd.awayid))
       }
-      // "B4" = Bottom 4th, "T5" = Top 5th
       const statusText = String(g.gamestatustext ?? '')
       const stMatch = statusText.match(/^([TB])(\d+)$/)
       const inning = stMatch ? parseInt(stMatch[2]) : 1
@@ -116,7 +111,6 @@ export async function GET() {
       }
     })
 
-    // Finished games — from Supabase (scores already stored by n8n)
     const { data: finishedRows } = await supabase
       .from('games')
       .select(
@@ -138,7 +132,6 @@ export async function GET() {
       awayScore: g.away_score,
     }))
 
-    // Upcoming games — from Supabase
     const { data: upcomingRows } = await supabase
       .from('games')
       .select('external_id, game_date, game_time, home_team_id, away_team_id')
@@ -159,7 +152,6 @@ export async function GET() {
       awayScore: null,
     }))
 
-    // Standings for record display
     const { data: standingsRows } = await supabase
       .from('standings')
       .select('team_id, wins, losses')

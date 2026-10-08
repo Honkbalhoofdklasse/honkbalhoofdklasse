@@ -63,18 +63,15 @@ export default function NavBar() {
             />
           </Link>
 
-          {/* Desktop nav */}
           <DesktopNav
             entries={entries}
             pathname={pathname}
             onSearchOpen={() => setSearchOpen(true)}
           />
 
-          {/* Mobile: bell + hamburger */}
           <MobileToggle open={open} onToggle={() => setOpen((o) => !o)} />
         </div>
 
-        {/* Mobile menu */}
         <MobileMenu
           open={open}
           entries={entries}

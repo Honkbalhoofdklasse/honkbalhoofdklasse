@@ -1,15 +1,14 @@
 import type { Grade, Slot } from './types'
 
-// ── Config ────────────────────────────────────────────────────────────────────
 export const REG_GAMES = 36
 export const CUTOFF_MIN = 22,
-  CUTOFF_MAX = 25 // playoff line varies per game, fixed within a game
-export const SEMI_WINS = 3 // best-of-5
-export const FINAL_WINS = 4 // best-of-7
-export const RA_FLOOR = 3.6 // a 5-man staff regresses over a full season
-export const OFF_EXP = 1.55 // run scaling vs offense (kept realistic, not explosive)
-export const OPP_SEMI = 0.62 // semifinal opponent: a top playoff team
-export const OPP_FINAL = 0.75 // Holland Series opponent: the league's best
+  CUTOFF_MAX = 25
+export const SEMI_WINS = 3
+export const FINAL_WINS = 4
+export const RA_FLOOR = 3.6
+export const OFF_EXP = 1.55
+export const OPP_SEMI = 0.62
+export const OPP_FINAL = 0.75
 export const SKIPS = 3
 
 export const SLOTS: Slot[] = [

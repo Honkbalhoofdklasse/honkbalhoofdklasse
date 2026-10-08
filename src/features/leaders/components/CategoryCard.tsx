@@ -33,7 +33,6 @@ export default function CategoryCard({
         </div>
         {category.type === 'sb' && (
           <div className="h-7 w-14 flex items-center justify-end shrink-0">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="https://res.cloudinary.com/dqld625sq/image/upload/v1778604074/SSK_LOGO_hiu1wg.png"
               alt="SSK"

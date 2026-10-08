@@ -1,13 +1,16 @@
-export type Game = {
-  id: number
-  game_date: string
-  game_time: string | null
-  home_team_id: string
-  away_team_id: string
-  status: string
-  home_score: number | null
-  away_score: number | null
-}
+import type { GameRow } from '@/shared/types/game'
+
+export type Game = Omit<
+  GameRow,
+  | 'external_id'
+  | 'home_team_name'
+  | 'away_team_name'
+  | 'home_short'
+  | 'away_short'
+  | 'home_logo'
+  | 'away_logo'
+  | 'venue'
+>
 
 export type Pick = {
   game_id: number

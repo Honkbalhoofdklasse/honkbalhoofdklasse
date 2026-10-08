@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import { feedDate } from '@/features/postseason/domain/feedDate'
 
-// ── Countdown ─────────────────────────────────────────────────────────────────
 export function Countdown({ targetISO }: { targetISO: string }) {
   const [now, setNow] = useState(() => Date.now())
   useEffect(() => {

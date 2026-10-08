@@ -1,4 +1,5 @@
 import { BAT_COLS, type BatGame, type BatSplit } from './types'
+import { DAY_MONTH, formatGameDate } from '@/shared/dates/gameDate'
 
 export function BattingSplits({
   batSplits,
@@ -80,10 +81,7 @@ export function BattingSplits({
               {batGames.map((g, i) => (
                 <tr key={i} className="hover:bg-[var(--card-hover)] transition-colors">
                   <td className="px-4 py-2.5 font-display font-700 text-xs text-white/60 whitespace-nowrap">
-                    {new Date(g.date + 'T12:00:00').toLocaleDateString('nl-NL', {
-                      day: 'numeric',
-                      month: 'short',
-                    })}
+                    {formatGameDate(g.date, DAY_MONTH, 'nl-NL')}
                   </td>
                   <td className="px-3 py-2.5 font-display font-700 text-xs text-[var(--muted)] uppercase">
                     {g.opponent}

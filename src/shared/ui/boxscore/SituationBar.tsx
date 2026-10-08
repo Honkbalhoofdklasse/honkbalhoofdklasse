@@ -4,7 +4,6 @@ import type { Situation } from './types'
 export function SituationBar({ sit }: { sit: Situation }) {
   return (
     <div className="flex items-center gap-4 px-4 py-3 bg-[#060e1b] border-t border-[var(--border)]">
-      {/* Inning */}
       <div className="text-center shrink-0">
         <p className="font-display font-800 text-[10px] text-[var(--muted)] uppercase">
           {sit.isBottom ? 'Bot' : 'Top'}
@@ -19,7 +18,6 @@ export function SituationBar({ sit }: { sit: Situation }) {
 
       <div className="w-px h-8 bg-[var(--border)]" />
 
-      {/* Outs */}
       <div className="text-center shrink-0">
         <div className="flex gap-1 justify-center mb-0.5">
           {[0, 1, 2].map((i) => (
@@ -36,7 +34,6 @@ export function SituationBar({ sit }: { sit: Situation }) {
 
       <div className="w-px h-8 bg-[var(--border)]" />
 
-      {/* Bases */}
       <div className="flex flex-col items-center shrink-0">
         <BaseDiamond r1={sit.runner1} r2={sit.runner2} r3={sit.runner3} size={10} />
         <p className="font-display font-700 text-[9px] text-[var(--muted)] uppercase tracking-widest mt-0.5">
@@ -46,7 +43,6 @@ export function SituationBar({ sit }: { sit: Situation }) {
 
       <div className="w-px h-8 bg-[var(--border)]" />
 
-      {/* Count */}
       <div className="text-center shrink-0">
         <p className="font-display font-800 text-base text-white tabular-nums">
           {sit.balls}-{sit.strikes}
@@ -56,7 +52,6 @@ export function SituationBar({ sit }: { sit: Situation }) {
         </p>
       </div>
 
-      {/* Batter / Pitcher */}
       {(sit.currentBatter || sit.currentPitcher) && (
         <>
           <div className="w-px h-8 bg-[var(--border)]" />

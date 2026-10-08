@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
-import { type WinProbPoint, winProb } from '../domain/winProbability'
+import { winProb } from '../domain/winProbability'
+import type { WinProbPoint } from '@/shared/types/winProbability'
 
 export async function GET(_req: Request, { params }: { params: Promise<{ gameId: string }> }) {
   const { gameId } = await params
@@ -13,8 +14,6 @@ export async function GET(_req: Request, { params }: { params: Promise<{ gameId:
     const data = await res.json()
     const gd = data.gameData as Record<string, unknown>
 
-    // Determine game length (same logic as boxscore API):
-    // default 9 innings, extend only if there are actual runs in extra innings
     let lastInning = 9
     for (let i = 20; i > 9; i--) {
       if (Number(gd[`runsaway${i}`]) > 0 || Number(gd[`runshome${i}`]) > 0) {
@@ -22,7 +21,6 @@ export async function GET(_req: Request, { params }: { params: Promise<{ gameId:
         break
       }
     }
-    // Verify at least inning 1 has data (game was actually played)
     if (gd['runsaway1'] === null || gd['runsaway1'] === undefined || gd['runsaway1'] === '')
       return NextResponse.json({ points: [] })
 
@@ -38,15 +36,12 @@ export async function GET(_req: Request, { params }: { params: Promise<{ gameId:
       const awayVal = gd[`runsaway${i}`]
       const homeVal = gd[`runshome${i}`]
 
-      // Top of inning: away team bats
       if (awayVal !== null && awayVal !== undefined && awayVal !== '') {
         awayRuns += Number(awayVal) || 0
-        // After top: home still has bottom of this inning + all remaining
         const innsLeft = totalInnings - i + 0.5
         points.push({ label: `T${i}`, homeProb: winProb(homeRuns - awayRuns, innsLeft) })
       }
 
-      // Bottom of inning: home team bats (unless they didn't need to)
       const homeDidntBat =
         homeWon &&
         i === totalInnings &&
@@ -58,7 +53,6 @@ export async function GET(_req: Request, { params }: { params: Promise<{ gameId:
       }
     }
 
-    // Snap final point to 0 or 1 based on actual result
     if (points.length > 1) {
       const last = points[points.length - 1]
       last.homeProb = homeRuns > awayRuns ? 1 : homeRuns < awayRuns ? 0 : 0.5

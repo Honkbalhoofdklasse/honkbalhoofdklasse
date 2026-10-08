@@ -5,12 +5,10 @@ import type { NextRequest } from 'next/server'
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Public admin routes — always allow
   if (pathname.startsWith('/admin/login') || pathname.startsWith('/admin/auth')) {
     return NextResponse.next()
   }
 
-  // Protect all other /admin routes
   if (pathname.startsWith('/admin')) {
     let response = NextResponse.next({ request })
 
@@ -41,7 +39,6 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(loginUrl)
     }
 
-    // Public franchise accounts must not gain access to admin-only pages or APIs.
     const { data: admin, error: roleError } = await supabase
       .from('admin_users')
       .select('email')

@@ -1,6 +1,5 @@
 export function scorecardTop({ rating }: { rating: number | null }) {
   return [
-    /* ── Branding pill (top center) ──────────────────────────── */
     <div
       key="branding"
       style={{
@@ -22,7 +21,6 @@ export function scorecardTop({ rating }: { rating: number | null }) {
           gap: 10,
         }}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="https://res.cloudinary.com/dn8c5398m/image/upload/q_auto/f_auto/v1781607525/hk_logo_iets_groter_tumykq.png"
           alt=""
@@ -34,7 +32,6 @@ export function scorecardTop({ rating }: { rating: number | null }) {
       </div>
     </div>,
 
-    /* ── Rating gem (top right) ──────────────────────────────── */
     rating !== null && (
       <div
         key="rating"

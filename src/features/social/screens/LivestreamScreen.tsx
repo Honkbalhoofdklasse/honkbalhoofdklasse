@@ -9,10 +9,6 @@ export default async function LivestreamScreen() {
   const now = new Date()
   const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate())
 
-  // A stream only counts as live inside the real broadcast window: from 15 min
-  // before its scheduled start until 6 h after (a safety cap so a stuck is_live
-  // flag can't linger indefinitely). A stream with no scheduled_at can't be
-  // verified, so it's never shown as live regardless of the flag.
   const LIVE_LEAD_MS = 15 * 60 * 1000
   const LIVE_MAX_MS = 6 * 60 * 60 * 1000
   const isActuallyLive = (s: Stream) => {
@@ -24,8 +20,8 @@ export default async function LivestreamScreen() {
   const liveNow = streams.filter(isActuallyLive)
   const scheduled = streams.filter((s) => {
     if (isActuallyLive(s)) return false
-    if (!s.scheduled_at) return true // no date set — always show
-    return new Date(s.scheduled_at) >= startOfToday // hide once the day has passed
+    if (!s.scheduled_at) return true
+    return new Date(s.scheduled_at) >= startOfToday
   })
 
   const gamesWithoutStream = upcoming.filter((g) => !streams.find((s) => s.game_id === g.id))
@@ -45,13 +41,10 @@ export default async function LivestreamScreen() {
         </p>
       </div>
 
-      {/* Live nu */}
       {liveNow.length > 0 && <LiveNowSection liveNow={liveNow} />}
 
-      {/* Geplande streams */}
       {scheduled.length > 0 && <ScheduledStreamsSection scheduled={scheduled} />}
 
-      {/* Wedstrijden zonder stream */}
       {gamesWithoutStream.length > 0 && (
         <GamesWithoutStreamSection gamesWithoutStream={gamesWithoutStream} />
       )}

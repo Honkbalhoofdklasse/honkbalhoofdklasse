@@ -1,8 +1,8 @@
 import { TEAM_SHORT } from '@/shared/teams/teams'
 import type { HomeData } from '@/features/home/api/getHomeData'
-import { formatDate } from '@/features/home/domain/formatDate'
-import { TeamLogo } from '@/features/home/components/TeamLogo'
+import { TeamLogo } from '@/shared/ui/TeamLogo'
 import { SectionLabel } from '@/features/home/components/SectionLabel'
+import { DAY_MONTH, formatGameDate } from '@/shared/dates/gameDate'
 
 export function UpcomingGames({
   upcoming,
@@ -23,7 +23,7 @@ export function UpcomingGames({
           <div className="p-4">
             <div className="flex items-center justify-between mb-3">
               <p className="font-display font-700 text-xs text-[#4a6a8a] uppercase tracking-widest">
-                {formatDate(g.game_date)}
+                {formatGameDate(g.game_date, DAY_MONTH)}
                 {g.game_time ? ` · ${g.game_time.slice(0, 5)}` : ''}
               </p>
               {g.venue && (
@@ -34,7 +34,7 @@ export function UpcomingGames({
             </div>
             <div className="flex items-center gap-2">
               <div className="flex flex-col items-center gap-1 flex-1">
-                <TeamLogo teamId={g.away_team_id} size={36} />
+                <TeamLogo teamId={g.away_team_id} size={36} useShortName />
                 <span className="font-display font-800 text-[11px] uppercase text-white text-center">
                   {TEAM_SHORT[g.away_team_id]}
                 </span>
@@ -48,7 +48,7 @@ export function UpcomingGames({
                 <p className="font-display font-800 italic text-lg text-[#4a6a8a]">VS</p>
               </div>
               <div className="flex flex-col items-center gap-1 flex-1">
-                <TeamLogo teamId={g.home_team_id} size={36} />
+                <TeamLogo teamId={g.home_team_id} size={36} useShortName />
                 <span className="font-display font-800 text-[11px] uppercase text-white text-center">
                   {TEAM_SHORT[g.home_team_id]}
                 </span>

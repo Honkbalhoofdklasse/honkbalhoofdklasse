@@ -1,4 +1,4 @@
-import { TeamLogo } from './TeamLogo'
+import { TeamLogo } from '@/shared/ui/TeamLogo'
 import type { BoxscoreData } from './types'
 
 export function LinescoreTable({
@@ -41,7 +41,7 @@ export function LinescoreTable({
           <tr className="border-t border-[var(--border)]">
             <td className="py-3 px-2 text-left">
               <div className="flex items-center gap-1.5">
-                <TeamLogo teamId={data.awayId} size={22} />
+                <TeamLogo teamId={data.awayId} size={22} rounded="xl" imageInset={10} />
                 <span className="font-display font-800 text-xs uppercase text-white">
                   {data.awayId.slice(0, 3).toUpperCase()}
                 </span>
@@ -70,7 +70,7 @@ export function LinescoreTable({
           <tr className="border-t border-[var(--border)]">
             <td className="py-3 px-2 text-left">
               <div className="flex items-center gap-1.5">
-                <TeamLogo teamId={data.homeId} size={22} />
+                <TeamLogo teamId={data.homeId} size={22} rounded="xl" imageInset={10} />
                 <span className="font-display font-800 text-xs uppercase text-white">
                   {data.homeId.slice(0, 3).toUpperCase()}
                 </span>

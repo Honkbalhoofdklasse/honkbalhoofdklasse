@@ -1,9 +1,9 @@
 export type Award = {
   season: number
   category: string
-  playerName: string // must match Player.name exactly
+  playerName: string
   teamId: string
-  label?: string // e.g. "Week 1", "Maand 1"
+  label?: string
   note?: string
 }
 
@@ -47,7 +47,6 @@ export const AWARD_CATEGORIES: AwardCategory[] = [
 ]
 
 export const AWARDS: Award[] = [
-  // Totaalwarmte Hottest Player of the Week 2026
   {
     season: 2026,
     category: 'hottest-player-week',
@@ -176,7 +175,6 @@ export const AWARDS: Award[] = [
     label: 'Week 16',
     note: '4-for-4, 1.000 AVG, 1.000 OBP, 1 RBI, 2 R',
   },
-  // SSK Pitcher of the Month 2026
   {
     season: 2026,
     category: 'pitcher-of-month',
@@ -205,7 +203,6 @@ export const AWARDS: Award[] = [
     teamId: 'pirates',
     label: 'July',
   },
-  // Bat King Europe Hitter of the Month 2026
   {
     season: 2026,
     category: 'hitter-of-month',

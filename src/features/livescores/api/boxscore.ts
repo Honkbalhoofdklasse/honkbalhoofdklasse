@@ -13,7 +13,6 @@ export async function GET(_req: Request, { params }: { params: Promise<{ gameId:
       | Record<string, { fullName: string; era: number }>
       | undefined
 
-    // Determine game length
     let lastInning = 9
     for (let i = 20; i > 9; i--) {
       if (Number(gd[`runsaway${i}`]) > 0 || Number(gd[`runshome${i}`]) > 0) {
@@ -35,13 +34,11 @@ export async function GET(_req: Request, { params }: { params: Promise<{ gameId:
 
     const fmtEra = (era: number) => (era / 100).toFixed(2)
 
-    // Player stats
     const awayTeamId = gd.awayid
     const homeTeamId = gd.homeid
     const awayPlayers = getTeamPlayers(boxScore, awayTeamId as string)
     const homePlayers = getTeamPlayers(boxScore, homeTeamId as string)
 
-    // Live game situation — parse "B4"/"T5" from gamestatustext
     const gamestatus = Number(gd.gamestatus ?? 0)
     const isLive = gamestatus === 1
     const statusText = String(gd.gamestatustext ?? '')
@@ -49,9 +46,6 @@ export async function GET(_req: Request, { params }: { params: Promise<{ gameId:
     const currentInning = stMatch ? parseInt(stMatch[2]) : 0
     const isBottom = stMatch ? stMatch[1] === 'B' : false
 
-    // For live games: only show innings that have been played
-    // Away (bats top): 1..currentInning (top done for current inning if bottom, or in progress)
-    // Home (bats bottom): 1..(currentInning-1) if top, 1..currentInning if bottom
     const showAwayUpTo = isLive && currentInning > 0 ? currentInning : 99
     const showHomeUpTo =
       isLive && currentInning > 0 ? (isBottom ? currentInning : currentInning - 1) : 99
@@ -68,7 +62,6 @@ export async function GET(_req: Request, { params }: { params: Promise<{ gameId:
       return v !== null && v !== undefined ? Number(v) : null
     })
 
-    // Format batter/pitcher name: "VICARIO Jayvon" → "Jayvon Vicario"
     function fmtPerson(raw: string): string | null {
       if (!raw) return null
       const parts = raw.trim().split(/\s+/)

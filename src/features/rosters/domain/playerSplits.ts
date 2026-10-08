@@ -23,7 +23,6 @@ export function fmtAvg(h: number, ab: number) {
   return (h / ab).toFixed(3).replace('0.', '.')
 }
 
-// Convert "5.1" IP notation to total outs
 export const ipToOuts = (v: unknown) => {
   const s = String(v ?? '0')
   if (!s || s === '0' || s === '0.0') return 0

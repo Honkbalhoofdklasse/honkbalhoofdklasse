@@ -1,8 +1,9 @@
 import { TEAM_NAMES } from '@/shared/teams/teams'
-import type { Game, StandingsEntry } from '../domain/types'
-import { formatDate } from '../domain/format'
+import type { LiveGame } from '../domain/types'
+import type { WinLoss } from '@/shared/types/standing'
 import BaseDiamond from './BaseDiamond'
-import TeamLogo from './TeamLogo'
+import { TeamLogo } from '@/shared/ui/TeamLogo'
+import { WEEKDAY_DAY_MONTH, formatGameDate } from '@/shared/dates/gameDate'
 
 export default function ScoreRow({
   game,
@@ -10,9 +11,9 @@ export default function ScoreRow({
   standings = {},
   onClick,
 }: {
-  game: Game
+  game: LiveGame
   isLive?: boolean
-  standings?: Record<string, StandingsEntry>
+  standings?: Record<string, WinLoss>
   onClick?: () => void
 }) {
   const homeWon = (game.homeScore ?? 0) > (game.awayScore ?? 0)
@@ -34,10 +35,9 @@ export default function ScoreRow({
       )}
 
       <div className="px-4 py-3">
-        {/* Header */}
         <div className="flex items-center justify-between mb-3">
           <p className="font-display font-700 text-xs text-[var(--muted)] uppercase tracking-widest">
-            {formatDate(game.gameDate)}
+            {formatGameDate(game.gameDate, WEEKDAY_DAY_MONTH)}
             {game.gameTime && ` · ${game.gameTime.slice(0, 5)}`}
           </p>
           <div className="flex items-center gap-2">
@@ -67,9 +67,7 @@ export default function ScoreRow({
           </div>
         </div>
 
-        {/* Teams + score — vertically centered */}
         <div className="flex items-center gap-3">
-          {/* Away */}
           <div
             className={`flex items-center gap-2 flex-1 min-w-0 justify-end ${isFinal && !awayWon ? 'opacity-40' : ''}`}
           >
@@ -86,7 +84,6 @@ export default function ScoreRow({
             <TeamLogo teamId={game.awayId} size={40} />
           </div>
 
-          {/* Score / VS */}
           <div className="shrink-0 w-16 text-center">
             {game.homeScore !== null && game.awayScore !== null ? (
               <p className="font-display font-800 text-2xl text-white tracking-tight tabular-nums">
@@ -103,7 +100,6 @@ export default function ScoreRow({
             )}
           </div>
 
-          {/* Home */}
           <div
             className={`flex items-center gap-2 flex-1 min-w-0 ${isFinal && !homeWon ? 'opacity-40' : ''}`}
           >
@@ -121,7 +117,6 @@ export default function ScoreRow({
           </div>
         </div>
 
-        {/* Live situation: inning · outs · runners */}
         {isLive && game.inning != null && (
           <div className="flex items-center gap-4 mt-3 pt-3 border-t border-[var(--border)]/50">
             <span className="font-display font-800 text-xs text-[var(--accent)] uppercase tracking-widest">

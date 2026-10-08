@@ -1,4 +1,4 @@
-import type { BatterStat, PitcherStat } from '@/features/livescores/domain/boxscoreTypes'
+import type { BatterStat, PitcherStat } from '@/shared/types/boxscore'
 
 export type Situation = {
   inning: number

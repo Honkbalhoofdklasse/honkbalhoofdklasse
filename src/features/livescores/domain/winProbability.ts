@@ -1,4 +1,3 @@
-// Normal CDF approximation (Abramowitz & Stegun)
 export function normalCDF(z: number): number {
   const sign = z < 0 ? -1 : 1
   const x = Math.abs(z) / Math.SQRT2
@@ -10,15 +9,12 @@ export function normalCDF(z: number): number {
   return 0.5 * (1 + sign * erf)
 }
 
-// Win probability given run differential and innings remaining
-// σ = 1.5 runs/inning (slightly higher for semi-pro like Hoofdklasse)
+const RUNS_PER_INNING_SIGMA = 1.5
+
 export function winProb(runDiff: number, inningsRemaining: number): number {
   if (inningsRemaining <= 0) {
     return runDiff > 0 ? 1 : runDiff < 0 ? 0 : 0.5
   }
-  const sigma = 1.5
-  const z = runDiff / (sigma * Math.sqrt(inningsRemaining))
+  const z = runDiff / (RUNS_PER_INNING_SIGMA * Math.sqrt(inningsRemaining))
   return normalCDF(z)
 }
-
-export type WinProbPoint = { label: string; homeProb: number }

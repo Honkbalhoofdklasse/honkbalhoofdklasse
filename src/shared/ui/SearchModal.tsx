@@ -40,7 +40,6 @@ export default function SearchModal({ onClose }: { onClose: () => void }) {
     inputRef.current?.focus()
   }, [])
 
-  // Load full player list (including mid-season additions) from API
   useEffect(() => {
     fetch('/api/all-players')
       .then((r) => r.json())
@@ -68,7 +67,6 @@ export default function SearchModal({ onClose }: { onClose: () => void }) {
   }, [query, allPlayers])
 
   function go(player: PlayerResult) {
-    // New players (uniform '?') don't have a profile page — go to team roster
     const isNew = player.uniform === '?'
     if (isNew) {
       router.push(`/rosters/${player.teamId}`)
@@ -112,7 +110,6 @@ export default function SearchModal({ onClose }: { onClose: () => void }) {
     >
       <div className="w-full max-w-lg" onClick={(e) => e.stopPropagation()}>
         <div className="bg-[#0a1220] border border-[#1a2a3a] rounded-2xl overflow-hidden shadow-2xl">
-          {/* Input */}
           <div className="flex items-center gap-3 px-4 border-b border-[#1a2a3a]">
             <svg
               className="w-5 h-5 text-[var(--muted)] shrink-0"
@@ -141,7 +138,6 @@ export default function SearchModal({ onClose }: { onClose: () => void }) {
             </kbd>
           </div>
 
-          {/* Results */}
           {results.length > 0 && (
             <div className="py-2">
               {results.map((player, i) => (

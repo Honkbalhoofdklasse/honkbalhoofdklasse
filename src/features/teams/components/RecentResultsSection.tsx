@@ -1,7 +1,8 @@
 import Image from 'next/image'
 import { TEAM_COLORS, TEAM_LOGOS, TEAM_SHORT } from '@/shared/teams/teams'
-import { fmtDate, type Game } from '../domain/teamPage'
+import type { Game } from '../domain/teamPage'
 import Section from './Section'
+import { WEEKDAY_DAY_MONTH, formatGameDate } from '@/shared/dates/gameDate'
 
 export default function RecentResultsSection({ games, teamId }: { games: Game[]; teamId: string }) {
   return (
@@ -27,7 +28,7 @@ export default function RecentResultsSection({ games, teamId }: { games: Game[];
               {won ? 'W' : 'L'}
             </span>
             <span className="font-display font-700 text-xs text-[var(--muted)] w-24 shrink-0">
-              {fmtDate(g.game_date)}
+              {formatGameDate(g.game_date, WEEKDAY_DAY_MONTH)}
             </span>
             <div className="flex items-center gap-1.5 flex-1">
               <span className="font-display font-700 text-xs text-white/50">

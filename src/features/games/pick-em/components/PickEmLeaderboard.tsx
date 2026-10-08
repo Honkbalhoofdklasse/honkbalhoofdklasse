@@ -19,7 +19,6 @@ export function PickEmLeaderboard({
         </div>
       ) : (
         <div className="bg-[#0a1220] border border-[#1a2a3a] rounded-2xl overflow-hidden">
-          {/* Header */}
           <div
             className="grid px-5 py-3 border-b border-[#1a2a3a]"
             style={{ gridTemplateColumns: '40px 1fr 80px 80px 60px' }}

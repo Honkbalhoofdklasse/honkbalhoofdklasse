@@ -1,7 +1,5 @@
 import type { CmpPlayer } from '../api/compareRoute'
 
-// ── Stats table ───────────────────────────────────────────────────────────────
-
 export type StatRow = {
   label: string
   key: keyof CmpPlayer

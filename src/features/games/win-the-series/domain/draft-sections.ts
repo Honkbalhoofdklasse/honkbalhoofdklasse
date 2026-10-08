@@ -15,7 +15,6 @@ export function buildDraftSections(
       .sort((a, b) => sortH(a as HSHitter, b as HSHitter))
     if (players.length) sections.push({ title: sec.title, slotFilled: !!filled[sec.pos], players })
   }
-  // DH is a wildcard: while it's open, every available batter can be slotted there.
   if (!filled['DH']) {
     const dh = roster
       .filter((p) => !isPitcher(p))

@@ -1,4 +1,3 @@
-// ── Stat table ─────────────────────────────────────────────────────────────
 export function StatTable({
   headers,
   rows,

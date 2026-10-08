@@ -1,7 +1,7 @@
 export type HLPlayer = {
   name: string
   teamId: string
-  avg: number // e.g. 0.312
+  avg: number
   hr: number
   rbi: number
   ops: number

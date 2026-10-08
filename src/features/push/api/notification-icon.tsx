@@ -18,7 +18,6 @@ export async function GET(_req: Request, { params }: { params: Promise<{ teamId:
         borderRadius: 32,
       }}
     >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={logo} style={{ width: 130, height: 130, objectFit: 'contain' }} alt="" />
     </div>,
     { width: 192, height: 192 },
