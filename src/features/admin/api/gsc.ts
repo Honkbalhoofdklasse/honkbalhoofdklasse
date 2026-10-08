@@ -27,9 +27,9 @@ export async function GET(req: NextRequest) {
     const data = await fetchGscData(days)
     return NextResponse.json(data, { headers: { 'Cache-Control': 'no-store' } })
   } catch (err) {
-    console.error('[gsc]', err instanceof Error ? err.message : err)
+    console.error('[gsc]', err)
     return NextResponse.json(
-      { ...EMPTY, error: err instanceof Error ? err.message : 'failed' },
+      { ...EMPTY, error: 'Internal error' },
       { headers: { 'Cache-Control': 'no-store' } },
     )
   }

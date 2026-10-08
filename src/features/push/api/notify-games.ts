@@ -1,15 +1,11 @@
 import { NextResponse } from 'next/server'
+import { requireCronSecret } from '@/shared/http/requireCronSecret'
 import { supabaseAdmin } from '@/shared/supabase/legacy'
 import { sendGameNotification } from '@/shared/email/email'
 
 export async function GET(req: Request) {
-  const secret = process.env.CRON_SECRET
-  if (secret) {
-    const auth = req.headers.get('Authorization')
-    if (auth !== `Bearer ${secret}`) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-  }
+  const unauthorized = requireCronSecret(req)
+  if (unauthorized) return unauthorized
 
   const now = new Date()
   const dow = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/Amsterdam' })).getDay()

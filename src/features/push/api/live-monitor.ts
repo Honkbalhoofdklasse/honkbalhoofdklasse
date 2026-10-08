@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { requireCronSecret } from '@/shared/http/requireCronSecret'
 import { supabaseAdmin } from '@/shared/supabase/legacy'
 import { buildNewState, initialGameState } from '../domain/game-state'
 import { BASE, KNBSB_TO_TEAM, TEAM_NAME } from '../domain/teams'
@@ -69,10 +70,8 @@ async function processLiveGame(game: ScheduledGame, notifications: string[]) {
 }
 
 export async function GET(req: Request) {
-  const secret = process.env.CRON_SECRET
-  if (secret && req.headers.get('Authorization') !== `Bearer ${secret}`) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  const unauthorized = requireCronSecret(req)
+  if (unauthorized) return unauthorized
 
   const schedRes = await fetch(
     'https://boxscore.stenwessel.nl/api/fetchschedule.php?competition=hb2026',

@@ -125,6 +125,7 @@ export async function GET(req: NextRequest) {
       },
     )
   } catch (e) {
-    return NextResponse.json({ batting: [], pitching: [], error: String(e) })
+    console.error('[career-stats]', e)
+    return NextResponse.json({ batting: [], pitching: [], error: 'Internal error' })
   }
 }

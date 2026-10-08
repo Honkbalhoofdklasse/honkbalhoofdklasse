@@ -1,14 +1,8 @@
 'use client'
 
-import type { LeaderEntry, UserInfo } from '../domain/types'
+import type { LeaderEntry } from '../domain/types'
 
-export function PickEmLeaderboard({
-  leaderboard,
-  user,
-}: {
-  leaderboard: LeaderEntry[]
-  user: UserInfo
-}) {
+export function PickEmLeaderboard({ leaderboard }: { leaderboard: LeaderEntry[] }) {
   return (
     <div>
       {leaderboard.length === 0 ? (
@@ -34,10 +28,10 @@ export function PickEmLeaderboard({
           </div>
 
           {leaderboard.map((entry, i) => {
-            const isMe = entry.token === user?.token
+            const isMe = entry.isMe
             return (
               <div
-                key={entry.token}
+                key={entry.rank}
                 className={`grid items-center px-5 py-3.5 border-b border-[#1a2a3a] last:border-0 ${isMe ? 'bg-[var(--accent)]/10' : i % 2 === 0 ? '' : 'bg-white/[0.02]'}`}
                 style={{ gridTemplateColumns: '40px 1fr 80px 80px 60px' }}
               >
