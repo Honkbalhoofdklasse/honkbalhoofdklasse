@@ -30,8 +30,15 @@ export default function LivescoresScreen() {
 
   useEffect(() => {
     fetchData()
-    const t = setInterval(fetchData, 60_000)
-    return () => clearInterval(t)
+    const tick = () => {
+      if (!document.hidden) fetchData()
+    }
+    const t = setInterval(tick, 60_000)
+    document.addEventListener('visibilitychange', tick)
+    return () => {
+      clearInterval(t)
+      document.removeEventListener('visibilitychange', tick)
+    }
   }, [fetchData])
 
   const hasLive = (data?.live?.length ?? 0) > 0

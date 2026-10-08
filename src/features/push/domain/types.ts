@@ -1,3 +1,5 @@
+import type { PushSubscriptionRow } from '../api/send-to-teams'
+
 export type GameState = {
   status: number
   homeruns: number
@@ -49,4 +51,5 @@ export type LiveGameContext = {
   gameUrl: string
   icon: string
   notifications: string[]
+  subscriptions: PushSubscriptionRow[]
 }

@@ -92,7 +92,7 @@ Production Lighthouse baseline (2026-10-07): `/` 85/84/100/100, `/stand` 90/95/1
   Files: `src/app/rosters/[teamId]/page.tsx:9-14` (`force-dynamic` + fetch to `NEXT_PUBLIC_SITE_URL`), `src/app/rosters/[teamId]/[playerSlug]/page.tsx:59-62`
   Fix: call the lib function directly, `next: { revalidate: 300 }`, drop `force-dynamic`.
 
-- [ ] **Livescores poll is uncached**
+- [x] **Livescores poll is uncached**
   Files: `src/app/livescores/page.tsx:186-204`, `src/app/api/livescores/route.ts`
   Fix: `Cache-Control: public, s-maxage=15, stale-while-revalidate=30`, pause the poll when `document.hidden`.
 
@@ -100,7 +100,7 @@ Production Lighthouse baseline (2026-10-07): `/` 85/84/100/100, `/stand` 90/95/1
   Verify: `grep -rn "fetchschedule.php" src | wc -l`
   Fix: one `getSchedule()` in `src/lib` with `next: { revalidate: 15 }`.
 
-- [ ] **Leaders page waterfall and force-dynamic**
+- [x] **Leaders page waterfall and force-dynamic**
   File: `src/app/leaders/page.tsx:73, 291-301`
   Fix: `Promise.all` all three, `revalidate = 300`.
 
@@ -108,15 +108,15 @@ Production Lighthouse baseline (2026-10-07): `/` 85/84/100/100, `/stand` 90/95/1
   File: `src/app/api/leaders/postseason/route.ts:46-48`
   Fix: `Promise.all`.
 
-- [ ] **live-monitor cron reads the whole subscriptions table per notification**
+- [x] **live-monitor cron reads the whole subscriptions table per notification**
   File: `src/app/api/push/live-monitor/route.ts:48-77, 94`
   Fix: load subscriptions once per run, filter in SQL, `Promise.all` over games.
 
-- [ ] **sync cron writes 7 standings rows every 2 minutes unchanged**
+- [x] **sync cron writes 7 standings rows every 2 minutes unchanged**
   File: `src/app/api/sync/route.ts:145-162`
   Fix: diff before write, single upsert, `revalidatePath('/stand')` on change.
 
-- [ ] **public/franchise is 291 MB, 166 MB of fallback JPEG originals**
+- [x] **public/franchise is 291 MB, 166 MB of fallback JPEG originals**
   Verify: `du -sh public/franchise/Assets/Photos`
   Fix: add `public/franchise/Assets/Photos/` to `.vercelignore` if the fallback is never hit; long-cache header for `franchise.wasm.gz`.
 

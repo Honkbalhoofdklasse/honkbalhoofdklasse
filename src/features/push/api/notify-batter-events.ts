@@ -33,13 +33,17 @@ export async function notifyHomeRuns(ctx: LiveGameContext) {
           `Home run by ${name}. ${rbiStr.charAt(0).toUpperCase() + rbiStr.slice(1)}. ${score}`,
           `🔥 ${name} with a ${rbiStr} home run. ${score}`,
         ])
-        await sendToTeams(teams, {
-          title: `${awayName} @ ${homeName} — ${ordinal(Number(inning))} inning`,
-          body: hrBody,
-          icon: `${BASE}/api/notification-icon/${playerTeam}`,
-          url: gameUrl,
-          tag: `hr-${gameId}-${pid}-${currentHR}`,
-        })
+        await sendToTeams(
+          teams,
+          {
+            title: `${awayName} @ ${homeName} — ${ordinal(Number(inning))} inning`,
+            body: hrBody,
+            icon: `${BASE}/api/notification-icon/${playerTeam}`,
+            url: gameUrl,
+            tag: `hr-${gameId}-${pid}-${currentHR}`,
+          },
+          ctx.subscriptions,
+        )
         newState.playerHR[pid] = currentHR
         ctx.notifications.push(`hr:${name}`)
       } else {
@@ -76,13 +80,17 @@ export async function notifyFourHits(ctx: LiveGameContext) {
           `Hot bat alert: ${name} with 4 hits. ${score}`,
           `🔥 ${name} is on fire — 4 hits. ${score}`,
         ])
-        await sendToTeams(teams, {
-          title: `${awayName} @ ${homeName} — ${ordinal(Number(inning))} inning`,
-          body: hitsBody,
-          icon: `${BASE}/api/notification-icon/${playerTeam}`,
-          url: gameUrl,
-          tag: `4hits-${gameId}-${pid}`,
-        })
+        await sendToTeams(
+          teams,
+          {
+            title: `${awayName} @ ${homeName} — ${ordinal(Number(inning))} inning`,
+            body: hitsBody,
+            icon: `${BASE}/api/notification-icon/${playerTeam}`,
+            url: gameUrl,
+            tag: `4hits-${gameId}-${pid}`,
+          },
+          ctx.subscriptions,
+        )
         ctx.notifications.push(`4hits:${name}`)
       }
       if (currentH > 0) newState.playerHR[`h_${pid}`] = currentH

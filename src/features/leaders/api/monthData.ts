@@ -18,7 +18,7 @@ async function getTeamGamesInMonth(prefix: string): Promise<Record<string, numbe
   try {
     const res = await fetch(
       'https://boxscore.stenwessel.nl/api/fetchschedule.php?competition=hb2026',
-      { cache: 'no-store' },
+      { next: { revalidate: 300 } },
     )
     const json = await res.json()
     const games: Array<{ start?: string; gamestatus?: number; homeid?: number; awayid?: number }> =

@@ -3,6 +3,9 @@ import { fetchGameBoxscore } from '@/shared/knbsb/scraper'
 import { extractBatters, extractPitchers, getTeamPlayers } from '../domain/boxscorePlayers'
 import { formatPitcherName, mapTeamFromIoc, mapTeamFromLabel } from '../domain/teamMapping'
 
+const LIVE_CACHE = 'public, s-maxage=30, stale-while-revalidate=60'
+const FINAL_CACHE = 'public, s-maxage=86400'
+
 export async function GET(_req: Request, { params }: { params: Promise<{ gameId: string }> }) {
   const { gameId } = await params
   try {
@@ -86,34 +89,37 @@ export async function GET(_req: Request, { params }: { params: Promise<{ gameId:
         }
       : null
 
-    return NextResponse.json({
-      isLive,
-      displayInnings,
-      startInning,
-      awayId,
-      homeId,
-      awayInnings,
-      homeInnings,
-      awayTotals: { r: Number(gd.awayruns), h: Number(gd.awayhits), e: Number(gd.awayerrors) },
-      homeTotals: { r: Number(gd.homeruns), h: Number(gd.homehits), e: Number(gd.homeerrors) },
-      winPitcher: pitchers?.win
-        ? { name: formatPitcherName(pitchers.win.fullName), era: fmtEra(pitchers.win.era) }
-        : null,
-      lossPitcher: pitchers?.loss
-        ? { name: formatPitcherName(pitchers.loss.fullName), era: fmtEra(pitchers.loss.era) }
-        : null,
-      savePitcher: pitchers?.save
-        ? {
-            name: formatPitcherName((pitchers.save as unknown as { fullName: string }).fullName),
-            era: fmtEra((pitchers.save as unknown as { era: number }).era),
-          }
-        : null,
-      awayBatters: extractBatters(awayPlayers),
-      homeBatters: extractBatters(homePlayers),
-      awayPitchers: extractPitchers(awayPlayers),
-      homePitchers: extractPitchers(homePlayers),
-      situation,
-    })
+    return NextResponse.json(
+      {
+        isLive,
+        displayInnings,
+        startInning,
+        awayId,
+        homeId,
+        awayInnings,
+        homeInnings,
+        awayTotals: { r: Number(gd.awayruns), h: Number(gd.awayhits), e: Number(gd.awayerrors) },
+        homeTotals: { r: Number(gd.homeruns), h: Number(gd.homehits), e: Number(gd.homeerrors) },
+        winPitcher: pitchers?.win
+          ? { name: formatPitcherName(pitchers.win.fullName), era: fmtEra(pitchers.win.era) }
+          : null,
+        lossPitcher: pitchers?.loss
+          ? { name: formatPitcherName(pitchers.loss.fullName), era: fmtEra(pitchers.loss.era) }
+          : null,
+        savePitcher: pitchers?.save
+          ? {
+              name: formatPitcherName((pitchers.save as unknown as { fullName: string }).fullName),
+              era: fmtEra((pitchers.save as unknown as { era: number }).era),
+            }
+          : null,
+        awayBatters: extractBatters(awayPlayers),
+        homeBatters: extractBatters(homePlayers),
+        awayPitchers: extractPitchers(awayPlayers),
+        homePitchers: extractPitchers(homePlayers),
+        situation,
+      },
+      { headers: { 'Cache-Control': isLive ? LIVE_CACHE : FINAL_CACHE } },
+    )
   } catch {
     return NextResponse.json({ error: 'Failed to fetch boxscore' }, { status: 500 })
   }
