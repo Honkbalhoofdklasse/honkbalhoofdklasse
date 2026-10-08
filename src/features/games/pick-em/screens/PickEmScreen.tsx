@@ -30,7 +30,7 @@ export default function PickEmScreen() {
     setLoading(true)
     const [gamesRes, lbRes] = await Promise.all([
       fetch(`/api/pick-em?token=${token}`),
-      fetch('/api/pick-em/leaderboard'),
+      fetch(`/api/pick-em/leaderboard?token=${token}`),
     ])
     const { games: g, picks: p } = await gamesRes.json()
     const lb = await lbRes.json()
@@ -98,8 +98,8 @@ export default function PickEmScreen() {
     grouped[week].some((g) => g.status === 'scheduled' || g.status === 'live'),
   )
 
-  const myRank = user ? leaderboard.findIndex((e) => e.token === user.token) + 1 : 0
-  const myEntry = user ? leaderboard.find((e) => e.token === user.token) : null
+  const myEntry = leaderboard.find((e) => e.isMe) ?? null
+  const myRank = myEntry?.rank ?? 0
 
   if (!user) {
     return <NicknameScreen nickInput={nickInput} setNickInput={setNickInput} saveUser={saveUser} />
@@ -180,9 +180,7 @@ export default function PickEmScreen() {
           </div>
         )}
 
-        {!loading && tab === 'leaderboard' && (
-          <PickEmLeaderboard leaderboard={leaderboard} user={user} />
-        )}
+        {!loading && tab === 'leaderboard' && <PickEmLeaderboard leaderboard={leaderboard} />}
       </div>
     </div>
   )

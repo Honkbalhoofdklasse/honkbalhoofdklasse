@@ -18,7 +18,8 @@ export type Pick = {
 }
 
 export type LeaderEntry = {
-  token: string
+  rank: number
+  isMe: boolean
   nickname: string
   correct: number
   total: number

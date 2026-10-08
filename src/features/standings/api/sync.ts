@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { requireCronSecret } from '@/shared/http/requireCronSecret'
 import { supabaseAdmin } from '@/shared/supabase/legacy'
 import { sendLiveNotification } from '@/shared/email/email'
 import { IOC_TO_TEAM } from '@/shared/teams/teams'
@@ -14,13 +15,8 @@ const LIVE_NOTIFY_TOLERANCE_MS = 5 * 60_000
 const STREAM_GO_LIVE_LEAD_MS = 15 * 60_000
 
 export async function GET(req: Request) {
-  const secret = process.env.CRON_SECRET
-  if (secret) {
-    const auth = req.headers.get('Authorization')
-    if (auth !== `Bearer ${secret}`) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-  }
+  const unauthorized = requireCronSecret(req)
+  if (unauthorized) return unauthorized
 
   try {
     const res = await fetch(`${BASE_URL}/fetchschedule.php?competition=${COMPETITION}`, {
@@ -207,6 +203,6 @@ export async function GET(req: Request) {
     })
   } catch (err) {
     console.error('[sync]', err)
-    return NextResponse.json({ error: String(err) }, { status: 500 })
+    return NextResponse.json({ error: 'Internal error' }, { status: 500 })
   }
 }

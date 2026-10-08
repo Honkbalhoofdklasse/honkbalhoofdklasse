@@ -1,16 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/shared/supabase/legacy'
+import { pickSchema } from '../domain/pickSchema'
 
-type GameRow = {
-  id: number
-  game_date: string
-  game_time: string | null
-  home_team_id: string
-  away_team_id: string
-  status: string
-  home_score: number | null
-  away_score: number | null
-}
+const invalidRequest = () => NextResponse.json({ error: 'Invalid request' }, { status: 400 })
 
 export async function GET(req: NextRequest) {
   const userToken = req.nextUrl.searchParams.get('token')
@@ -22,7 +14,10 @@ export async function GET(req: NextRequest) {
     .order('game_date', { ascending: true })
     .order('game_time', { ascending: true })
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  if (error) {
+    console.error('[pick-em]', error)
+    return NextResponse.json({ error: 'Internal error' }, { status: 500 })
+  }
 
   let picks: { game_id: number; picked_team_id: string }[] = []
   if (userToken) {
@@ -37,19 +32,21 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const { userToken, nickname, gameId, pickedTeamId } = await req.json()
-
-  if (!userToken || !nickname || !gameId || !pickedTeamId) {
-    return NextResponse.json({ error: 'Missing fields' }, { status: 400 })
-  }
+  const parsed = pickSchema.safeParse(await req.json().catch(() => null))
+  if (!parsed.success) return invalidRequest()
+  const { userToken, nickname, gameId, pickedTeamId } = parsed.data
 
   const { data: game } = await supabaseAdmin
     .from('games')
-    .select('game_date, game_time, status')
+    .select('game_date, game_time, status, home_team_id, away_team_id')
     .eq('id', gameId)
     .single()
 
   if (!game) return NextResponse.json({ error: 'Game not found' }, { status: 404 })
+
+  if (pickedTeamId !== game.home_team_id && pickedTeamId !== game.away_team_id) {
+    return invalidRequest()
+  }
 
   if (game.status !== 'scheduled') {
     return NextResponse.json({ error: 'Game already started' }, { status: 400 })
@@ -67,6 +64,9 @@ export async function POST(req: NextRequest) {
       { onConflict: 'user_token,game_id' },
     )
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  if (error) {
+    console.error('[pick-em]', error)
+    return NextResponse.json({ error: 'Internal error' }, { status: 500 })
+  }
   return NextResponse.json({ ok: true })
 }

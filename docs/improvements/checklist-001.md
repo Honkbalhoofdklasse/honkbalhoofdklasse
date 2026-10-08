@@ -7,27 +7,27 @@ Production Lighthouse baseline (2026-10-07): `/` 85/84/100/100, `/stand` 90/95/1
 
 ## P0 security (do first, 2 hours)
 
-- [ ] **Delete unauthenticated test push endpoint**
+- [x] **Delete unauthenticated test push endpoint**
   File: `src/app/api/push/test/route.ts`
   Verify: `sed -n 7,12p src/app/api/push/test/route.ts` shows `GET` with no auth check before `supabaseAdmin`.
   Fix: delete the file.
 
-- [ ] **Pick-em leaderboard leaks user tokens**
+- [x] **Pick-em leaderboard leaks user tokens**
   File: `src/app/api/pick-em/leaderboard/route.ts:48`
   Verify: `grep -n "token," src/app/api/pick-em/leaderboard/route.ts` shows `token` returned in the JSON map.
   Fix: return rank and nickname only. Validate `pickedTeamId` against the game's two teams in `src/app/api/pick-em/route.ts`.
 
-- [ ] **Partner-contact HTML injection and open mail relay**
+- [x] **Partner-contact HTML injection and open mail relay**
   File: `src/app/api/partner-contact/route.ts:40-43, 68, 75, 183-187, 195-202`
   Verify: `sed -n 183,187p src/app/api/partner-contact/route.ts` shows raw `${company}`, `${name}`, `${message}` in HTML.
   Fix: escape every value, validate with zod (email format, max lengths), add rate limit, stop returning `errors` to the caller.
 
-- [ ] **Cron routes fail open when CRON_SECRET is unset**
+- [x] **Cron routes fail open when CRON_SECRET is unset**
   Files: `src/app/api/sync/route.ts:39`, `src/app/api/push/live-monitor/route.ts:80`, `src/app/api/notify-games/route.ts:6`
   Verify: `grep -n "if (secret" src/app/api/sync/route.ts src/app/api/push/live-monitor/route.ts src/app/api/notify-games/route.ts`
   Fix: `if (!secret || auth !== \`Bearer ${secret}\`) return 401`. Confirm `CRON_SECRET` is set in Vercel prod and preview.
 
-- [ ] **Upgrade Next.js (16.2.6 has middleware bypass and ImageResponse RCE advisories)**
+- [x] **Upgrade Next.js (16.2.6 has middleware bypass and ImageResponse RCE advisories)**
   Verify: `npm audit --omit=dev --package-lock-only | head -40`
   Fix: `npm install next@latest`, then `npm audit fix`, also bump `sharp` and remove unused `maplibre-gl`.
 

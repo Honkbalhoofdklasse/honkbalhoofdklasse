@@ -170,6 +170,7 @@ export async function GET() {
       updatedAt: new Date().toISOString(),
     })
   } catch (err) {
-    return NextResponse.json({ error: String(err) }, { status: 500 })
+    console.error('[livescores]', err)
+    return NextResponse.json({ error: 'Internal error' }, { status: 500 })
   }
 }

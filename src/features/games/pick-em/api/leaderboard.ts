@@ -1,7 +1,8 @@
-import { NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/shared/supabase/legacy'
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const viewerToken = req.nextUrl.searchParams.get('token')
   const { data: games } = await supabaseAdmin
     .from('games')
     .select('id, home_team_id, away_team_id, home_score, away_score, status')
@@ -40,13 +41,14 @@ export async function GET() {
 
   const leaderboard = Array.from(userMap.entries())
     .map(([token, u]) => ({
-      token,
+      isMe: viewerToken !== null && token === viewerToken,
       nickname: u.nickname,
       correct: u.correct,
       total: u.total,
       pct: u.total > 0 ? Math.round((u.correct / u.total) * 100) : 0,
     }))
     .sort((a, b) => b.correct - a.correct || b.pct - a.pct)
+    .map((entry, index) => ({ rank: index + 1, ...entry }))
 
   return NextResponse.json(leaderboard)
 }
