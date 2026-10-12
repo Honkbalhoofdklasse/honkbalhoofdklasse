@@ -19,7 +19,7 @@ export function NotificationsPromo() {
             </p>
             <Link
               href="/notificaties"
-              className="inline-flex items-center gap-2 bg-[var(--accent)] text-[var(--on-accent)] font-display font-800 uppercase tracking-wider text-xs px-5 py-3 rounded-xl hover:opacity-90 transition-opacity"
+              className="inline-flex items-center gap-2 bg-[var(--accent-strong)] text-white font-display font-800 uppercase tracking-wider text-xs px-5 py-3 rounded-xl hover:opacity-90 transition-opacity"
             >
               How to set it up
             </Link>

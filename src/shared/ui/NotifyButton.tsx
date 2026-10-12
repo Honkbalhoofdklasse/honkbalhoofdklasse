@@ -89,7 +89,7 @@ function SubscribeModal({ onClose }: { onClose: () => void }) {
           <button
             onClick={subscribe}
             disabled={state === 'loading' || !email.includes('@')}
-            className="w-full bg-[var(--accent)] py-3 rounded-xl font-display font-800 text-sm uppercase tracking-wider text-[var(--on-accent)] hover:opacity-90 transition-opacity disabled:opacity-50"
+            className="w-full bg-[var(--accent-strong)] py-3 rounded-xl font-display font-800 text-sm uppercase tracking-wider text-white hover:opacity-90 transition-opacity disabled:opacity-50"
           >
             {state === 'loading' ? (
               <span className="flex items-center justify-center gap-2">

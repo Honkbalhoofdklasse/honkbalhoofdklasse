@@ -212,7 +212,7 @@ export default function StreamsScreen() {
                     <button
                       onClick={() => save(g)}
                       disabled={!typing.trim() || saving === g.id}
-                      className="bg-[var(--accent)] text-[var(--on-accent)] font-display font-800 text-xs uppercase tracking-widest px-4 py-2 rounded-lg disabled:opacity-40 hover:opacity-90 transition-opacity shrink-0"
+                      className="bg-[var(--accent-strong)] text-white font-display font-800 text-xs uppercase tracking-widest px-4 py-2 rounded-lg disabled:opacity-40 hover:opacity-90 transition-opacity shrink-0"
                     >
                       {saving === g.id ? '...' : 'Opslaan'}
                     </button>

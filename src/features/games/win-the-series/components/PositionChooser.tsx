@@ -37,7 +37,7 @@ export function PositionChooser({
             <button
               key={pos}
               onClick={() => onAssign(choosing, pos)}
-              className="font-display font-800 text-sm uppercase tracking-wider px-4 py-2 rounded-xl bg-[var(--accent)] text-[var(--on-accent)] hover:opacity-90 transition-opacity"
+              className="font-display font-800 text-sm uppercase tracking-wider px-4 py-2 rounded-xl bg-[var(--accent-strong)] text-white hover:opacity-90 transition-opacity"
             >
               {pos}
             </button>

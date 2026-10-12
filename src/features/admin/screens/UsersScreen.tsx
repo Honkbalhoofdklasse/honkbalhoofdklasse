@@ -139,7 +139,7 @@ export default function UsersScreen() {
             <button
               onClick={addUser}
               disabled={adding || !newEmail.trim()}
-              className="font-display font-800 text-sm uppercase tracking-wider bg-[var(--accent)] text-[var(--on-accent)] px-6 py-3 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-40"
+              className="font-display font-800 text-sm uppercase tracking-wider bg-[var(--accent-strong)] text-white px-6 py-3 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-40"
             >
               {adding ? '…' : 'Toevoegen'}
             </button>

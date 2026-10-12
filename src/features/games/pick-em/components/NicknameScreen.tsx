@@ -44,7 +44,7 @@ export function NicknameScreen({
           <button
             onClick={saveUser}
             disabled={!nickInput.trim()}
-            className="w-full bg-[var(--accent)] text-[var(--on-accent)] font-display font-800 text-sm uppercase tracking-wider py-3 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-40"
+            className="w-full bg-[var(--accent-strong)] text-white font-display font-800 text-sm uppercase tracking-wider py-3 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-40"
           >
             Spelen →
           </button>

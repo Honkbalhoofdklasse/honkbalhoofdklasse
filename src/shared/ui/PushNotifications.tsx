@@ -193,7 +193,7 @@ export default function PushNotifications() {
           <button
             onClick={subscribe}
             disabled={saving}
-            className="w-full bg-[var(--accent)] text-[var(--on-accent)] font-display font-800 text-sm uppercase tracking-wider py-3 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50"
+            className="w-full bg-[var(--accent-strong)] text-white font-display font-800 text-sm uppercase tracking-wider py-3 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50"
           >
             {saving
               ? 'Enabling…'

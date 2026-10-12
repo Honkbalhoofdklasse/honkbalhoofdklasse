@@ -65,7 +65,7 @@ export default function DesktopNav({ entries, pathname, onSearchOpen }: Props) {
         </button>
         <Link
           href="/partner-up"
-          className="font-display font-800 text-xs uppercase tracking-wider bg-[var(--accent)] text-[var(--on-accent)] px-4 py-1.5 rounded-lg hover:opacity-90 transition-opacity whitespace-nowrap"
+          className="font-display font-800 text-xs uppercase tracking-wider bg-[var(--accent-strong)] text-white px-4 py-1.5 rounded-lg hover:opacity-90 transition-opacity whitespace-nowrap"
         >
           Partner up
         </Link>

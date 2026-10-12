@@ -69,13 +69,13 @@ export default function PlayerSplits({
         <div className="flex gap-1.5">
           <button
             onClick={() => setActiveView('batting')}
-            className={`font-display font-800 text-xs uppercase tracking-wider px-3 py-1.5 rounded-lg transition-all ${!showPitching ? 'bg-[var(--accent)] text-[var(--on-accent)]' : 'bg-[var(--card)] border border-[var(--border)] text-[var(--muted)] hover:text-white'}`}
+            className={`font-display font-800 text-xs uppercase tracking-wider px-3 py-1.5 rounded-lg transition-all ${!showPitching ? 'bg-[var(--accent-strong)] text-white' : 'bg-[var(--card)] border border-[var(--border)] text-[var(--muted)] hover:text-white'}`}
           >
             Batting
           </button>
           <button
             onClick={() => setActiveView('pitching')}
-            className={`font-display font-800 text-xs uppercase tracking-wider px-3 py-1.5 rounded-lg transition-all ${showPitching ? 'bg-[var(--accent)] text-[var(--on-accent)]' : 'bg-[var(--card)] border border-[var(--border)] text-[var(--muted)] hover:text-white'}`}
+            className={`font-display font-800 text-xs uppercase tracking-wider px-3 py-1.5 rounded-lg transition-all ${showPitching ? 'bg-[var(--accent-strong)] text-white' : 'bg-[var(--card)] border border-[var(--border)] text-[var(--muted)] hover:text-white'}`}
           >
             Pitching
           </button>

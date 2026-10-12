@@ -38,9 +38,9 @@ export default function ScoreRow({
           </p>
           <div className="flex items-center gap-2">
             {isLive && (
-              <span className="flex items-center gap-1.5 bg-[var(--accent)] px-2 py-0.5 rounded">
-                <span className="w-1.5 h-1.5 rounded-full bg-[var(--on-accent)] animate-pulse" />
-                <span className="font-display font-800 text-[10px] text-[var(--on-accent)] uppercase tracking-widest">
+              <span className="flex items-center gap-1.5 bg-[var(--accent-strong)] px-2 py-0.5 rounded">
+                <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                <span className="font-display font-800 text-[10px] text-white uppercase tracking-widest">
                   Live
                 </span>
               </span>

@@ -136,7 +136,7 @@ export default function FocalPointEditor({
         <button
           onClick={save}
           disabled={saving}
-          className="flex-1 bg-[var(--accent)] py-2.5 rounded-xl font-display font-800 text-sm uppercase tracking-wider text-[var(--on-accent)] hover:opacity-90 transition-opacity disabled:opacity-50"
+          className="flex-1 bg-[var(--accent-strong)] py-2.5 rounded-xl font-display font-800 text-sm uppercase tracking-wider text-white hover:opacity-90 transition-opacity disabled:opacity-50"
         >
           {saving ? 'Opslaan…' : 'Opslaan'}
         </button>

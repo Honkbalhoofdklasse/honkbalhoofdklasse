@@ -185,7 +185,7 @@ export default function AdminGate({ checkAuth, onAuth, children }: Props) {
             <button
               onClick={login}
               disabled={loading || !pw}
-              className="relative w-full overflow-hidden bg-[var(--accent)] hover:bg-[var(--accent)]/85 disabled:opacity-40 disabled:cursor-not-allowed transition-all py-3.5 rounded-xl font-display font-800 text-sm uppercase tracking-[0.2em] text-[var(--on-accent)] group"
+              className="relative w-full overflow-hidden bg-[var(--accent-strong)] hover:bg-[var(--accent-strong)]/85 disabled:opacity-40 disabled:cursor-not-allowed transition-all py-3.5 rounded-xl font-display font-800 text-sm uppercase tracking-[0.2em] text-white group"
             >
               <span className="relative z-10 flex items-center justify-center gap-2">
                 {loading ? (

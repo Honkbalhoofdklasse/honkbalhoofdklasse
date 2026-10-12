@@ -123,7 +123,7 @@ export function PartnerForm() {
       <button
         type="submit"
         disabled={sending}
-        className="w-full bg-[var(--accent)] text-[var(--on-accent)] font-display font-800 uppercase tracking-wider text-sm py-4 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-60"
+        className="w-full bg-[var(--accent-strong)] text-white font-display font-800 uppercase tracking-wider text-sm py-4 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-60"
       >
         {sending ? 'Versturen…' : 'Verstuur aanvraag →'}
       </button>

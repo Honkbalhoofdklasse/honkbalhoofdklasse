@@ -32,7 +32,7 @@ export function SpinGate({
         </p>
       ) : (
         <>
-          <span className="font-display font-800 uppercase tracking-widest text-[var(--on-accent)] text-lg bg-[var(--accent)] px-12 py-4 rounded-xl shadow-[0_0_35px_-5px_var(--accent)]">
+          <span className="font-display font-800 uppercase tracking-widest text-white text-lg bg-[var(--accent-strong)] px-12 py-4 rounded-xl shadow-[0_0_35px_-5px_var(--accent)]">
             Spin
           </span>
           <p className="font-display font-700 text-[10px] text-[var(--muted)] uppercase tracking-[0.25em]">

@@ -114,7 +114,7 @@ export function InputModal({
         <button
           onClick={() => submit(query)}
           disabled={!query.trim()}
-          className="w-full bg-[var(--accent)] disabled:opacity-40 py-3 rounded-lg font-display font-800 text-sm uppercase tracking-wider text-[var(--on-accent)] hover:bg-[var(--accent)]/80 transition-colors"
+          className="w-full bg-[var(--accent-strong)] disabled:opacity-40 py-3 rounded-lg font-display font-800 text-sm uppercase tracking-wider text-white hover:bg-[var(--accent-strong)]/80 transition-colors"
         >
           Submit →
         </button>
