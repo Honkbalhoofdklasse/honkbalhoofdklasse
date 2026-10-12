@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
+import { useCallback, useEffect, useState } from 'react'
 import EyeIcon from '@/features/admin/components/EyeIcon'
 
 type Props = {
@@ -142,12 +142,16 @@ export default function AdminGate({ checkAuth, onAuth, children }: Props) {
           </div>
 
           <div className="animate-fade-slide-up space-y-2" style={{ animationDelay: '180ms' }}>
-            <label className="font-display font-700 text-xs text-[var(--muted)] uppercase tracking-widest block">
+            <label
+              htmlFor="admin-password"
+              className="font-display font-700 text-xs text-[var(--muted)] uppercase tracking-widest block"
+            >
               Password
             </label>
             <div className="relative group">
               <div className="absolute -inset-[1px] rounded-xl bg-gradient-to-r from-transparent via-[var(--accent)]/0 to-transparent group-focus-within:via-[var(--accent)]/50 transition-all duration-300" />
               <input
+                id="admin-password"
                 type={showPw ? 'text' : 'password'}
                 value={pw}
                 onChange={(e) => {
@@ -162,6 +166,7 @@ export default function AdminGate({ checkAuth, onAuth, children }: Props) {
               <button
                 type="button"
                 onClick={() => setShowPw((v) => !v)}
+                aria-label={showPw ? 'Hide password' : 'Show password'}
                 className="absolute inset-y-0 right-0 px-4 flex items-center text-[var(--muted)] hover:text-white transition-colors"
               >
                 <EyeIcon open={showPw} />
@@ -180,7 +185,7 @@ export default function AdminGate({ checkAuth, onAuth, children }: Props) {
             <button
               onClick={login}
               disabled={loading || !pw}
-              className="relative w-full overflow-hidden bg-[var(--accent)] hover:bg-[var(--accent)]/85 disabled:opacity-40 disabled:cursor-not-allowed transition-all py-3.5 rounded-xl font-display font-800 text-sm uppercase tracking-[0.2em] text-white group"
+              className="relative w-full overflow-hidden bg-[var(--accent)] hover:bg-[var(--accent)]/85 disabled:opacity-40 disabled:cursor-not-allowed transition-all py-3.5 rounded-xl font-display font-800 text-sm uppercase tracking-[0.2em] text-[var(--on-accent)] group"
             >
               <span className="relative z-10 flex items-center justify-center gap-2">
                 {loading ? (

@@ -67,10 +67,10 @@ function NotifCard({
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2 mb-0.5">
-            <p className="font-display font-700 text-[9px] uppercase tracking-widest text-white/35">
+            <p className="font-display font-700 text-[9px] uppercase tracking-widest text-white/60">
               Honkbal Hoofdklasse
             </p>
-            <p className="font-display font-700 text-[9px] text-white/25 shrink-0">{time}</p>
+            <p className="font-display font-700 text-[9px] text-white/60 shrink-0">{time}</p>
           </div>
           <p className="font-display font-800 text-[13px] text-white leading-snug">{title}</p>
           <p className="font-display font-700 text-[11px] text-white/55 mt-0.5 leading-snug">

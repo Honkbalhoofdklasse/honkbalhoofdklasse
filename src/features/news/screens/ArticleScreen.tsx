@@ -19,7 +19,7 @@ export async function ArticleScreen({ params }: { params: { slug: string } }) {
 
       <div>
         {article.tags && article.tags[0] && (
-          <span className="font-display font-800 text-xs text-white bg-[var(--accent)] px-2 py-1 rounded uppercase tracking-widest mb-3 inline-block">
+          <span className="font-display font-800 text-xs text-[var(--on-accent)] bg-[var(--accent)] px-2 py-1 rounded uppercase tracking-widest mb-3 inline-block">
             {article.tags[0]}
           </span>
         )}

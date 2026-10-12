@@ -16,11 +16,11 @@ export function SpinGate({
   onSpin: () => void
 }) {
   return (
-    <div
+    <button
+      type="button"
       onClick={onSpin}
-      role="button"
-      tabIndex={0}
-      className="cursor-pointer select-none py-12 flex flex-col items-center gap-6"
+      disabled={spinning}
+      className="w-full cursor-pointer select-none py-12 flex flex-col items-center gap-6"
     >
       <p className="font-display font-700 text-xs text-[var(--muted)] uppercase tracking-[0.3em]">
         Pick {round} / {total}
@@ -32,7 +32,7 @@ export function SpinGate({
         </p>
       ) : (
         <>
-          <span className="font-display font-800 uppercase tracking-widest text-white text-lg bg-[var(--accent)] px-12 py-4 rounded-xl shadow-[0_0_35px_-5px_var(--accent)]">
+          <span className="font-display font-800 uppercase tracking-widest text-[var(--on-accent)] text-lg bg-[var(--accent)] px-12 py-4 rounded-xl shadow-[0_0_35px_-5px_var(--accent)]">
             Spin
           </span>
           <p className="font-display font-700 text-[10px] text-[var(--muted)] uppercase tracking-[0.25em]">
@@ -40,6 +40,6 @@ export function SpinGate({
           </p>
         </>
       )}
-    </div>
+    </button>
   )
 }

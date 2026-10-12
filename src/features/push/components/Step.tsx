@@ -9,7 +9,7 @@ export function Step({
 }) {
   return (
     <div className="flex gap-5">
-      <div className="shrink-0 w-9 h-9 rounded-full bg-[var(--accent)] flex items-center justify-center font-display font-800 text-white text-sm mt-0.5">
+      <div className="shrink-0 w-9 h-9 rounded-full bg-[var(--accent)] flex items-center justify-center font-display font-800 text-[var(--on-accent)] text-sm mt-0.5">
         {n}
       </div>
       <div className="flex-1">

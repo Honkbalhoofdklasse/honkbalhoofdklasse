@@ -55,7 +55,7 @@ export function ResultBanner({
         </div>
         <button
           onClick={onShare}
-          className="shrink-0 bg-[var(--accent)] px-5 py-2.5 rounded-xl font-display font-800 text-sm uppercase tracking-wider text-white hover:bg-[var(--accent)]/80 transition-colors"
+          className="shrink-0 bg-[var(--accent)] px-5 py-2.5 rounded-xl font-display font-800 text-sm uppercase tracking-wider text-[var(--on-accent)] hover:bg-[var(--accent)]/80 transition-colors"
         >
           {shared ? '✓ Copied!' : 'Share'}
         </button>

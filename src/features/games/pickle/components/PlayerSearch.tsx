@@ -1,7 +1,7 @@
 'use client'
 
-import type { RefObject } from 'react'
 import Image from 'next/image'
+import type { RefObject } from 'react'
 import { TEAM_COLORS, TEAM_LOGOS, TEAM_NAMES } from '@/shared/teams/teams'
 import type { PoolPlayer } from '../domain/types'
 
@@ -42,7 +42,7 @@ export function PlayerSearch({
               key={p.name}
               onClick={() => submitGuess(p)}
               onMouseEnter={() => setSelIdx(i)}
-              className={`w-full flex items-center gap-3 px-4 py-2.5 text-left border-b border-[var(--border)] last:border-0 transition-colors ${i === selIdx ? 'bg-[var(--accent)]' : 'hover:bg-[var(--card-hover)]'}`}
+              className={`w-full flex items-center gap-3 px-4 py-2.5 text-left border-b border-[var(--border)] last:border-0 transition-colors ${i === selIdx ? 'bg-[var(--accent-strong)]' : 'hover:bg-[var(--card-hover)]'}`}
             >
               <div
                 className="w-5 h-5 rounded flex items-center justify-center shrink-0 p-0.5"

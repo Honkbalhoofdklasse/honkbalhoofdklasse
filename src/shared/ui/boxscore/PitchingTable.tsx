@@ -1,6 +1,6 @@
 import Link from 'next/link'
-import type { PitcherStat } from '@/shared/types/boxscore'
 import { slugify } from '@/shared/rosters/rosters-data'
+import type { PitcherStat } from '@/shared/types/boxscore'
 
 export function PitchingTable({
   pitchers,
@@ -23,11 +23,15 @@ export function PitchingTable({
       <table className="w-full text-left border-collapse">
         <thead>
           <tr className="border-b border-[var(--border)]">
-            <th className="font-display font-700 text-[10px] text-[var(--muted)] uppercase tracking-widest py-2 pr-3 text-left">
+            <th
+              scope="col"
+              className="font-display font-700 text-[10px] text-[var(--muted)] uppercase tracking-widest py-2 pr-3 text-left"
+            >
               Pitcher
             </th>
             {cols.map((c) => (
               <th
+                scope="col"
                 key={c}
                 className="font-display font-700 text-[10px] text-[var(--muted)] uppercase tracking-widest py-2 px-2 text-center w-8"
               >

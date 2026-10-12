@@ -67,7 +67,9 @@ export function PlayerHero({
       )}
 
       <button
+        type="button"
         onClick={onClose}
+        aria-label="Close"
         className="absolute top-3 right-3 z-20 w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-white/80 hover:text-white hover:bg-black/70 transition-colors text-lg leading-none"
       >
         ×

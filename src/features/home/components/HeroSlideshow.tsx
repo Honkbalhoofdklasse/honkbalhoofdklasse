@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import Image from 'next/image'
+import { useEffect, useState } from 'react'
+import { prefersReducedMotion } from '@/shared/motion/prefersReducedMotion'
 
 const IMAGES = [
   'https://res.cloudinary.com/dn8c5398m/image/upload/v1780159379/Twins_HCAW_7_mei_2026-54_f6fnno.jpg',
@@ -18,8 +19,14 @@ export default function HeroSlideshow() {
   const [current, setCurrent] = useState(0)
   const [prev, setPrev] = useState<number | null>(null)
   const [fading, setFading] = useState(false)
+  const [paused, setPaused] = useState(false)
 
   useEffect(() => {
+    setPaused(prefersReducedMotion())
+  }, [])
+
+  useEffect(() => {
+    if (paused) return
     const timer = setInterval(() => {
       setPrev(current)
       setFading(true)
@@ -30,7 +37,7 @@ export default function HeroSlideshow() {
       }, 800)
     }, INTERVAL)
     return () => clearInterval(timer)
-  }, [current])
+  }, [current, paused])
 
   return (
     <div
@@ -77,10 +84,22 @@ export default function HeroSlideshow() {
         </h1>
       </div>
 
-      <div className="absolute bottom-8 right-8 flex gap-2 z-10">
+      <div className="absolute bottom-8 right-8 flex items-center z-10">
+        <button
+          type="button"
+          onClick={() => setPaused((p) => !p)}
+          aria-label={paused ? 'Play slideshow' : 'Pause slideshow'}
+          aria-pressed={paused}
+          className="mr-2 w-6 h-6 rounded-full bg-black/40 text-white flex items-center justify-center text-[10px] leading-none hover:bg-black/60 transition-colors"
+        >
+          {paused ? '▶' : '❚❚'}
+        </button>
         {IMAGES.map((_, i) => (
           <button
+            type="button"
             key={i}
+            aria-label={`Slide ${i + 1}`}
+            aria-current={i === current}
             onClick={() => {
               setPrev(current)
               setFading(true)
@@ -90,8 +109,12 @@ export default function HeroSlideshow() {
                 setPrev(null)
               }, 800)
             }}
-            className={`w-2 h-2 rounded-full transition-all ${i === current ? 'bg-white w-5' : 'bg-white/40'}`}
-          />
+            className={`flex items-center justify-center h-6 ${i === current ? 'w-8' : 'w-6'}`}
+          >
+            <span
+              className={`h-2 rounded-full transition-all ${i === current ? 'bg-white w-5' : 'bg-white/40 w-2'}`}
+            />
+          </button>
         ))}
       </div>
     </div>

@@ -25,10 +25,14 @@ export function NicknameScreen({
         </div>
 
         <div className="bg-[#0a1220] border border-[#1a2a3a] rounded-2xl p-6">
-          <p className="font-display font-800 text-sm uppercase text-white tracking-wide mb-4">
+          <label
+            htmlFor="pickem-nickname"
+            className="block font-display font-800 text-sm uppercase text-white tracking-wide mb-4"
+          >
             Kies een bijnaam
-          </p>
+          </label>
           <input
+            id="pickem-nickname"
             type="text"
             value={nickInput}
             onChange={(e) => setNickInput(e.target.value)}
@@ -40,7 +44,7 @@ export function NicknameScreen({
           <button
             onClick={saveUser}
             disabled={!nickInput.trim()}
-            className="w-full bg-[var(--accent)] text-white font-display font-800 text-sm uppercase tracking-wider py-3 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-40"
+            className="w-full bg-[var(--accent)] text-[var(--on-accent)] font-display font-800 text-sm uppercase tracking-wider py-3 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-40"
           >
             Spelen →
           </button>

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { NicknameScreen } from '../components/NicknameScreen'
 import { PickEmLeaderboard } from '../components/PickEmLeaderboard'
 import { WeekSection } from '../components/WeekSection'
@@ -148,7 +148,9 @@ export default function PickEmScreen() {
               key={t}
               onClick={() => setTab(t)}
               className={`flex-1 font-display font-800 text-xs uppercase tracking-wider py-2.5 rounded-lg transition-colors ${
-                tab === t ? 'bg-[var(--accent)] text-white' : 'text-[var(--muted)] hover:text-white'
+                tab === t
+                  ? 'bg-[var(--accent)] text-[var(--on-accent)]'
+                  : 'text-[var(--muted)] hover:text-white'
               }`}
             >
               {t === 'picks' ? 'Voorspellingen' : 'Ranglijst'}

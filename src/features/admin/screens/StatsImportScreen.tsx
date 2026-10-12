@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { createClient } from '@/shared/supabase/client'
 
 type SeriesInfo = {
@@ -147,7 +147,7 @@ export default function StatsImportScreen() {
             <button
               onClick={() => importSeries(s.seriesDate)}
               disabled={s.importing}
-              className="shrink-0 font-display font-800 text-xs uppercase tracking-wider px-4 py-2 rounded-xl bg-[var(--accent)] text-white hover:opacity-90 disabled:opacity-50 transition-opacity"
+              className="shrink-0 font-display font-800 text-xs uppercase tracking-wider px-4 py-2 rounded-xl bg-[var(--accent)] text-[var(--on-accent)] hover:opacity-90 disabled:opacity-50 transition-opacity"
             >
               {s.importing ? 'Importing…' : s.imported ? 'Re-import' : 'Import'}
             </button>

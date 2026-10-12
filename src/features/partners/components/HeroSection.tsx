@@ -29,7 +29,7 @@ export function HeroSection() {
 
         <a
           href="#contact"
-          className="inline-flex items-center gap-3 bg-[var(--accent)] text-white font-display font-800 uppercase tracking-wider text-sm px-8 py-4 rounded-2xl hover:opacity-90 transition-opacity shadow-lg shadow-[var(--accent)]/25"
+          className="inline-flex items-center gap-3 bg-[var(--accent)] text-[var(--on-accent)] font-display font-800 uppercase tracking-wider text-sm px-8 py-4 rounded-2xl hover:opacity-90 transition-opacity shadow-lg shadow-[var(--accent)]/25"
         >
           Word partner →
         </a>

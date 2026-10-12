@@ -33,7 +33,7 @@ export function CasesSection() {
             </a>
           </div>
 
-          <div className="bg-[var(--accent)] border border-[var(--accent)] rounded-2xl p-6 flex flex-col gap-4">
+          <div className="bg-[var(--accent-strong)] border border-[var(--accent-strong)] rounded-2xl p-6 flex flex-col gap-4">
             <span className="font-display font-800 italic text-5xl text-white/20 leading-none">
               <strong>02</strong>
             </span>
@@ -41,7 +41,7 @@ export function CasesSection() {
               <h3 className="font-display font-800 uppercase text-white text-lg mb-2">
                 <strong>Rankings, awards en content-series</strong>
               </h3>
-              <p className="text-white/70 text-sm leading-relaxed">
+              <p className="text-white/85 text-sm leading-relaxed">
                 Jouw naam koppelen aan wekelijkse awards, statistiekoverzichten of vaste
                 content-rubrieken. Structurele zichtbaarheid gedurende het hele seizoen.
               </p>

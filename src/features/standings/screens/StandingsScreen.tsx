@@ -68,7 +68,7 @@ export default async function StandingsScreen() {
                 transition-colors cursor-pointer
                 ${
                   isLeader
-                    ? 'bg-[var(--accent)] hover:opacity-95'
+                    ? 'bg-[var(--accent-strong)] hover:opacity-95'
                     : 'bg-[var(--card)] hover:bg-[var(--card-hover)]'
                 }
               `}

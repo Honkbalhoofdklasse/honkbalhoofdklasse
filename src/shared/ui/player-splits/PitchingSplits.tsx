@@ -1,5 +1,5 @@
-import { PIT_COLS, type PitGame, type PitSplit } from './types'
 import { DAY_MONTH, formatGameDate } from '@/shared/dates/gameDate'
+import { PIT_COLS, type PitGame, type PitSplit } from './types'
 
 export function PitchingSplits({
   pitSplits,
@@ -15,11 +15,15 @@ export function PitchingSplits({
           <table className="w-full text-sm min-w-[480px]">
             <thead>
               <tr className="border-b border-[var(--border)]">
-                <th className="text-left px-4 py-3 font-display font-700 text-xs uppercase tracking-widest text-[var(--muted)]">
+                <th
+                  scope="col"
+                  className="text-left px-4 py-3 font-display font-700 text-xs uppercase tracking-widest text-[var(--muted)]"
+                >
                   Period
                 </th>
                 {[...PIT_COLS, 'ERA'].map((c) => (
                   <th
+                    scope="col"
                     key={c}
                     className="text-center px-3 py-3 font-display font-700 text-xs uppercase tracking-widest text-[var(--muted)]"
                   >
@@ -61,14 +65,21 @@ export function PitchingSplits({
           <table className="w-full text-sm min-w-[440px]">
             <thead>
               <tr className="border-b border-[var(--border)]">
-                <th className="text-left px-4 py-2 font-display font-700 text-xs uppercase tracking-widest text-[var(--muted)]">
+                <th
+                  scope="col"
+                  className="text-left px-4 py-2 font-display font-700 text-xs uppercase tracking-widest text-[var(--muted)]"
+                >
                   Date
                 </th>
-                <th className="text-left px-3 py-2 font-display font-700 text-xs uppercase tracking-widest text-[var(--muted)]">
+                <th
+                  scope="col"
+                  className="text-left px-3 py-2 font-display font-700 text-xs uppercase tracking-widest text-[var(--muted)]"
+                >
                   OPP
                 </th>
                 {[...PIT_COLS, 'ERA'].map((c) => (
                   <th
+                    scope="col"
                     key={c}
                     className="text-center px-2 py-2 font-display font-700 text-xs uppercase tracking-widest text-[var(--muted)]"
                   >

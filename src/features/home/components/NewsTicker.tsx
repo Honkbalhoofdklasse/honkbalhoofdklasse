@@ -2,7 +2,7 @@ import type { NewsItem } from '@/features/home/api/getHomeData'
 
 export function NewsTicker({ news }: { news: NewsItem[] }) {
   return (
-    <div className="bg-[var(--accent)] flex items-stretch overflow-hidden">
+    <div className="bg-[var(--accent-strong)] flex items-stretch overflow-hidden">
       <div className="shrink-0 bg-black/20 px-4 flex items-center">
         <a
           href="https://honkbalsoftbal.nl/?cat=544"

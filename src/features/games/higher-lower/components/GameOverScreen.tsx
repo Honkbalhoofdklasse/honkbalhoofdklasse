@@ -65,7 +65,7 @@ export function GameOverScreen({
       <div className="flex gap-3">
         <button
           onClick={onRestart}
-          className="font-display font-800 text-sm uppercase tracking-wider bg-[var(--accent)] text-white px-8 py-4 rounded-2xl hover:opacity-90 transition-opacity"
+          className="font-display font-800 text-sm uppercase tracking-wider bg-[var(--accent)] text-[var(--on-accent)] px-8 py-4 rounded-2xl hover:opacity-90 transition-opacity"
         >
           Play Again
         </button>

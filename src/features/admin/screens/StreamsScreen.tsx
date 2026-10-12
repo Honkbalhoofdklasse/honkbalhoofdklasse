@@ -1,13 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
 import {
+  detectPlatform,
+  fmtGame,
   type Game,
   type Stream,
   TEAM_NAME,
-  fmtGame,
-  detectPlatform,
 } from '@/features/admin/domain/streams'
 
 export default function StreamsScreen() {
@@ -202,6 +202,7 @@ export default function StreamsScreen() {
                 ) : (
                   <div className="flex items-center gap-2">
                     <input
+                      aria-label="Livestream URL"
                       placeholder="https://youtube.com/watch?v=..."
                       value={typing}
                       onChange={(e) => setUrls((p) => ({ ...p, [g.id]: e.target.value }))}
@@ -211,7 +212,7 @@ export default function StreamsScreen() {
                     <button
                       onClick={() => save(g)}
                       disabled={!typing.trim() || saving === g.id}
-                      className="bg-[var(--accent)] text-white font-display font-800 text-xs uppercase tracking-widest px-4 py-2 rounded-lg disabled:opacity-40 hover:opacity-90 transition-opacity shrink-0"
+                      className="bg-[var(--accent)] text-[var(--on-accent)] font-display font-800 text-xs uppercase tracking-widest px-4 py-2 rounded-lg disabled:opacity-40 hover:opacity-90 transition-opacity shrink-0"
                     >
                       {saving === g.id ? '...' : 'Opslaan'}
                     </button>

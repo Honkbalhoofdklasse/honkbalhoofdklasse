@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import PlayerStatsModal from '@/shared/ui/PlayerStatsModal'
 import SeasonCategoryGrid from '../components/SeasonCategoryGrid'
 import TabButton from '../components/TabButton'
@@ -98,6 +98,7 @@ export default function LeadersTabs({
               </TabButton>
               {period === 'month' && availableMonths.length > 1 && (
                 <select
+                  aria-label="Select month"
                   value={selectedMonth}
                   onChange={(e) => setSelectedMonth(e.target.value)}
                   className="font-display font-700 text-xs uppercase bg-[var(--card)] border border-[var(--border)] text-white rounded-xl px-3 py-2.5 cursor-pointer outline-none hover:border-white/30 transition-colors"

@@ -74,7 +74,7 @@ export default function LeaderTable<T extends Row>({
               onClick={() =>
                 onSelect(String(row.full_name ?? ''), String(row.team_id ?? ''), statType)
               }
-              className={`w-full grid items-center px-3 sm:px-5 py-2 sm:py-2.5 gap-2 sm:gap-3 transition-colors text-left ${isLeader ? 'bg-[var(--accent)]' : 'hover:bg-[var(--card-hover)]'}`}
+              className={`w-full grid items-center px-3 sm:px-5 py-2 sm:py-2.5 gap-2 sm:gap-3 transition-colors text-left ${isLeader ? 'bg-[var(--accent-strong)]' : 'hover:bg-[var(--card-hover)]'}`}
               style={{ gridTemplateColumns: gridCols }}
             >
               <span

@@ -1,12 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import BoxscoreModal from '@/shared/ui/BoxscoreModal'
+import { DAY_MONTH, formatGameDate } from '@/shared/dates/gameDate'
 import { TEAM_COLORS, TEAM_NAMES } from '@/shared/teams/teams'
-import { TeamLogo } from '@/shared/ui/TeamLogo'
 import type { GameRow } from '@/shared/types/game'
 import type { WinLoss } from '@/shared/types/standing'
-import { DAY_MONTH, formatGameDate } from '@/shared/dates/gameDate'
+import BoxscoreModal from '@/shared/ui/BoxscoreModal'
+import { TeamLogo } from '@/shared/ui/TeamLogo'
 
 type Game = Pick<
   GameRow,
@@ -39,10 +39,11 @@ export default function HomeRecentResults({
           const awayWon = (g.away_score ?? 0) > (g.home_score ?? 0)
           const winColor = TEAM_COLORS[homeWon ? g.home_team_id : g.away_team_id] ?? '#fe3d00'
           return (
-            <div
+            <button
+              type="button"
               key={g.id}
               onClick={() => setSelected(g)}
-              className="relative bg-[#0a1220] border border-[#1a2a3a] overflow-hidden group hover:border-[var(--accent)]/50 transition-colors cursor-pointer"
+              className="relative w-full text-left bg-[#0a1220] border border-[#1a2a3a] overflow-hidden group hover:border-[var(--accent)]/50 transition-colors cursor-pointer"
             >
               <div className="h-[3px]" style={{ backgroundColor: winColor }} />
 
@@ -54,7 +55,7 @@ export default function HomeRecentResults({
                       {TEAM_NAMES[g.away_team_id] ?? g.away_team_id}
                     </span>
                     {standingsMap[g.away_team_id] && (
-                      <span className="font-display font-600 text-[0.6rem] text-[#4a6a8a] leading-none mt-0.5">
+                      <span className="font-display font-600 text-[0.6rem] text-[var(--muted)] leading-none mt-0.5">
                         {standingsMap[g.away_team_id].wins}-{standingsMap[g.away_team_id].losses}
                       </span>
                     )}
@@ -73,7 +74,7 @@ export default function HomeRecentResults({
                       {TEAM_NAMES[g.home_team_id] ?? g.home_team_id}
                     </span>
                     {standingsMap[g.home_team_id] && (
-                      <span className="font-display font-600 text-[0.6rem] text-[#4a6a8a] leading-none mt-0.5">
+                      <span className="font-display font-600 text-[0.6rem] text-[var(--muted)] leading-none mt-0.5">
                         {standingsMap[g.home_team_id].wins}-{standingsMap[g.home_team_id].losses}
                       </span>
                     )}
@@ -87,14 +88,14 @@ export default function HomeRecentResults({
               </div>
 
               <div className="px-4 py-2 border-t border-[#1a2a3a] flex items-center justify-between">
-                <span className="font-display font-700 text-[11px] text-[#4a6a8a] uppercase tracking-widest">
+                <span className="font-display font-700 text-[11px] text-[var(--muted)] uppercase tracking-widest">
                   {formatGameDate(g.game_date, DAY_MONTH)}
                 </span>
                 <span className="font-display font-800 text-[11px] text-[var(--accent)] uppercase tracking-widest">
                   Final
                 </span>
               </div>
-            </div>
+            </button>
           )
         })}
       </div>

@@ -47,7 +47,7 @@ export default function TeamsTable({
         onClick={() => setSortKey(btn.key)}
         className={`shrink-0 font-display font-700 text-xs uppercase tracking-wider transition-all px-3.5 py-2 rounded-full border ${
           active
-            ? 'text-white bg-[var(--accent)] border-[var(--accent)]'
+            ? 'text-[var(--on-accent)] bg-[var(--accent)] border-[var(--accent)]'
             : 'text-[var(--muted)] border-white/10 hover:text-white hover:border-white/30'
         }`}
       >
@@ -66,7 +66,7 @@ export default function TeamsTable({
           onClick={() => setSortKey('standings')}
           className={`shrink-0 font-display font-700 text-xs uppercase tracking-wider transition-all px-3.5 py-2 rounded-full border ${
             sortKey === 'standings'
-              ? 'text-white bg-[var(--accent)] border-[var(--accent)]'
+              ? 'text-[var(--on-accent)] bg-[var(--accent)] border-[var(--accent)]'
               : 'text-[var(--muted)] border-white/10 hover:text-white hover:border-white/30'
           }`}
         >

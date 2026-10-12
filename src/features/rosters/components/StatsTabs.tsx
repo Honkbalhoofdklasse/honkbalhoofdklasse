@@ -40,7 +40,10 @@ function BigStatCard({
 
 function TableTh({ children }: { children: React.ReactNode }) {
   return (
-    <th className="font-display font-700 text-[10px] text-white/40 uppercase tracking-widest px-2 py-2 text-center whitespace-nowrap">
+    <th
+      scope="col"
+      className="font-display font-700 text-[10px] text-white/40 uppercase tracking-widest px-2 py-2 text-center whitespace-nowrap"
+    >
       {children}
     </th>
   )

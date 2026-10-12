@@ -43,7 +43,7 @@ export async function sendLiveNotification(
         subject,
         html: baseTemplate(
           `
-          <div style="background:#fe3d00;padding:20px 28px">
+          <div style="background:#b82c00;padding:20px 28px">
             <p style="margin:0;font-size:11px;letter-spacing:3px;text-transform:uppercase;opacity:.8">Honkbal Hoofdklasse</p>
             <h1 style="margin:6px 0 0;font-size:26px;font-weight:900;text-transform:uppercase">🔴 Live Now</h1>
           </div>
@@ -53,7 +53,7 @@ export async function sendLiveNotification(
               ${games.length === 1 ? 'This game has' : 'These games have'} just started. Follow the live scores and boxscore on the website.
             </p>
             <a href="${SITE}/livescores"
-              style="display:inline-block;background:#fe3d00;color:#fff;text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:800;font-size:14px;text-transform:uppercase;letter-spacing:1px">
+              style="display:inline-block;background:#b82c00;color:#fff;text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:800;font-size:14px;text-transform:uppercase;letter-spacing:1px">
               View live scores →
             </a>
           </div>
@@ -99,7 +99,7 @@ export async function sendGameNotification(
             <p style="margin:0 0 8px;font-size:22px;font-weight:800">New game available!</p>
             <p style="margin:0 0 24px;color:#8ba0b8;font-size:15px">${desc}</p>
             <a href="${url}"
-              style="display:inline-block;background:#fe3d00;color:#fff;text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:800;font-size:14px;text-transform:uppercase;letter-spacing:1px">
+              style="display:inline-block;background:#b82c00;color:#fff;text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:800;font-size:14px;text-transform:uppercase;letter-spacing:1px">
               ${btnLabel}
             </a>
           </div>

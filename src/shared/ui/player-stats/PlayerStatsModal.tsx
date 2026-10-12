@@ -1,9 +1,10 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { getAwardsByPlayer } from '@/shared/data/awards-data'
 import { headshotFaceUrl } from '@/shared/media/cloudinary'
 import { TEAM_COLORS } from '@/shared/teams/teams'
+import { Modal } from '@/shared/ui/Modal'
 import PlayerSplits from '@/shared/ui/PlayerSplits'
 import { AwardsSection } from './AwardsSection'
 import { BattingSection } from './BattingSection'
@@ -14,7 +15,6 @@ import { PitchingSection } from './PitchingSection'
 import { PlayerHero } from './PlayerHero'
 import { buildBatRow, buildPitRow } from './statRows'
 import type { Career, Photos, SeasonStats } from './types'
-import { useModalFocusTrap } from './useModalFocusTrap'
 
 export default function PlayerStatsModal({
   playerName,
@@ -32,7 +32,6 @@ export default function PlayerStatsModal({
   const [career, setCareer] = useState<Career | null>(null)
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState<'batting' | 'pitching'>(statType)
-  const modalRef = useRef<HTMLDivElement>(null)
 
   const rosterPlayer = findRosterPlayer(playerName)
   const bbrefId = rosterPlayer?.bbref_id
@@ -66,8 +65,6 @@ export default function PlayerStatsModal({
     Promise.all(jobs).finally(() => setLoading(false))
   }, [playerName, statType, bbrefId])
 
-  useModalFocusTrap(modalRef, onClose)
-
   const hasBatting = true
   const hasPitching = n(st?.pitch_appear) > 0
   const age = rosterPlayer?.yob ?? null
@@ -80,101 +77,93 @@ export default function PlayerStatsModal({
   const pitRow = buildPitRow(st)
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4"
-      onClick={onClose}
+    <Modal
+      onClose={onClose}
+      label={playerName}
+      overlayClassName="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4"
+      backdrop={<div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />}
+      panelClassName="relative w-full max-w-3xl bg-[#060e1b] border border-[var(--border)] rounded-2xl overflow-hidden shadow-2xl flex flex-col"
+      panelStyle={{ maxHeight: '92vh' }}
     >
-      <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
+      <PlayerHero
+        playerName={playerName}
+        teamId={teamId}
+        teamColor={teamColor}
+        accentColor={accentColor}
+        rosterPlayer={rosterPlayer}
+        bannerUrl={bannerUrl}
+        headshotUrl={headshotUrl}
+        bannerPosition={bannerPosition}
+        age={age}
+        onClose={onClose}
+      />
 
-      <div
-        ref={modalRef}
-        role="dialog"
-        aria-modal="true"
-        aria-label={playerName}
-        className="relative w-full max-w-3xl bg-[#060e1b] border border-[var(--border)] rounded-2xl overflow-hidden shadow-2xl flex flex-col"
-        style={{ maxHeight: '92vh' }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <PlayerHero
-          playerName={playerName}
-          teamId={teamId}
-          teamColor={teamColor}
-          accentColor={accentColor}
-          rosterPlayer={rosterPlayer}
-          bannerUrl={bannerUrl}
-          headshotUrl={headshotUrl}
-          bannerPosition={bannerPosition}
-          age={age}
-          onClose={onClose}
-        />
+      <div style={{ height: 3, background: accentColor, flexShrink: 0 }} />
 
-        <div style={{ height: 3, background: accentColor, flexShrink: 0 }} />
+      <div className="overflow-y-auto flex-1">
+        {!loading && st && hasBatting && hasPitching && (
+          <div className="flex border-b border-[var(--border)] px-1">
+            {(['batting', 'pitching'] as const).map((t) => (
+              <button
+                key={t}
+                onClick={() => setTab(t)}
+                className={`px-5 py-3 font-display font-800 text-xs uppercase tracking-widest transition-colors border-b-2 -mb-px ${
+                  tab === t
+                    ? 'text-white'
+                    : 'text-[var(--muted)] hover:text-white border-transparent'
+                }`}
+                style={tab === t ? { borderColor: accentColor } : {}}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
+        )}
 
-        <div className="overflow-y-auto flex-1">
-          {!loading && st && hasBatting && hasPitching && (
-            <div className="flex border-b border-[var(--border)] px-1">
-              {(['batting', 'pitching'] as const).map((t) => (
-                <button
-                  key={t}
-                  onClick={() => setTab(t)}
-                  className={`px-5 py-3 font-display font-800 text-xs uppercase tracking-widest transition-colors border-b-2 -mb-px ${
-                    tab === t
-                      ? 'text-white'
-                      : 'text-[var(--muted)] hover:text-white border-transparent'
-                  }`}
-                  style={tab === t ? { borderColor: accentColor } : {}}
-                >
-                  {t}
-                </button>
-              ))}
+        {loading ? (
+          <LoadingSkeleton />
+        ) : (
+          <>
+            {(tab === 'batting' || !hasPitching) && (
+              <BattingSection
+                accentColor={accentColor}
+                batRow={batRow}
+                career={career}
+                bbrefId={bbrefId}
+              />
+            )}
+
+            {(tab === 'pitching' || (!hasBatting && hasPitching)) && hasPitching && (
+              <PitchingSection accentColor={accentColor} pitRow={pitRow} career={career} />
+            )}
+
+            <div className="px-5 pb-5 border-t border-[var(--border)] pt-4">
+              <p className="font-display font-700 text-[10px] text-[var(--muted)] uppercase tracking-widest mb-3">
+                Splits
+              </p>
+              <PlayerSplits playerName={playerName} teamId={teamId} statType={statType} />
             </div>
-          )}
 
-          {loading ? (
-            <LoadingSkeleton />
-          ) : (
-            <>
-              {(tab === 'batting' || !hasPitching) && (
-                <BattingSection
-                  accentColor={accentColor}
-                  batRow={batRow}
-                  career={career}
-                  bbrefId={bbrefId}
-                />
-              )}
-
-              {(tab === 'pitching' || (!hasBatting && hasPitching)) && hasPitching && (
-                <PitchingSection accentColor={accentColor} pitRow={pitRow} career={career} />
-              )}
-
-              <div className="px-5 pb-5 border-t border-[var(--border)] pt-4">
-                <p className="font-display font-700 text-[10px] text-[var(--muted)] uppercase tracking-widest mb-3">
-                  Splits
-                </p>
-                <PlayerSplits playerName={playerName} teamId={teamId} statType={statType} />
-              </div>
-
-              {awards.length > 0 && <AwardsSection awards={awards} accentColor={accentColor} />}
-            </>
-          )}
-        </div>
-
-        <div className="shrink-0 border-t border-[var(--border)] px-5 py-2.5 flex items-center justify-between">
-          <p className="font-display font-700 text-[10px] text-[var(--muted)] uppercase tracking-widest">
-            KNBSB Hoofdklasse · Season 2026
-          </p>
-          {rosterPlayer?.instagram && (
-            <a
-              href={`https://instagram.com/${rosterPlayer.instagram}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-display font-700 text-[10px] text-[var(--muted)] hover:text-white transition-colors uppercase tracking-widest"
-            >
-              @{rosterPlayer.instagram}
-            </a>
-          )}
-        </div>
+            {awards.length > 0 && <AwardsSection awards={awards} accentColor={accentColor} />}
+          </>
+        )}
       </div>
-    </div>
+
+      <div className="shrink-0 border-t border-[var(--border)] px-5 py-2.5 flex items-center justify-between">
+        <p className="font-display font-700 text-[10px] text-[var(--muted)] uppercase tracking-widest">
+          KNBSB Hoofdklasse · Season 2026
+        </p>
+        {rosterPlayer?.instagram && (
+          <a
+            href={`https://instagram.com/${rosterPlayer.instagram}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-display font-700 text-[10px] text-[var(--muted)] hover:text-white transition-colors uppercase tracking-widest"
+          >
+            @{rosterPlayer.instagram}
+          </a>
+        )}
+      </div>
+    </Modal>
   )
 }

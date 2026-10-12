@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
+import { useCallback, useEffect, useState } from 'react'
 import BarList from '@/features/admin/components/BarList'
 import PageTable from '@/features/admin/components/PageTable'
 import QueryTable from '@/features/admin/components/QueryTable'
@@ -10,8 +10,8 @@ import TimeChart from '@/features/admin/components/TimeChart'
 import {
   COUNTRY_NAMES,
   DEVICE_NAMES,
-  type GscData,
   fmtNum,
+  type GscData,
 } from '@/features/admin/domain/gsc-analytics'
 
 const RANGES = [
@@ -75,6 +75,7 @@ export default function AnalyticsScreen() {
           <h1 className="font-display font-800 italic text-3xl uppercase text-white">Analytics</h1>
           <input
             type="password"
+            aria-label="Password"
             value={pw}
             onChange={(e) => setPw(e.target.value)}
             placeholder="Password"
@@ -83,7 +84,7 @@ export default function AnalyticsScreen() {
           />
           <button
             type="submit"
-            className="w-full bg-[var(--accent)] text-white font-display font-800 text-sm uppercase tracking-wider py-3 rounded-xl hover:opacity-90 transition-opacity"
+            className="w-full bg-[var(--accent)] text-[var(--on-accent)] font-display font-800 text-sm uppercase tracking-wider py-3 rounded-xl hover:opacity-90 transition-opacity"
           >
             Login
           </button>
@@ -113,7 +114,7 @@ export default function AnalyticsScreen() {
               <button
                 key={r.value}
                 onClick={() => setRange(r.value)}
-                className={`font-display font-700 text-xs uppercase tracking-wider px-3 py-1.5 rounded-lg transition-colors ${range === r.value ? 'bg-[var(--accent)] text-white' : 'bg-[#0a1220] border border-[#1a2a3a] text-white/60 hover:text-white'}`}
+                className={`font-display font-700 text-xs uppercase tracking-wider px-3 py-1.5 rounded-lg transition-colors ${range === r.value ? 'bg-[var(--accent)] text-[var(--on-accent)]' : 'bg-[#0a1220] border border-[#1a2a3a] text-white/60 hover:text-white'}`}
               >
                 {r.label}
               </button>
