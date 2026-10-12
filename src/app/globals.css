@@ -2,7 +2,7 @@
 
 :root {
   --accent:  #fe3d00;
-  --accent-strong: #b82c00;
+  --accent-strong: #fe3d00;
   --navy:    #1e335a;
   --bg:      #ffffff;
   --card:    #111E2E;
@@ -14,7 +14,7 @@
 
 @theme {
   --color-accent:  #fe3d00;
-  --color-accent-strong: #b82c00;
+  --color-accent-strong: #fe3d00;
   --color-navy:    #1e335a;
   --color-bg:      #ffffff;
   --color-card:    #111E2E;
