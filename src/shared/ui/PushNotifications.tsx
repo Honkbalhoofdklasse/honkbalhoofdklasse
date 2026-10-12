@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import Image from 'next/image'
+import { useEffect, useState } from 'react'
 import { TEAM_COLORS, TEAM_LOGOS, TEAM_NAMES } from '@/shared/teams/teams'
+import { Modal } from '@/shared/ui/Modal'
 
 const TEAMS = ['neptunus', 'pirates', 'kinheim', 'hcaw', 'twins', 'pioniers', 'uvv']
 const VAPID_PUBLIC = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!
@@ -99,6 +100,9 @@ export default function PushNotifications() {
             : 'text-white/50 hover:text-white hover:bg-white/10'
         } disabled:opacity-40`}
         title={status === 'subscribed' ? 'Notificaties uitschakelen' : 'Notificaties inschakelen'}
+        aria-label={
+          status === 'subscribed' ? 'Notificaties uitschakelen' : 'Notificaties inschakelen'
+        }
       >
         <svg
           className="w-5 h-5"
@@ -119,83 +123,85 @@ export default function PushNotifications() {
       </button>
 
       {open && (
-        <div
-          className="fixed inset-0 z-[300] flex items-end sm:items-center justify-center sm:px-4 bg-black/60 backdrop-blur-sm"
-          onClick={() => setOpen(false)}
+        <Modal
+          onClose={() => setOpen(false)}
+          labelledBy="push-modal-title"
+          overlayClassName="fixed inset-0 z-[300] flex items-end sm:items-center justify-center sm:px-4 bg-black/60 backdrop-blur-sm"
+          panelClassName="w-full max-w-sm bg-[#0a1220] border border-[#1a2a3a] rounded-t-2xl sm:rounded-2xl p-6 shadow-2xl"
         >
-          <div
-            className="w-full max-w-sm bg-[#0a1220] border border-[#1a2a3a] rounded-t-2xl sm:rounded-2xl p-6 shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-start justify-between mb-4">
-              <div>
-                <h2 className="font-display font-800 text-lg uppercase text-white">
-                  Notifications
-                </h2>
-                <p className="font-display font-700 text-xs text-[var(--muted)] mt-0.5 uppercase tracking-wider">
-                  Home runs, scores &amp; game updates
-                </p>
-              </div>
-              <button
-                onClick={() => setOpen(false)}
-                className="text-[var(--muted)] hover:text-white text-xl leading-none"
+          <div className="flex items-start justify-between mb-4">
+            <div>
+              <h2
+                id="push-modal-title"
+                className="font-display font-800 text-lg uppercase text-white"
               >
-                ×
-              </button>
+                Notifications
+              </h2>
+              <p className="font-display font-700 text-xs text-[var(--muted)] mt-0.5 uppercase tracking-wider">
+                Home runs, scores &amp; game updates
+              </p>
             </div>
-
-            <p className="font-display font-700 text-xs text-[var(--muted)] uppercase tracking-widest mb-3">
-              Follow specific teams — or leave empty for all teams
-            </p>
-
-            <div className="grid grid-cols-2 gap-2 mb-6">
-              {TEAMS.map((teamId) => {
-                const selected = selectedTeams.includes(teamId)
-                const color = TEAM_COLORS[teamId] ?? '#1e335a'
-                return (
-                  <button
-                    key={teamId}
-                    onClick={() => toggleTeam(teamId)}
-                    className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl border transition-all ${
-                      selected ? 'border-transparent' : 'border-[#1a2a3a] hover:border-white/20'
-                    }`}
-                    style={selected ? { backgroundColor: color, borderColor: color } : {}}
-                  >
-                    <div
-                      className="w-6 h-6 rounded flex items-center justify-center p-0.5 shrink-0"
-                      style={{ backgroundColor: selected ? 'rgba(255,255,255,0.2)' : color }}
-                    >
-                      <Image
-                        src={TEAM_LOGOS[teamId]}
-                        alt={teamId}
-                        width={18}
-                        height={18}
-                        className="object-contain w-full h-full"
-                      />
-                    </div>
-                    <span
-                      className={`font-display font-800 text-xs uppercase ${selected ? 'text-white' : 'text-white/60'}`}
-                    >
-                      {TEAM_NAMES[teamId]}
-                    </span>
-                  </button>
-                )
-              })}
-            </div>
-
             <button
-              onClick={subscribe}
-              disabled={saving}
-              className="w-full bg-[var(--accent)] text-white font-display font-800 text-sm uppercase tracking-wider py-3 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50"
+              type="button"
+              onClick={() => setOpen(false)}
+              aria-label="Close"
+              className="text-[var(--muted)] hover:text-white text-xl leading-none"
             >
-              {saving
-                ? 'Enabling…'
-                : selectedTeams.length === 0
-                  ? 'Enable for all teams'
-                  : `Enable for ${selectedTeams.length} team${selectedTeams.length > 1 ? 's' : ''}`}
+              ×
             </button>
           </div>
-        </div>
+
+          <p className="font-display font-700 text-xs text-[var(--muted)] uppercase tracking-widest mb-3">
+            Follow specific teams — or leave empty for all teams
+          </p>
+
+          <div className="grid grid-cols-2 gap-2 mb-6">
+            {TEAMS.map((teamId) => {
+              const selected = selectedTeams.includes(teamId)
+              const color = TEAM_COLORS[teamId] ?? '#1e335a'
+              return (
+                <button
+                  key={teamId}
+                  onClick={() => toggleTeam(teamId)}
+                  className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl border transition-all ${
+                    selected ? 'border-transparent' : 'border-[#1a2a3a] hover:border-white/20'
+                  }`}
+                  style={selected ? { backgroundColor: color, borderColor: color } : {}}
+                >
+                  <div
+                    className="w-6 h-6 rounded flex items-center justify-center p-0.5 shrink-0"
+                    style={{ backgroundColor: selected ? 'rgba(255,255,255,0.2)' : color }}
+                  >
+                    <Image
+                      src={TEAM_LOGOS[teamId]}
+                      alt={teamId}
+                      width={18}
+                      height={18}
+                      className="object-contain w-full h-full"
+                    />
+                  </div>
+                  <span
+                    className={`font-display font-800 text-xs uppercase ${selected ? 'text-white' : 'text-white/60'}`}
+                  >
+                    {TEAM_NAMES[teamId]}
+                  </span>
+                </button>
+              )
+            })}
+          </div>
+
+          <button
+            onClick={subscribe}
+            disabled={saving}
+            className="w-full bg-[var(--accent-strong)] text-white font-display font-800 text-sm uppercase tracking-wider py-3 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50"
+          >
+            {saving
+              ? 'Enabling…'
+              : selectedTeams.length === 0
+                ? 'Enable for all teams'
+                : `Enable for ${selectedTeams.length} team${selectedTeams.length > 1 ? 's' : ''}`}
+          </button>
+        </Modal>
       )}
     </>
   )

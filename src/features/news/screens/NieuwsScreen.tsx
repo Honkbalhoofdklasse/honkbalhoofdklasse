@@ -45,7 +45,7 @@ export async function NieuwsScreen() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 p-6">
                 {featured.tags && featured.tags[0] && (
-                  <span className="font-display font-800 text-xs text-white bg-[var(--accent)] px-2 py-1 rounded uppercase tracking-widest mb-2 inline-block">
+                  <span className="font-display font-800 text-xs text-white bg-[var(--accent-strong)] px-2 py-1 rounded uppercase tracking-widest mb-2 inline-block">
                     {featured.tags[0]}
                   </span>
                 )}

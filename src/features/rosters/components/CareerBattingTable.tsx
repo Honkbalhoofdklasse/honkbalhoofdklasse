@@ -36,6 +36,7 @@ export default function CareerBattingTable({
                 'SLG',
               ].map((h) => (
                 <th
+                  scope="col"
                   key={h}
                   className="font-display font-700 text-[10px] text-[var(--muted)] uppercase tracking-widest px-2 py-2 text-center whitespace-nowrap first:text-left"
                 >

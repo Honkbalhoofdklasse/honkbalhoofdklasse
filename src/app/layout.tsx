@@ -1,11 +1,11 @@
+import { Analytics } from '@vercel/analytics/next'
 import type { Metadata } from 'next'
 import { Barlow_Condensed, Inter } from 'next/font/google'
-import { Analytics } from '@vercel/analytics/next'
-import NavBar from '@/shared/ui/NavBar'
+import { LanguageProvider } from '@/shared/i18n/language'
 import SiteFooter from '@/shared/ui/footer/SiteFooter'
 import SponsorMarquee from '@/shared/ui/footer/SponsorMarquee'
+import NavBar from '@/shared/ui/NavBar'
 import ServiceWorkerRegistrar from '@/shared/ui/ServiceWorkerRegistrar'
-import { LanguageProvider } from '@/shared/i18n/language'
 import './globals.css'
 
 const barlowCondensed = Barlow_Condensed({
@@ -118,7 +118,7 @@ const schemaOrg = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${barlowCondensed.variable} ${inter.variable}`}>
+    <html lang="nl" className={`${barlowCondensed.variable} ${inter.variable}`}>
       <head>
         <link
           rel="apple-touch-icon"

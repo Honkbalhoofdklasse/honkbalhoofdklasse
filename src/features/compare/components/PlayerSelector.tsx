@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
+import { useEffect, useRef, useState } from 'react'
 import { TEAM_COLORS, TEAM_LOGOS, TEAM_NAMES } from '@/shared/teams/teams'
 import type { CmpPlayer } from '../api/compareRoute'
 
@@ -44,39 +44,46 @@ export default function PlayerSelector({
     <div ref={ref} className="relative flex-1 min-w-0">
       {selected ? (
         <div
-          className="flex items-center gap-3 px-4 py-3 rounded-2xl border-2 cursor-pointer transition-colors hover:opacity-90"
+          className="flex items-center gap-3 px-4 py-3 rounded-2xl border-2 transition-colors hover:opacity-90"
           style={{ borderColor: color, backgroundColor: `${color}18` }}
-          onClick={() => {
-            setOpen(true)
-            setTimeout(() => inputRef.current?.focus(), 50)
-          }}
         >
-          {logo && (
-            <div
-              className="w-9 h-9 rounded-xl shrink-0 flex items-center justify-center p-1.5"
-              style={{ backgroundColor: color }}
-            >
-              <Image
-                src={logo}
-                alt={team!}
-                width={28}
-                height={28}
-                className="object-contain w-full h-full"
-              />
-            </div>
-          )}
-          <div className="flex-1 min-w-0">
-            <p className="font-display font-800 text-sm text-white truncate">{selected.name}</p>
-            <p className="font-display font-700 text-xs text-white/50 uppercase tracking-wider">
-              {team}
-            </p>
-          </div>
           <button
-            onClick={(e) => {
-              e.stopPropagation()
+            type="button"
+            onClick={() => {
+              setOpen(true)
+              setTimeout(() => inputRef.current?.focus(), 50)
+            }}
+            aria-label={`${selected.name} wijzigen`}
+            className="flex flex-1 items-center gap-3 min-w-0 text-left cursor-pointer"
+          >
+            {logo && (
+              <div
+                className="w-9 h-9 rounded-xl shrink-0 flex items-center justify-center p-1.5"
+                style={{ backgroundColor: color }}
+              >
+                <Image
+                  src={logo}
+                  alt={team!}
+                  width={28}
+                  height={28}
+                  className="object-contain w-full h-full"
+                />
+              </div>
+            )}
+            <div className="flex-1 min-w-0">
+              <p className="font-display font-800 text-sm text-white truncate">{selected.name}</p>
+              <p className="font-display font-700 text-xs text-white/50 uppercase tracking-wider">
+                {team}
+              </p>
+            </div>
+          </button>
+          <button
+            type="button"
+            onClick={() => {
               onSelect(null)
               setQuery('')
             }}
+            aria-label="Selectie verwijderen"
             className="text-white/30 hover:text-white/70 transition-colors shrink-0 text-lg leading-none"
           >
             ×
@@ -101,6 +108,7 @@ export default function PlayerSelector({
             <input
               ref={inputRef}
               type="text"
+              aria-label="Zoek speler"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Zoek speler…"

@@ -2,6 +2,7 @@
 
 :root {
   --accent:  #fe3d00;
+  --accent-strong: #b82c00;
   --navy:    #1e335a;
   --bg:      #ffffff;
   --card:    #111E2E;
@@ -13,6 +14,7 @@
 
 @theme {
   --color-accent:  #fe3d00;
+  --color-accent-strong: #b82c00;
   --color-navy:    #1e335a;
   --color-bg:      #ffffff;
   --color-card:    #111E2E;
@@ -89,4 +91,13 @@ html, body {
 }
 .animate-ripple {
   animation: rippleOut 2.4s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee,
+  .animate-ripple,
+  .animate-pulse,
+  .animate-spin {
+    animation: none;
+  }
 }

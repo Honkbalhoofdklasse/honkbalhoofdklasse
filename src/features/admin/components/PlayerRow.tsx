@@ -1,10 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { TEAM_NAMES } from '@/shared/teams/teams'
-import type { PlayerPhoto } from '@/features/admin/domain/photos'
 import FocalPointEditor from '@/features/admin/components/FocalPointEditor'
 import UploadButton from '@/features/admin/components/UploadButton'
+import type { PlayerPhoto } from '@/features/admin/domain/photos'
+import { TEAM_NAMES } from '@/shared/teams/teams'
 
 export default function PlayerRow({
   name,
@@ -52,6 +52,7 @@ export default function PlayerRow({
               className="relative group overflow-hidden rounded border border-[var(--border)] hover:border-[var(--accent)]/60 transition-colors shrink-0"
               style={{ width: 96, height: 32 }}
               title="Klik om positie aan te passen"
+              aria-label="Bannerpositie aanpassen"
             >
               <img
                 src={photo.banner_url}

@@ -14,7 +14,7 @@ export function MiniLeaders({ leaders }: { leaders: MiniLeadersData }) {
           <div className="space-y-1">
             {leaders.batters.map((p, i) => (
               <div key={i} className="flex items-center gap-2">
-                <span className="font-display font-700 text-xs text-[#4a6a8a] w-4 shrink-0">
+                <span className="font-display font-700 text-xs text-[var(--muted)] w-4 shrink-0">
                   {i + 1}
                 </span>
                 <p className="font-display font-800 text-xs uppercase text-white truncate flex-1">
@@ -34,7 +34,7 @@ export function MiniLeaders({ leaders }: { leaders: MiniLeadersData }) {
           <div className="space-y-1">
             {leaders.pitchers.map((p, i) => (
               <div key={i} className="flex items-center gap-2">
-                <span className="font-display font-700 text-xs text-[#4a6a8a] w-4 shrink-0">
+                <span className="font-display font-700 text-xs text-[var(--muted)] w-4 shrink-0">
                   {i + 1}
                 </span>
                 <p className="font-display font-800 text-xs uppercase text-white truncate flex-1">

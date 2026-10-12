@@ -72,7 +72,7 @@ export function NotificatiesScreen() {
         </p>
         <Link
           href="/"
-          className="inline-flex items-center gap-2 bg-[var(--accent)] text-white font-display font-800 uppercase tracking-wider text-xs px-6 py-3 rounded-xl hover:opacity-90 transition-opacity"
+          className="inline-flex items-center gap-2 bg-[var(--accent-strong)] text-white font-display font-800 uppercase tracking-wider text-xs px-6 py-3 rounded-xl hover:opacity-90 transition-opacity"
         >
           Go to the app
         </Link>

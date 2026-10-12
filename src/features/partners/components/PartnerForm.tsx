@@ -38,10 +38,14 @@ export function PartnerForm() {
     <form onSubmit={submit} className="space-y-5">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div>
-          <label className="block font-display font-700 text-xs uppercase tracking-widest text-[var(--muted)] mb-2">
+          <label
+            htmlFor="partner-company"
+            className="block font-display font-700 text-xs uppercase tracking-widest text-[var(--muted)] mb-2"
+          >
             Bedrijfsnaam *
           </label>
           <input
+            id="partner-company"
             required
             value={form.company}
             onChange={(e) => setForm((f) => ({ ...f, company: e.target.value }))}
@@ -50,10 +54,14 @@ export function PartnerForm() {
           />
         </div>
         <div>
-          <label className="block font-display font-700 text-xs uppercase tracking-widest text-[var(--muted)] mb-2">
+          <label
+            htmlFor="partner-name"
+            className="block font-display font-700 text-xs uppercase tracking-widest text-[var(--muted)] mb-2"
+          >
             Contactpersoon *
           </label>
           <input
+            id="partner-name"
             required
             value={form.name}
             onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
@@ -62,10 +70,14 @@ export function PartnerForm() {
           />
         </div>
         <div>
-          <label className="block font-display font-700 text-xs uppercase tracking-widest text-[var(--muted)] mb-2">
+          <label
+            htmlFor="partner-email"
+            className="block font-display font-700 text-xs uppercase tracking-widest text-[var(--muted)] mb-2"
+          >
             E-mailadres *
           </label>
           <input
+            id="partner-email"
             required
             type="email"
             value={form.email}
@@ -75,10 +87,14 @@ export function PartnerForm() {
           />
         </div>
         <div>
-          <label className="block font-display font-700 text-xs uppercase tracking-widest text-[var(--muted)] mb-2">
+          <label
+            htmlFor="partner-phone"
+            className="block font-display font-700 text-xs uppercase tracking-widest text-[var(--muted)] mb-2"
+          >
             Telefoonnummer
           </label>
           <input
+            id="partner-phone"
             value={form.phone}
             onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
             className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white font-display font-700 text-sm focus:outline-none focus:border-[var(--accent)] transition-colors"
@@ -88,10 +104,14 @@ export function PartnerForm() {
       </div>
 
       <div>
-        <label className="block font-display font-700 text-xs uppercase tracking-widest text-[var(--muted)] mb-2">
+        <label
+          htmlFor="partner-message"
+          className="block font-display font-700 text-xs uppercase tracking-widest text-[var(--muted)] mb-2"
+        >
           Bericht
         </label>
         <textarea
+          id="partner-message"
           value={form.message}
           onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
           rows={4}
@@ -103,7 +123,7 @@ export function PartnerForm() {
       <button
         type="submit"
         disabled={sending}
-        className="w-full bg-[var(--accent)] text-white font-display font-800 uppercase tracking-wider text-sm py-4 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-60"
+        className="w-full bg-[var(--accent-strong)] text-white font-display font-800 uppercase tracking-wider text-sm py-4 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-60"
       >
         {sending ? 'Versturen…' : 'Verstuur aanvraag →'}
       </button>

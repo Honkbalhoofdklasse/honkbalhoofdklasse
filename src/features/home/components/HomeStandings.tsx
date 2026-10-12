@@ -21,12 +21,12 @@ export function HomeStandings({ standings }: { standings: HomeData['standings'] 
         {['#', 'Team', 'W-L', 'PCT'].map((h) => (
           <span
             key={h}
-            className="font-display font-700 text-[10px] text-[#4a6a8a] uppercase tracking-widest text-center first:text-left"
+            className="font-display font-700 text-[10px] text-[var(--muted)] uppercase tracking-widest text-center first:text-left"
           >
             {h}
           </span>
         ))}
-        <span className="font-display font-700 text-[10px] text-[#4a6a8a] uppercase tracking-widest text-center hidden md:block">
+        <span className="font-display font-700 text-[10px] text-[var(--muted)] uppercase tracking-widest text-center hidden md:block">
           G
         </span>
       </div>
@@ -46,7 +46,7 @@ export function HomeStandings({ standings }: { standings: HomeData['standings'] 
               }`}
             >
               <span
-                className={`font-display font-800 text-sm ${isFirst ? 'text-[var(--accent)]' : 'text-[#4a6a8a]'}`}
+                className={`font-display font-800 text-sm ${isFirst ? 'text-[var(--accent)]' : 'text-[var(--muted)]'}`}
               >
                 {i + 1}
               </span>

@@ -17,7 +17,7 @@ export function LiveNowSection({ liveNow }: { liveNow: Stream[] }) {
             href={stream.stream_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="group bg-[var(--accent)] rounded-2xl p-5 hover:opacity-90 transition-opacity"
+            className="group bg-[var(--accent-strong)] rounded-2xl p-5 hover:opacity-90 transition-opacity"
           >
             <div className="flex items-start justify-between gap-3 mb-3">
               <span className="font-display font-800 text-3xl text-white/60">
@@ -30,7 +30,7 @@ export function LiveNowSection({ liveNow }: { liveNow: Stream[] }) {
             <p className="font-display font-800 text-xl uppercase text-white leading-tight">
               <strong>{stream.title}</strong>
             </p>
-            <p className="font-display font-700 text-white/70 text-sm mt-1 uppercase">
+            <p className="font-display font-700 text-white/85 text-sm mt-1 uppercase">
               {(stream.platform ?? 'Stream').toUpperCase()} · Click to watch →
             </p>
           </a>

@@ -29,7 +29,7 @@ export function StartScreen({ onStart }: { onStart: (m: Mode) => void }) {
         <div className="flex flex-col gap-2.5">
           <button
             onClick={() => onStart('free')}
-            className="font-display font-800 uppercase tracking-widest bg-[var(--accent)] text-white px-6 py-4 rounded-xl hover:opacity-90 transition-opacity text-lg"
+            className="font-display font-800 uppercase tracking-widest bg-[var(--accent-strong)] text-white px-6 py-4 rounded-xl hover:opacity-90 transition-opacity text-lg"
           >
             Play
           </button>

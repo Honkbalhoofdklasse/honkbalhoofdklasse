@@ -16,7 +16,7 @@ export function confirmationEmailHtml(lead: PartnerContact): string {
 
   <!-- Top brand bar -->
   <tr>
-    <td style="background:#fe3d00;border-radius:12px 12px 0 0;padding:16px 32px" align="center">
+    <td style="background:#b82c00;border-radius:12px 12px 0 0;padding:16px 32px" align="center">
       <p style="margin:0;font-size:12px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:#fff">
         HONKBAL HOOFDKLASSE
       </p>
@@ -61,7 +61,7 @@ export function confirmationEmailHtml(lead: PartnerContact): string {
 
       <!-- CTA -->
       <a href="${SITE}/partner-up"
-         style="display:block;background:#fe3d00;color:#fff;text-decoration:none;padding:15px 28px;border-radius:8px;font-weight:800;font-size:14px;text-transform:uppercase;letter-spacing:1.5px;text-align:center">
+         style="display:block;background:#b82c00;color:#fff;text-decoration:none;padding:15px 28px;border-radius:8px;font-weight:800;font-size:14px;text-transform:uppercase;letter-spacing:1.5px;text-align:center">
         Bekijk partner-mogelijkheden →
       </a>
 

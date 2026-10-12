@@ -28,9 +28,12 @@ export function GameCell({
             : 'border-[#1a2535] bg-[#080f1a] cursor-not-allowed'
 
   return (
-    <div
-      onClick={canClick ? onClick : undefined}
-      className={`rounded-xl border flex flex-col items-center justify-center transition-all select-none relative overflow-hidden ${bg} ${flash ? 'scale-95' : ''}`}
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={!canClick}
+      aria-label={cell.guess ? `${cell.guess}, ${cell.state}` : 'Empty cell, name a player'}
+      className={`w-full rounded-xl border flex flex-col items-center justify-center transition-all select-none relative overflow-hidden ${bg} ${flash ? 'scale-95' : ''}`}
       style={{ minHeight: 110 }}
     >
       {cell.state === 'correct' && cell.photoUrl && (
@@ -91,6 +94,6 @@ export function GameCell({
           </>
         )}
       </div>
-    </div>
+    </button>
   )
 }

@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { prefersReducedMotion } from '@/shared/motion/prefersReducedMotion'
 
 const ROTATING_WORDS = ['Neptunus', 'Pirates', 'Kinheim', 'HCAW', 'Twins', 'Pioniers', 'UVV']
 
@@ -9,6 +10,7 @@ export function RotatingWord() {
   const [visible, setVisible] = useState(true)
 
   useEffect(() => {
+    if (prefersReducedMotion()) return
     const id = setInterval(() => {
       setVisible(false)
       setTimeout(() => {

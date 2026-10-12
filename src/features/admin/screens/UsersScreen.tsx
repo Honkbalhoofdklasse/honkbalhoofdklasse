@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
 
 type AdminUser = {
   email: string
@@ -129,6 +129,7 @@ export default function UsersScreen() {
           <div className="flex gap-3">
             <input
               type="email"
+              aria-label="Emailadres"
               value={newEmail}
               onChange={(e) => setNewEmail(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && addUser()}
@@ -138,7 +139,7 @@ export default function UsersScreen() {
             <button
               onClick={addUser}
               disabled={adding || !newEmail.trim()}
-              className="font-display font-800 text-sm uppercase tracking-wider bg-[var(--accent)] text-white px-6 py-3 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-40"
+              className="font-display font-800 text-sm uppercase tracking-wider bg-[var(--accent-strong)] text-white px-6 py-3 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-40"
             >
               {adding ? '…' : 'Toevoegen'}
             </button>
@@ -211,6 +212,7 @@ export default function UsersScreen() {
                     Stream team:
                   </span>
                   <select
+                    aria-label="Stream team"
                     value={user.stream_team ?? ''}
                     onChange={(e) => setStreamTeam(user.email, e.target.value || null)}
                     disabled={saving === user.email + 'stream_team'}

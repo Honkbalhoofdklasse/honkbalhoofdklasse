@@ -28,7 +28,7 @@ export default function MobileMenu({
       <div className="bg-[var(--card)] border-t border-[var(--border)] px-4 py-4 space-y-1">
         <Link
           href="/"
-          className={`block font-display font-800 text-sm uppercase tracking-wider px-4 py-3 rounded-xl transition-colors ${pathname === '/' ? 'bg-[var(--accent)] text-white' : 'text-white/60 hover:text-white hover:bg-[var(--card-hover)]'}`}
+          className={`block font-display font-800 text-sm uppercase tracking-wider px-4 py-3 rounded-xl transition-colors ${pathname === '/' ? 'bg-[var(--accent-strong)] text-white' : 'text-white/60 hover:text-white hover:bg-[var(--card-hover)]'}`}
         >
           Home
         </Link>
@@ -40,7 +40,7 @@ export default function MobileMenu({
               href={entry.href}
               className={`block font-display font-800 text-sm uppercase tracking-wider px-4 py-3 rounded-xl transition-colors ${
                 pathname === entry.href
-                  ? 'bg-[var(--accent)] text-white'
+                  ? 'bg-[var(--accent-strong)] text-white'
                   : entry.highlight
                     ? 'text-[var(--accent)] hover:text-white hover:bg-[var(--card-hover)]'
                     : 'text-white/60 hover:text-white hover:bg-[var(--card-hover)]'

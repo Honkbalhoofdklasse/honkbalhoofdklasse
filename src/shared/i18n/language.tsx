@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import { createContext, type ReactNode, useContext, useEffect, useState } from 'react'
 
 type Lang = 'en' | 'nl'
 
@@ -79,6 +79,10 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     const saved = localStorage.getItem('hk_lang') as Lang | null
     if (saved === 'nl') setLang('nl')
   }, [])
+
+  useEffect(() => {
+    if (localStorage.getItem('hk_lang')) document.documentElement.lang = lang
+  }, [lang])
 
   const toggle = () => {
     const next: Lang = lang === 'en' ? 'nl' : 'en'

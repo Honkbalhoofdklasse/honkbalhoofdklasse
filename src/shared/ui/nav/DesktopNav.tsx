@@ -49,7 +49,7 @@ export default function DesktopNav({ entries, pathname, onSearchOpen }: Props) {
         <button
           onClick={onSearchOpen}
           className="flex items-center gap-2 text-white/50 hover:text-white transition-colors bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg px-3 py-1.5"
-          aria-label="Search"
+          aria-label="Search ⌘K"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
@@ -59,13 +59,13 @@ export default function DesktopNav({ entries, pathname, onSearchOpen }: Props) {
               d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
             />
           </svg>
-          <kbd className="font-display font-700 text-[10px] text-white/30 border border-white/10 rounded px-1.5 py-0.5">
+          <kbd className="font-display font-700 text-[10px] text-white/60 border border-white/10 rounded px-1.5 py-0.5">
             ⌘K
           </kbd>
         </button>
         <Link
           href="/partner-up"
-          className="font-display font-800 text-xs uppercase tracking-wider bg-[var(--accent)] text-white px-4 py-1.5 rounded-lg hover:opacity-90 transition-opacity whitespace-nowrap"
+          className="font-display font-800 text-xs uppercase tracking-wider bg-[var(--accent-strong)] text-white px-4 py-1.5 rounded-lg hover:opacity-90 transition-opacity whitespace-nowrap"
         >
           Partner up
         </Link>

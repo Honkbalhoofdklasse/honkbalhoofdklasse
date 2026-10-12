@@ -10,7 +10,7 @@ export default function MobileGroup({ entry, pathname, expanded, onToggle }: Pro
     <div>
       <button
         onClick={onToggle}
-        className={`w-full flex items-center justify-between font-display font-800 text-sm uppercase tracking-wider px-4 py-3 rounded-xl transition-colors ${entry.items.some((i) => i.href === pathname) ? 'bg-[var(--accent)] text-white' : 'text-white/60 hover:text-white hover:bg-[var(--card-hover)]'}`}
+        className={`w-full flex items-center justify-between font-display font-800 text-sm uppercase tracking-wider px-4 py-3 rounded-xl transition-colors ${entry.items.some((i) => i.href === pathname) ? 'bg-[var(--accent-strong)] text-white' : 'text-white/60 hover:text-white hover:bg-[var(--card-hover)]'}`}
       >
         {entry.label}
         <svg
@@ -25,7 +25,7 @@ export default function MobileGroup({ entry, pathname, expanded, onToggle }: Pro
       {expanded && (
         <div className="grid grid-cols-2 gap-1 pl-2">
           {entry.items.map((item) => {
-            const cls = `font-display font-800 text-sm uppercase tracking-wider px-4 py-3 rounded-xl transition-colors ${pathname === item.href ? 'bg-[var(--accent)] text-white' : 'text-white/60 hover:text-white hover:bg-[var(--card-hover)]'}`
+            const cls = `font-display font-800 text-sm uppercase tracking-wider px-4 py-3 rounded-xl transition-colors ${pathname === item.href ? 'bg-[var(--accent-strong)] text-white' : 'text-white/60 hover:text-white hover:bg-[var(--card-hover)]'}`
             return item.external || item.href.startsWith('http') ? (
               <a
                 key={item.href}

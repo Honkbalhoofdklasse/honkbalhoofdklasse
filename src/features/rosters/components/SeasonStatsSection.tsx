@@ -63,6 +63,7 @@ export default function SeasonStatsSection({
               <tr className="border-b border-[var(--border)]">
                 {['H', '2B', '3B', 'HR', 'RBI', 'R', 'BB', 'SO', 'SB', 'CS'].map((h) => (
                   <th
+                    scope="col"
                     key={h}
                     className="font-display font-700 text-[10px] text-[var(--muted)] uppercase tracking-widest px-3 py-2 text-center"
                   >

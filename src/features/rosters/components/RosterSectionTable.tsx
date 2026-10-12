@@ -15,6 +15,13 @@ export default function RosterSectionTable({
   activeTeam: string
   onSelectPlayer: (player: SelectedPlayer) => void
 }) {
+  const select = (player: NewPlayer) =>
+    onSelectPlayer({
+      name: player.name,
+      teamId: activeTeam,
+      statType: player.pos === 'P' ? 'pitching' : 'batting',
+    })
+
   return (
     <div>
       <div className="flex items-center gap-3 mb-3">
@@ -38,19 +45,34 @@ export default function RosterSectionTable({
         <table className="w-full">
           <thead>
             <tr className="border-b border-[var(--border)]">
-              <th className="font-display font-700 text-[10px] uppercase tracking-widest text-[var(--muted)] text-center px-3 py-2 w-10">
+              <th
+                scope="col"
+                className="font-display font-700 text-[10px] uppercase tracking-widest text-[var(--muted)] text-center px-3 py-2 w-10"
+              >
                 #
               </th>
-              <th className="font-display font-700 text-[10px] uppercase tracking-widest text-[var(--muted)] text-left px-3 py-2">
+              <th
+                scope="col"
+                className="font-display font-700 text-[10px] uppercase tracking-widest text-[var(--muted)] text-left px-3 py-2"
+              >
                 Name
               </th>
-              <th className="font-display font-700 text-[10px] uppercase tracking-widest text-[var(--muted)] text-center px-3 py-2 w-14">
+              <th
+                scope="col"
+                className="font-display font-700 text-[10px] uppercase tracking-widest text-[var(--muted)] text-center px-3 py-2 w-14"
+              >
                 POS
               </th>
-              <th className="font-display font-700 text-[10px] uppercase tracking-widest text-[var(--muted)] text-center px-3 py-2 w-14">
+              <th
+                scope="col"
+                className="font-display font-700 text-[10px] uppercase tracking-widest text-[var(--muted)] text-center px-3 py-2 w-14"
+              >
                 B/T
               </th>
-              <th className="font-display font-700 text-[10px] uppercase tracking-widest text-[var(--muted)] text-center px-3 py-2 w-14">
+              <th
+                scope="col"
+                className="font-display font-700 text-[10px] uppercase tracking-widest text-[var(--muted)] text-center px-3 py-2 w-14"
+              >
                 YOB
               </th>
             </tr>
@@ -59,14 +81,16 @@ export default function RosterSectionTable({
             {sectionPlayers.map((player, i) => (
               <tr
                 key={i}
-                onClick={() =>
-                  onSelectPlayer({
-                    name: player.name,
-                    teamId: activeTeam,
-                    statType: player.pos === 'P' ? 'pitching' : 'batting',
-                  })
-                }
-                className="border-b border-[var(--border)] last:border-0 hover:bg-[var(--card-hover)] transition-colors group cursor-pointer"
+                tabIndex={0}
+                role="button"
+                aria-label={player.name}
+                onClick={() => select(player)}
+                onKeyDown={(e) => {
+                  if (e.key !== 'Enter' && e.key !== ' ') return
+                  e.preventDefault()
+                  select(player)
+                }}
+                className="border-b border-[var(--border)] last:border-0 hover:bg-[var(--card-hover)] focus-visible:bg-[var(--card-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)] transition-colors group cursor-pointer"
               >
                 <td className="font-display font-800 text-sm text-center px-3 py-2.5 w-10 text-white">
                   {player.uniform || '–'}

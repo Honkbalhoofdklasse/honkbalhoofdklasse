@@ -15,24 +15,37 @@ export function LinescoreTable({
       <table className="border-collapse text-center mx-auto">
         <thead>
           <tr>
-            <th className="font-display font-700 text-[10px] text-[var(--muted)] uppercase tracking-widest py-2 px-2 text-left w-24">
+            <th
+              scope="col"
+              className="font-display font-700 text-[10px] text-[var(--muted)] uppercase tracking-widest py-2 px-2 text-left w-24"
+            >
               Team
             </th>
             {data.displayInnings.map((i) => (
               <th
+                scope="col"
                 key={i}
                 className="font-display font-700 text-[10px] text-[var(--muted)] uppercase tracking-widest py-2 px-2 w-8"
               >
                 {i}
               </th>
             ))}
-            <th className="font-display font-800 text-[10px] text-white uppercase tracking-widest py-2 px-3 border-l border-[var(--border)]">
+            <th
+              scope="col"
+              className="font-display font-800 text-[10px] text-white uppercase tracking-widest py-2 px-3 border-l border-[var(--border)]"
+            >
               R
             </th>
-            <th className="font-display font-700 text-[10px] text-[var(--muted)] uppercase tracking-widest py-2 px-3">
+            <th
+              scope="col"
+              className="font-display font-700 text-[10px] text-[var(--muted)] uppercase tracking-widest py-2 px-3"
+            >
               H
             </th>
-            <th className="font-display font-700 text-[10px] text-[var(--muted)] uppercase tracking-widest py-2 px-3">
+            <th
+              scope="col"
+              className="font-display font-700 text-[10px] text-[var(--muted)] uppercase tracking-widest py-2 px-3"
+            >
               E
             </th>
           </tr>

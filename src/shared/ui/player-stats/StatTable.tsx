@@ -12,11 +12,15 @@ export function StatTable({
       <table className="w-full text-xs min-w-max">
         <thead>
           <tr className="border-b border-[var(--border)]">
-            <th className="font-display font-700 text-[var(--muted)] uppercase tracking-widest px-3 py-2 text-left whitespace-nowrap w-28">
+            <th
+              scope="col"
+              className="font-display font-700 text-[var(--muted)] uppercase tracking-widest px-3 py-2 text-left whitespace-nowrap w-28"
+            >
               Year
             </th>
             {headers.map((h) => (
               <th
+                scope="col"
                 key={h}
                 className="font-display font-700 text-[var(--muted)] uppercase tracking-widest px-2 py-2 text-right whitespace-nowrap"
               >

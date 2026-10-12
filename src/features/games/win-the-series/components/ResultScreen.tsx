@@ -90,7 +90,7 @@ export function ResultScreen({
       <div className="flex justify-center">
         <button
           onClick={onPlayAgain}
-          className="font-display font-800 uppercase tracking-wider bg-[var(--accent)] text-white px-8 py-3 rounded-xl hover:opacity-90 transition-opacity"
+          className="font-display font-800 uppercase tracking-wider bg-[var(--accent-strong)] text-white px-8 py-3 rounded-xl hover:opacity-90 transition-opacity"
         >
           Play again
         </button>

@@ -1,6 +1,6 @@
 'use client'
 
-import { TEAM_COLORS, TEAM_SHORT, KNBSB_TEAM_MAP } from '@/shared/teams/teams'
+import { KNBSB_TEAM_MAP, TEAM_COLORS, TEAM_SHORT } from '@/shared/teams/teams'
 import { parseKnbsbName } from '../domain/names'
 import { assignRanks, getStatValue, parseLabel } from '../domain/statValue'
 import type { KnbsbCategory, OnSelect } from '../domain/types'
@@ -59,7 +59,7 @@ export default function CategoryCard({
                 key={i}
                 onClick={() => onSelect(name, teamKey, statType)}
                 className={`w-full grid items-center px-5 py-2.5 gap-3 transition-colors text-left ${
-                  isFirst ? 'bg-[var(--accent)]' : 'hover:bg-[var(--card-hover)]'
+                  isFirst ? 'bg-[var(--accent-strong)]' : 'hover:bg-[var(--card-hover)]'
                 }`}
                 style={{ gridTemplateColumns: gridCols }}
               >

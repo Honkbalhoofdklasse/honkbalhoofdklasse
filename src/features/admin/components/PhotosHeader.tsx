@@ -34,6 +34,7 @@ export default function PhotosHeader({
       <div className="flex items-center gap-3 flex-wrap">
         <input
           type="search"
+          aria-label="Zoek speler of team"
           placeholder="Zoek speler of team..."
           value={filter}
           onChange={(e) => setFilter(e.target.value)}

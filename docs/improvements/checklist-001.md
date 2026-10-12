@@ -124,15 +124,15 @@ Production Lighthouse baseline (2026-10-07): `/` 85/84/100/100, `/stand` 90/95/1
 
 ## P3 accessibility (1 day)
 
-- [ ] **Hero dots: no label, 8 px targets** `src/components/HeroSlideshow.tsx:88-92`. Fails Lighthouse `button-name` and `target-size` on `/`.
-- [ ] **Contrast 3.57:1 white on #fe3d00** nav CTA on every page, news-bar links. Fails `color-contrast` on all three audited pages. Darken the accent for text or use dark text on orange.
-- [ ] **Clickable divs without keyboard path** `src/app/livescores/page.tsx:84`, `src/components/HomeRecentResults.tsx:56`, `src/app/rosters/RosterTabs.tsx:136`, `src/app/compare/page.tsx:170`, `src/app/immaculate-grid/page.tsx:252`.
-- [ ] **Modals without role=dialog or focus trap**: all except `PlayerStatsModal`. Extract one `Modal` component.
-- [ ] **Icon-only close buttons without aria-label** `BoxscoreModal.tsx:272`, `immaculate-grid/page.tsx:193`, `pickle/page.tsx:287`.
-- [ ] **No prefers-reduced-motion** for marquee (`globals.css:54-60`) and hero autoplay.
-- [ ] **Forms**: `partner-up/page.tsx:105-133` labels without `htmlFor`; 8 placeholder-only inputs.
-- [ ] **Tables**: 48 `<th>` with no `scope`.
-- [ ] **Language toggle never sets `document.documentElement.lang`** `src/lib/language.tsx:40-52`.
+- [x] **Hero dots: no label, 8 px targets** `src/components/HeroSlideshow.tsx:88-92`. Fails Lighthouse `button-name` and `target-size` on `/`.
+- [x] **Contrast 3.57:1 white on #fe3d00** nav CTA on every page, news-bar links. Fails `color-contrast` on all three audited pages. Darken the accent for text or use dark text on orange.
+- [x] **Clickable divs without keyboard path** `src/app/livescores/page.tsx:84`, `src/components/HomeRecentResults.tsx:56`, `src/app/rosters/RosterTabs.tsx:136`, `src/app/compare/page.tsx:170`, `src/app/immaculate-grid/page.tsx:252`.
+- [x] **Modals without role=dialog or focus trap**: all except `PlayerStatsModal`. Extract one `Modal` component.
+- [x] **Icon-only close buttons without aria-label** `BoxscoreModal.tsx:272`, `immaculate-grid/page.tsx:193`, `pickle/page.tsx:287`.
+- [x] **No prefers-reduced-motion** for marquee (`globals.css:54-60`) and hero autoplay.
+- [x] **Forms**: `partner-up/page.tsx:105-133` labels without `htmlFor`; 8 placeholder-only inputs.
+- [x] **Tables**: 48 `<th>` with no `scope`.
+- [x] **Language toggle never sets `document.documentElement.lang`** `src/lib/language.tsx:40-52`.
 - [ ] **SEO**: `nieuws/[slug]` has no metadata so it inherits the homepage canonical; sitemap misses postseason, win-the-series, holland-series, media, notificaties.
 
 ## P4 clean code and structure (ongoing, one feature per PR)

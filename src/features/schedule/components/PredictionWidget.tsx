@@ -100,10 +100,10 @@ export default function PredictionWidget({
           disabled={!!votedFor}
           className={`flex-1 rounded-lg py-2 px-3 text-center font-display font-800 text-sm uppercase transition-all ${
             votedFor === 'away'
-              ? 'bg-[var(--accent)] text-white'
+              ? 'bg-[var(--accent-strong)] text-white'
               : votedFor
                 ? 'bg-[var(--card-hover)] text-[var(--muted)] cursor-default opacity-60'
-                : 'bg-[var(--card-hover)] text-white hover:bg-[var(--accent)] cursor-pointer'
+                : 'bg-[var(--card-hover)] text-white hover:bg-[var(--accent-strong)] hover:text-white cursor-pointer'
           }`}
         >
           {TEAM_NAMES[awayTeamId] ?? awayTeamId}
@@ -114,10 +114,10 @@ export default function PredictionWidget({
           disabled={!!votedFor}
           className={`flex-1 rounded-lg py-2 px-3 text-center font-display font-800 text-sm uppercase transition-all ${
             votedFor === 'home'
-              ? 'bg-[var(--accent)] text-white'
+              ? 'bg-[var(--accent-strong)] text-white'
               : votedFor
                 ? 'bg-[var(--card-hover)] text-[var(--muted)] cursor-default opacity-60'
-                : 'bg-[var(--card-hover)] text-white hover:bg-[var(--accent)] cursor-pointer'
+                : 'bg-[var(--card-hover)] text-white hover:bg-[var(--accent-strong)] hover:text-white cursor-pointer'
           }`}
         >
           {TEAM_NAMES[homeTeamId] ?? homeTeamId}

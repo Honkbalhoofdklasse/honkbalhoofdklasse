@@ -1,9 +1,9 @@
+import { formatGameDate, WEEKDAY_DAY_MONTH } from '@/shared/dates/gameDate'
 import { TEAM_NAMES } from '@/shared/teams/teams'
-import type { LiveGame } from '../domain/types'
 import type { WinLoss } from '@/shared/types/standing'
-import BaseDiamond from './BaseDiamond'
 import { TeamLogo } from '@/shared/ui/TeamLogo'
-import { WEEKDAY_DAY_MONTH, formatGameDate } from '@/shared/dates/gameDate'
+import type { LiveGame } from '../domain/types'
+import BaseDiamond from './BaseDiamond'
 
 export default function ScoreRow({
   game,
@@ -21,15 +21,11 @@ export default function ScoreRow({
   const isFinal = game.status === 'final'
   const clickable = game.status !== 'scheduled'
 
-  return (
-    <div
-      onClick={clickable ? onClick : undefined}
-      className={`relative rounded-xl overflow-hidden border transition-all ${
-        isLive
-          ? 'border-[var(--accent)]/60 bg-[#0f1e2e]'
-          : 'border-[var(--border)] bg-[var(--card)]'
-      } ${clickable ? 'cursor-pointer hover:border-[var(--accent)]/60 hover:bg-[#0d1a2a]' : ''}`}
-    >
+  const rootClass = `relative rounded-xl overflow-hidden border transition-all ${
+    isLive ? 'border-[var(--accent)]/60 bg-[#0f1e2e]' : 'border-[var(--border)] bg-[var(--card)]'
+  }`
+  const content = (
+    <>
       {isLive && (
         <div className="absolute top-0 left-0 right-0 h-[2px] bg-[var(--accent)] animate-pulse" />
       )}
@@ -42,7 +38,7 @@ export default function ScoreRow({
           </p>
           <div className="flex items-center gap-2">
             {isLive && (
-              <span className="flex items-center gap-1.5 bg-[var(--accent)] px-2 py-0.5 rounded">
+              <span className="flex items-center gap-1.5 bg-[var(--accent-strong)] px-2 py-0.5 rounded">
                 <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
                 <span className="font-display font-800 text-[10px] text-white uppercase tracking-widest">
                   Live
@@ -141,6 +137,18 @@ export default function ScoreRow({
           </div>
         )}
       </div>
-    </div>
+    </>
+  )
+
+  if (!clickable) return <div className={rootClass}>{content}</div>
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`${rootClass} w-full text-left cursor-pointer hover:border-[var(--accent)]/60 hover:bg-[#0d1a2a]`}
+    >
+      {content}
+    </button>
   )
 }
